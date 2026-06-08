@@ -18,6 +18,7 @@
 
     @include('store.partials.footer')
     @include('store.partials.floating-contact')
+    @include('store.partials.scroll-top')
 
     @stack('scripts')
 </body>
