@@ -18,6 +18,7 @@ COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 WORKDIR /var/www/html
 
 COPY docker/php/start.sh /usr/local/bin/start.sh
+COPY docker/php/opcache.ini /usr/local/etc/php/conf.d/99-opcache-custom.ini
 RUN sed -i 's/\r$//' /usr/local/bin/start.sh && chmod +x /usr/local/bin/start.sh
 
 EXPOSE 9000

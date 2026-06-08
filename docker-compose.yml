@@ -18,6 +18,12 @@ services:
       AUTO_MIGRATE: "false"
       TZ: Asia/Ho_Chi_Minh
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "php-fpm -t 2>/dev/null || exit 1"]
+      interval: 5s
+      timeout: 3s
+      retries: 12
+      start_period: 30s
     depends_on:
       db:
         condition: service_healthy
@@ -28,7 +34,8 @@ services:
     image: nginx:1.27-alpine
     container_name: nongsanttc-web
     depends_on:
-      - app
+      app:
+        condition: service_healthy
     restart: unless-stopped
     environment:
       TZ: Asia/Ho_Chi_Minh
@@ -112,8 +119,10 @@ services:
     networks:
       - nongsanttc
 
-  # Build assets một lần: docker compose run --rm vite-build
+  # Chạy thủ công: docker compose run --rm vite-build
   vite-build:
+    profiles: [build]
+    restart: "no"
     image: node:22-alpine
     working_dir: /var/www/html
     volumes:

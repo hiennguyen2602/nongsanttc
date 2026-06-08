@@ -2,6 +2,10 @@
 
 @section('title', config('store.name') . ' — ' . config('store.tagline'))
 
+@push('head')
+    <link rel="preload" as="image" href="{{ store_media_url(config('store.images.hero')) }}">
+@endpush
+
 @section('content')
     {{-- Hero — parallax + entrance animation --}}
     <section
@@ -16,6 +20,10 @@
                 src="{{ store_media_url(config('store.images.hero')) }}"
                 alt="Nông sản TTC"
                 class="h-full w-full object-cover"
+                fetchpriority="high"
+                decoding="async"
+                width="1920"
+                height="1080"
             >
         </div>
         <div class="absolute inset-0 bg-gradient-to-b from-black/40 via-black/50 to-black/70"></div>
@@ -77,11 +85,15 @@
                     src="{{ store_media_url(config('store.images.about_main')) }}"
                     alt="Nông dân TTC"
                     class="relative aspect-[4/5] w-full rounded-2xl object-cover shadow-2xl ring-1 ring-slate-200/50"
+                    loading="lazy"
+                    decoding="async"
                 >
                 <img
                     src="{{ store_media_url(config('store.images.about_small')) }}"
                     alt="Thu hoạch"
                     class="absolute -bottom-6 -right-4 hidden w-40 rounded-xl object-cover shadow-xl ring-4 ring-white sm:block lg:-right-8 lg:w-52"
+                    loading="lazy"
+                    decoding="async"
                 >
                 <div data-reveal="zoom-in" data-reveal-delay="400" class="absolute -bottom-4 left-4 rounded-xl bg-brand px-4 py-3 text-white shadow-lg lg:-bottom-6 lg:left-8">
                     <p class="text-2xl font-bold">100%</p>
@@ -157,7 +169,7 @@
                         data-reveal="fade-up"
                         class="group relative block aspect-[2/1] overflow-hidden rounded-2xl shadow-lg ring-1 ring-black/5"
                     >
-                        <img src="{{ store_media_url($banner->image) }}" alt="{{ $banner->title }}" class="h-full w-full object-cover transition duration-700 group-hover:scale-110">
+                        <img src="{{ store_media_url($banner->image) }}" alt="{{ $banner->title }}" class="h-full w-full object-cover transition duration-700 group-hover:scale-110" loading="lazy" decoding="async">
                         <div class="absolute inset-0 bg-gradient-to-t from-brand-dark/90 via-brand-dark/30 to-transparent transition duration-500 group-hover:from-brand-dark/95"></div>
                         <div class="absolute bottom-0 left-0 p-6 text-white sm:p-8">
                             <h3 class="text-xl font-bold transition group-hover:translate-x-1 sm:text-2xl">{{ $banner->title }}</h3>
