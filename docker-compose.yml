@@ -1,0 +1,135 @@
+# Production / VPS: docker compose up -d --build
+# Local dev: cp docker-compose.override.yml.example docker-compose.override.yml
+# Frontend dev (HMR): docker compose --profile dev up -d
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: docker/php/Dockerfile
+    container_name: nongsanttc-app
+    working_dir: /var/www/html
+    volumes:
+      - ./src:/var/www/html
+      - app_vendor:/var/www/html/vendor
+      - app_storage:/var/www/html/storage
+      - app_bootstrap_cache:/var/www/html/bootstrap/cache
+    environment:
+      AUTO_MIGRATE: "false"
+      TZ: Asia/Ho_Chi_Minh
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - nongsanttc
+
+  web:
+    image: nginx:1.27-alpine
+    container_name: nongsanttc-web
+    depends_on:
+      - app
+    restart: unless-stopped
+    environment:
+      TZ: Asia/Ho_Chi_Minh
+    volumes:
+      - ./src:/var/www/html
+      - app_storage:/var/www/html/storage
+      - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+    networks:
+      - nongsanttc
+
+  db:
+    image: mysql:8.4
+    container_name: nongsanttc-db
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:-secret}
+      MYSQL_DATABASE: ${DB_DATABASE:-nongsanttc}
+      MYSQL_USER: ${DB_USERNAME:-nongsanttc}
+      MYSQL_PASSWORD: ${DB_PASSWORD:-secret}
+      TZ: Asia/Ho_Chi_Minh
+    volumes:
+      - db_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h localhost -u\"$$MYSQL_USER\" -p\"$$MYSQL_PASSWORD\" --silent"]
+      interval: 5s
+      timeout: 3s
+      retries: 15
+    networks:
+      - nongsanttc
+
+  redis:
+    profiles: [workers]
+    image: redis:7-alpine
+    container_name: nongsanttc-redis
+    restart: unless-stopped
+    command: redis-server --save "" --appendonly no
+    networks:
+      - nongsanttc
+
+  queue:
+    profiles: [workers]
+    build:
+      context: .
+      dockerfile: docker/php/Dockerfile
+    container_name: nongsanttc-queue
+    working_dir: /var/www/html
+    volumes:
+      - ./src:/var/www/html
+      - app_vendor:/var/www/html/vendor
+      - app_storage:/var/www/html/storage
+      - app_bootstrap_cache:/var/www/html/bootstrap/cache
+    environment:
+      TZ: Asia/Ho_Chi_Minh
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    command: ["php", "artisan", "queue:work", "--sleep=3", "--tries=3"]
+    networks:
+      - nongsanttc
+
+  reverb:
+    profiles: [workers]
+    build:
+      context: .
+      dockerfile: docker/php/Dockerfile
+    container_name: nongsanttc-reverb
+    working_dir: /var/www/html
+    volumes:
+      - ./src:/var/www/html
+      - app_vendor:/var/www/html/vendor
+      - app_storage:/var/www/html/storage
+      - app_bootstrap_cache:/var/www/html/bootstrap/cache
+    environment:
+      TZ: Asia/Ho_Chi_Minh
+    restart: unless-stopped
+    depends_on:
+      - app
+      - redis
+    command: ["php", "artisan", "reverb:start", "--host=0.0.0.0", "--port=8080"]
+    networks:
+      - nongsanttc
+
+  # Build assets một lần: docker compose run --rm vite-build
+  vite-build:
+    image: node:22-alpine
+    working_dir: /var/www/html
+    volumes:
+      - ./src:/var/www/html
+      - vite_node_modules:/var/www/html/node_modules
+    command: sh -c "npm install && npm run build && rm -f public/hot"
+    networks:
+      - nongsanttc
+
+volumes:
+  db_data:
+  vite_node_modules:
+  app_vendor:
+  app_storage:
+  app_bootstrap_cache:
+
+networks:
+  nongsanttc:
+    driver: bridge
