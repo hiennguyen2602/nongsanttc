@@ -31,9 +31,11 @@
                 <a href="{{ route('products.index') }}" class="mt-4 inline-block text-brand hover:underline">Xem tất cả</a>
             </div>
         @else
-            <div class="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 lg:gap-6">
+            <div class="product-grid-equal grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 lg:gap-6">
                 @foreach ($products as $product)
-                    @include('store.partials.product-card', ['product' => $product])
+                    <div class="h-full">
+                        @include('store.partials.product-card', ['product' => $product])
+                    </div>
                 @endforeach
             </div>
             <div class="mt-10">

@@ -5,7 +5,7 @@
 @section('content')
     {{-- Hero nhỏ --}}
     <section class="relative flex min-h-[40vh] items-center justify-center overflow-hidden">
-        <img src="https://images.unsplash.com/photo-1464226184884-fa280b87c399?w=1920&h=600&fit=crop" alt="" class="absolute inset-0 h-full w-full object-cover">
+        <img src="{{ store_media_url(config('store.images.about_main')) }}" alt="" class="absolute inset-0 h-full w-full object-cover">
         <div class="absolute inset-0 bg-black/50"></div>
         <div class="relative z-10 px-4 text-center text-white">
             <p class="font-display mb-2 italic text-amber-200/90">Về chúng tôi</p>
@@ -24,7 +24,7 @@
                     Mỗi sản phẩm đều được kiểm tra chất lượng, đóng gói cẩn thận và giao đến tay khách hàng với sự tận tâm cao nhất.
                 </p>
             </div>
-            <img src="https://images.unsplash.com/photo-1625246333195-78d9c38ad449?w=800&h=600&fit=crop" alt="Nông trại" class="rounded-xl object-cover shadow-lg">
+            <img src="{{ store_media_url('images/store/post-farm.jpg') }}" alt="Nông trại" class="rounded-xl object-cover shadow-lg">
         </div>
     </section>
 

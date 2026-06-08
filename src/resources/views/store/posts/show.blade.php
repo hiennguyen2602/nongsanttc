@@ -16,7 +16,7 @@
         </header>
 
         @if ($post->image)
-            <img src="{{ $post->image }}" alt="{{ $post->title }}" class="mb-8 aspect-[16/9] w-full rounded-xl object-cover">
+            <img src="{{ store_media_url($post->image) }}" alt="{{ $post->title }}" class="mb-8 aspect-[16/9] w-full rounded-xl object-cover">
         @endif
 
         <div class="prose prose-slate max-w-none text-slate-700">

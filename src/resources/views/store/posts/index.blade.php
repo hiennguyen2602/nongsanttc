@@ -16,7 +16,7 @@
                 <article class="overflow-hidden rounded-lg bg-white shadow-sm ring-1 ring-slate-200 transition hover:shadow-md">
                     <a href="{{ route('posts.show', $post->slug) }}">
                         <div class="aspect-[16/10] overflow-hidden">
-                            <img src="{{ $post->image }}" alt="{{ $post->title }}" class="h-full w-full object-cover transition hover:scale-105" loading="lazy">
+                            <img src="{{ store_media_url($post->image) }}" alt="{{ $post->title }}" class="h-full w-full object-cover transition hover:scale-105" loading="lazy">
                         </div>
                         <div class="p-5">
                             <p class="mb-2 text-xs text-slate-400">{{ $post->published_at?->format('d/m/Y') }}</p>

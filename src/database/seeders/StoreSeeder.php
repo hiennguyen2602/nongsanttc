@@ -8,7 +8,6 @@ use App\Models\Post;
 use App\Models\Product;
 use App\Models\ProductVariant;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Str;
 
 class StoreSeeder extends Seeder
 {
@@ -36,7 +35,7 @@ class StoreSeeder extends Seeder
                 'category' => 'gao-ngu-coc',
                 'price' => 185000,
                 'sale_price' => 175000,
-                'image' => 'https://images.unsplash.com/photo-1586201375761-83865001e31c?w=600&h=600&fit=crop',
+                'image' => 'images/store/product-rice.jpg',
                 'featured' => true,
                 'variants' => [
                     ['flavor' => null, 'size' => '5kg', 'price' => 175000],
@@ -49,7 +48,7 @@ class StoreSeeder extends Seeder
                 'sku' => 'MO-500',
                 'category' => 'dac-san-vung-mien',
                 'price' => 220000,
-                'image' => 'https://images.unsplash.com/photo-1587049352846-4a222e784d38?w=600&h=600&fit=crop',
+                'image' => 'images/store/product-honey.jpg',
                 'featured' => true,
                 'variants' => [
                     ['flavor' => 'Nguyên chất', 'size' => '500ml', 'price' => 220000],
@@ -62,7 +61,7 @@ class StoreSeeder extends Seeder
                 'sku' => 'CL-TT',
                 'category' => 'dac-san-vung-mien',
                 'price' => 85000,
-                'image' => 'https://images.unsplash.com/photo-1606312619070-d48b4c652765?w=600&h=600&fit=crop',
+                'image' => 'images/store/product-snack.jpg',
                 'featured' => true,
                 'variants' => [
                     ['flavor' => 'Vừng', 'size' => 'Hộp 300g', 'price' => 85000],
@@ -75,7 +74,7 @@ class StoreSeeder extends Seeder
                 'sku' => 'BXL-HL',
                 'category' => 'trai-cay-rau-cu',
                 'price' => 65000,
-                'image' => 'https://images.unsplash.com/photo-1611080626919-7a0430b1406f?w=600&h=600&fit=crop',
+                'image' => 'images/store/product-fruit.jpg',
                 'featured' => true,
             ],
             [
@@ -84,7 +83,7 @@ class StoreSeeder extends Seeder
                 'sku' => 'RAU-CB',
                 'category' => 'trai-cay-rau-cu',
                 'price' => 120000,
-                'image' => 'https://images.unsplash.com/photo-1540420773420-3366772f4999?w=600&h=600&fit=crop',
+                'image' => 'images/store/product-vegetables.jpg',
                 'featured' => true,
             ],
             [
@@ -94,7 +93,7 @@ class StoreSeeder extends Seeder
                 'category' => 'qua-tang',
                 'price' => 450000,
                 'sale_price' => 399000,
-                'image' => 'https://images.unsplash.com/photo-1549465220-1a8b923004cd?w=600&h=600&fit=crop',
+                'image' => 'images/store/product-gift.jpg',
                 'featured' => true,
             ],
         ];
@@ -139,19 +138,19 @@ class StoreSeeder extends Seeder
                 'title' => 'Bí quyết chọn gạo ST25 chuẩn vị Sóc Trăng',
                 'slug' => 'bi-quyet-chon-gao-st25',
                 'excerpt' => 'Gạo ST25 nổi tiếng với hương thơm lá dứa đặc trưng. Cùng TTC tìm hiểu cách chọn gạo ngon, tránh hàng kém chất lượng.',
-                'image' => 'https://images.unsplash.com/photo-1586201375761-83865001e31c?w=800&h=500&fit=crop',
+                'image' => 'images/store/product-rice.jpg',
             ],
             [
                 'title' => '5 món quà nông sản ý nghĩa dịp Tết',
                 'slug' => '5-mon-qua-nong-san-tet',
                 'excerpt' => 'Set quà nông sản sạch vừa thể hiện tấm lòng, vừa góp phần lan tỏa đặc sản Việt đến người thân và đối tác.',
-                'image' => 'https://images.unsplash.com/photo-1549465220-1a8b923004cd?w=800&h=500&fit=crop',
+                'image' => 'images/store/product-gift.jpg',
             ],
             [
                 'title' => 'Hành trình nông sản sạch từ nông trại đến bàn ăn',
                 'slug' => 'hanh-trinh-nong-san-sach',
                 'excerpt' => 'TTC hợp tác trực tiếp với hộ nông dân, kiểm soát chất lượng từ khâu thu hoạch đến đóng gói và vận chuyển.',
-                'image' => 'https://images.unsplash.com/photo-1625246333195-78d9c38ad449?w=800&h=500&fit=crop',
+                'image' => 'images/store/post-farm.jpg',
             ],
         ];
 
@@ -174,7 +173,7 @@ class StoreSeeder extends Seeder
         Banner::create([
             'title' => 'Món quà vàng từ đồng quê',
             'subtitle' => 'Nông sản sạch — gửi trọn tình thân',
-            'image' => 'https://images.unsplash.com/photo-1625246333195-78d9c38ad449?w=800&h=400&fit=crop',
+            'image' => 'images/store/banner-farm.jpg',
             'link' => '/san-pham',
             'position' => 'home_cta',
             'sort_order' => 1,
@@ -183,7 +182,7 @@ class StoreSeeder extends Seeder
         Banner::create([
             'title' => 'Trở thành đại lý',
             'subtitle' => 'Lan tỏa đặc sản nông sản đến mọi miền',
-            'image' => 'https://images.unsplash.com/photo-1464226184884-fa280b87c399?w=800&h=400&fit=crop',
+            'image' => 'images/store/banner-partner.jpg',
             'link' => '#',
             'position' => 'home_cta',
             'sort_order' => 2,

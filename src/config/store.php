@@ -11,6 +11,12 @@ return [
     'maps' => 'https://maps.google.com',
     'facebook' => 'https://facebook.com/nongsanttc',
 
+    'images' => [
+        'hero' => 'images/store/hero.jpg',
+        'about_main' => 'images/store/about-farmer.jpg',
+        'about_small' => 'images/store/about-harvest.jpg',
+    ],
+
     'promotions' => [
         ['code' => 'TTC001', 'title' => 'Miễn phí vận chuyển', 'desc' => 'Đơn hàng từ 350k', 'min_order' => 350000],
         ['code' => 'TTC002', 'title' => 'Giảm 5k', 'desc' => 'Đơn hàng từ 100k', 'min_order' => 100000],

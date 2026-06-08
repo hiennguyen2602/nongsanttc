@@ -13,7 +13,7 @@
             :style="`transform: translateY(${parallax}px) scale(1.05)`"
         >
             <img
-                src="https://images.unsplash.com/photo-1625246333195-78d9c38ad449?w=1920&h=1080&fit=crop"
+                src="{{ store_media_url(config('store.images.hero')) }}"
                 alt="Nông sản TTC"
                 class="h-full w-full object-cover"
             >
@@ -74,12 +74,12 @@
             <div data-reveal="fade-left" class="relative">
                 <div data-reveal="zoom-in" data-reveal-delay="200" class="absolute -left-4 -top-4 h-24 w-24 rounded-full bg-brand-muted lg:-left-8 lg:-top-8 lg:h-32 lg:w-32"></div>
                 <img
-                    src="https://images.unsplash.com/photo-1464226184884-fa280b87c399?w=800&h=900&fit=crop"
+                    src="{{ store_media_url(config('store.images.about_main')) }}"
                     alt="Nông dân TTC"
                     class="relative aspect-[4/5] w-full rounded-2xl object-cover shadow-2xl ring-1 ring-slate-200/50"
                 >
                 <img
-                    src="https://images.unsplash.com/photo-1574323347407-f5e1e8c4df8d?w=400&h=500&fit=crop"
+                    src="{{ store_media_url(config('store.images.about_small')) }}"
                     alt="Thu hoạch"
                     class="absolute -bottom-6 -right-4 hidden w-40 rounded-xl object-cover shadow-xl ring-4 ring-white sm:block lg:-right-8 lg:w-52"
                 >
@@ -131,9 +131,9 @@
                 </a>
             </div>
 
-            <div class="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 lg:gap-6" data-reveal-group>
+            <div class="product-grid-equal grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 lg:gap-6" data-reveal-group>
                 @foreach ($featuredProducts as $product)
-                    <div data-reveal="zoom-in">
+                    <div data-reveal="zoom-in" class="h-full">
                         @include('store.partials.product-card', ['product' => $product])
                     </div>
                 @endforeach
@@ -157,7 +157,7 @@
                         data-reveal="fade-up"
                         class="group relative block aspect-[2/1] overflow-hidden rounded-2xl shadow-lg ring-1 ring-black/5"
                     >
-                        <img src="{{ $banner->image }}" alt="{{ $banner->title }}" class="h-full w-full object-cover transition duration-700 group-hover:scale-110">
+                        <img src="{{ store_media_url($banner->image) }}" alt="{{ $banner->title }}" class="h-full w-full object-cover transition duration-700 group-hover:scale-110">
                         <div class="absolute inset-0 bg-gradient-to-t from-brand-dark/90 via-brand-dark/30 to-transparent transition duration-500 group-hover:from-brand-dark/95"></div>
                         <div class="absolute bottom-0 left-0 p-6 text-white sm:p-8">
                             <h3 class="text-xl font-bold transition group-hover:translate-x-1 sm:text-2xl">{{ $banner->title }}</h3>
@@ -214,7 +214,7 @@
                     <article data-reveal="fade-up" class="group overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-slate-200/80 transition hover:-translate-y-1 hover:shadow-xl">
                         <a href="{{ route('posts.show', $post->slug) }}">
                             <div class="aspect-[16/10] overflow-hidden">
-                                <img src="{{ $post->image }}" alt="{{ $post->title }}" class="h-full w-full object-cover transition duration-500 group-hover:scale-105" loading="lazy">
+                                <img src="{{ store_media_url($post->image) }}" alt="{{ $post->title }}" class="h-full w-full object-cover transition duration-500 group-hover:scale-105" loading="lazy">
                             </div>
                             <div class="p-6">
                                 <time class="text-xs font-medium uppercase tracking-wider text-brand">{{ $post->published_at?->format('d/m/Y') }}</time>

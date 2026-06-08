@@ -16,12 +16,12 @@
         <div
             class="grid grid-cols-1 gap-10 lg:grid-cols-12"
             x-data="{
-                mainImage: @js($product->image),
+                mainImage: @js(store_media_url($product->image)),
                 quantity: 1,
                 selectedVariant: @js($product->variants->first()?->id),
                 variants: @js($product->variants->map(fn($v) => ['id' => $v->id, 'label' => $v->label(), 'price' => $v->price, 'formatted' => $v->formattedPrice()])),
                 basePrice: {{ $product->displayPrice() }},
-                gallery: @js(array_values(array_filter(array_merge([$product->image], $product->gallery ?? []))))
+                gallery: @js(collect(array_merge([$product->image], $product->gallery ?? []))->map(fn ($img) => store_media_url($img))->filter()->values()->all())
             }"
         >
             {{-- Gallery --}}
@@ -171,9 +171,11 @@
         @if ($relatedProducts->isNotEmpty())
             <div class="mt-12 border-t border-slate-200 pt-10">
                 <h2 class="mb-6 text-lg font-bold text-slate-900">Sản phẩm liên quan</h2>
-                <div class="grid grid-cols-2 gap-4 sm:grid-cols-4">
+                <div class="product-grid-equal grid grid-cols-2 gap-4 sm:grid-cols-4">
                     @foreach ($relatedProducts as $related)
-                        @include('store.partials.product-card', ['product' => $related])
+                        <div class="h-full">
+                            @include('store.partials.product-card', ['product' => $related])
+                        </div>
                     @endforeach
                 </div>
             </div>

@@ -167,6 +167,20 @@ html {
     animation: scroll-hint 2s ease-in-out infinite;
 }
 
+/* Product card — equal height grid */
+.product-grid-equal {
+    align-items: stretch;
+}
+
+.product-grid-equal > * {
+    display: flex;
+    min-height: 0;
+}
+
+.product-card-body {
+    min-height: 5.75rem;
+}
+
 /* Product card polish */
 .product-card-hover {
     transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.35s ease;
