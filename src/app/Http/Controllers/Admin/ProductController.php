@@ -9,6 +9,7 @@ use App\Models\ProductVariant;
 use App\Services\ImageUploadService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
 
 class ProductController extends Controller
@@ -42,6 +43,7 @@ class ProductController extends Controller
     public function store(Request $request, ImageUploadService $uploader): RedirectResponse
     {
         $data = $this->validated($request);
+        $this->ensureHasImage($request);
 
         [$image, $gallery] = $this->handleImages($request, $uploader, null);
         $data['image'] = $image;
@@ -66,6 +68,7 @@ class ProductController extends Controller
     public function update(Request $request, Product $product, ImageUploadService $uploader): RedirectResponse
     {
         $data = $this->validated($request, $product);
+        $this->ensureHasImage($request);
 
         [$image, $gallery] = $this->handleImages($request, $uploader, $product);
         $data['image'] = $image;
@@ -91,6 +94,10 @@ class ProductController extends Controller
 
     private function validated(Request $request, ?Product $product = null): array
     {
+        $maxMb = (float) config('media.max_image_mb', 5);
+        $maxKb = (int) round($maxMb * 1024);
+        $maxLabel = rtrim(rtrim(number_format($maxMb, 1), '0'), '.');
+
         $data = $request->validate([
             'category_id' => ['nullable', 'exists:categories,id'],
             'name' => ['required', 'string', 'max:255'],
@@ -102,7 +109,16 @@ class ProductController extends Controller
             'stock' => ['required', 'integer', 'min:0'],
             'is_featured' => ['nullable', 'boolean'],
             'is_active' => ['nullable', 'boolean'],
+            'images' => ['nullable', 'array'],
+            'images.*' => ['nullable', 'image', 'mimes:jpeg,jpg,png,webp,gif', 'max:' . $maxKb],
+        ], [
+            'images.*.image' => 'File tải lên phải là hình ảnh.',
+            'images.*.mimes' => 'Ảnh phải có định dạng: jpeg, jpg, png, webp, gif.',
+            'images.*.max' => 'Mỗi ảnh không được vượt quá ' . $maxLabel . 'MB.',
+            'images.*.uploaded' => 'Ảnh tải lên thất bại hoặc vượt quá dung lượng cho phép (' . $maxLabel . 'MB).',
         ]);
+
+        unset($data['images']);
 
         $data['slug'] = generate_unique_slug($data['name'], 'products', $product?->id);
 
@@ -113,6 +129,23 @@ class ProductController extends Controller
         $data['is_active'] = $request->boolean('is_active', true);
 
         return $data;
+    }
+
+    /**
+     * Yêu cầu sản phẩm phải có ít nhất một ảnh (ảnh cũ giữ lại hoặc ảnh mới).
+     */
+    private function ensureHasImage(Request $request): void
+    {
+        $hasNew = collect((array) $request->file('images', []))->filter()->isNotEmpty();
+        $hasKept = collect((array) $request->input('existing_images', []))
+            ->filter(fn ($path) => filled($path))
+            ->isNotEmpty();
+
+        if (! $hasNew && ! $hasKept) {
+            throw ValidationException::withMessages([
+                'images' => 'Vui lòng chọn ít nhất một ảnh sản phẩm.',
+            ]);
+        }
     }
 
     /**

@@ -9,6 +9,10 @@ RUN apt-get update \
         libzip-dev \
         libpng-dev \
         libonig-dev \
+        libjpeg62-turbo-dev \
+        libfreetype6-dev \
+        libwebp-dev \
+    && docker-php-ext-configure gd --with-jpeg --with-freetype --with-webp \
     && docker-php-ext-install pdo_mysql zip mbstring bcmath pcntl gd \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
@@ -19,6 +23,7 @@ WORKDIR /var/www/html
 
 COPY docker/php/start.sh /usr/local/bin/start.sh
 COPY docker/php/opcache.ini /usr/local/etc/php/conf.d/99-opcache-custom.ini
+COPY docker/php/uploads.ini /usr/local/etc/php/conf.d/99-uploads-custom.ini
 RUN sed -i 's/\r$//' /usr/local/bin/start.sh && chmod +x /usr/local/bin/start.sh
 
 EXPOSE 9000

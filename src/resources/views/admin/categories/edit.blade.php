@@ -8,7 +8,7 @@
             <form method="POST" action="{{ route('admin.categories.update', $category) }}" class="admin-form-narrow">
                 @csrf @method('PUT')
                 <div class="mb-3"><label class="form-label">Tên *</label><input name="name" value="{{ old('name', $category->name) }}" required class="form-control"></div>
-                <div class="mb-3"><label class="form-label">Thứ tự</label><input type="number" name="sort_order" value="{{ old('sort_order', $category->sort_order) }}" class="form-control"></div>
+                <div class="mb-3"><label class="form-label">Thứ tự</label><input type="number" name="sort_order" min="1" value="{{ old('sort_order', $category->sort_order) }}" class="form-control"></div>
                 <div class="form-actions">
                     <button type="submit" class="btn btn-primary">Cập nhật</button>
                     <a href="{{ route('admin.categories.index') }}" class="btn btn-secondary">Hủy</a>

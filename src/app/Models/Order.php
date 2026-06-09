@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
@@ -31,11 +32,36 @@ class Order extends Model
         'promo_code',
         'payment_method',
         'status',
+        'viewed_at',
     ];
+
+    protected function casts(): array
+    {
+        return [
+            'viewed_at' => 'datetime',
+        ];
+    }
 
     public function items(): HasMany
     {
         return $this->hasMany(OrderItem::class);
+    }
+
+    public function scopeNew(Builder $query): Builder
+    {
+        return $query->whereNull('viewed_at');
+    }
+
+    public function isNew(): bool
+    {
+        return $this->viewed_at === null;
+    }
+
+    public function markViewed(): void
+    {
+        if ($this->viewed_at === null) {
+            $this->forceFill(['viewed_at' => now()])->save();
+        }
     }
 
     public static function statusLabels(): array

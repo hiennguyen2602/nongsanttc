@@ -38,21 +38,24 @@
                     <tbody>
                         @foreach($orders as $order)
                             <tr>
-                                <td><a href="{{ route('admin.orders.show', $order) }}" class="font-medium text-gent-accent hover:underline">{{ $order->order_code }}</a></td>
+                                <td>
+                                    <a href="{{ route('admin.orders.show', $order) }}" class="inline-flex items-start gap-1 font-medium text-[#015096] hover:underline">
+                                        <span>{{ $order->order_code }}</span>
+                                        @if($order->isNew())
+                                            <span class="inline-flex h-5 w-5 -translate-y-1 items-center justify-center rounded-full bg-red-500 text-[7px] font-bold leading-none text-white" title="Đơn hàng mới">New</span>
+                                        @endif
+                                    </a>
+                                </td>
                                 <td>
                                     @foreach($order->items as $item)
-                                        <div class="text-sm">
-                                            @if($item->product)
-                                                <a href="{{ route('admin.products.show', $item->product) }}" class="text-gent-accent hover:underline">{{ $item->product_name }}</a>
-                                            @else
-                                                {{ $item->product_name }}
-                                            @endif
+                                        <div class="whitespace-nowrap text-sm text-slate-700">
+                                            {{ $item->product_name }}
                                             <span class="text-xs text-slate-400">× {{ $item->quantity }}</span>
                                         </div>
                                     @endforeach
                                     @if($order->items->isEmpty())<span class="text-slate-400">—</span>@endif
                                 </td>
-                                <td>{{ $order->customer_name }}<br><span class="text-xs text-slate-500">{{ $order->customer_phone }}</span></td>
+                                <td class="whitespace-nowrap">{{ $order->customer_name }}<br><span class="text-xs text-slate-500">{{ $order->customer_phone }}</span></td>
                                 <td>{{ $order->formattedTotal() }}</td>
                                 <td><span class="badge {{ $order->statusBadgeClass() }}">{{ $order->statusLabel() }}</span></td>
                                 <td>{{ $order->created_at->format('d/m/Y H:i') }}</td>

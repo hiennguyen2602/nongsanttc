@@ -37,7 +37,7 @@
                                         <img src="{{ store_media_url($product->image, 'thumbnail') }}" alt="" class="h-12 w-12 rounded object-cover ring-1 ring-slate-200">
                                     @endif
                                 </td>
-                                <td class="font-medium text-slate-800">{{ $product->name }}</td>
+                                <td class="font-medium"><a href="{{ route('admin.products.show', $product) }}" class="text-[#015096] hover:underline">{{ $product->name }}</a></td>
                                 <td>{{ $product->category?->name ?? '—' }}</td>
                                 <td>{{ $product->formattedPrice() }}</td>
                                 <td>

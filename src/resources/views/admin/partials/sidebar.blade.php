@@ -61,7 +61,10 @@
                         @if ($item['route'])
                             <a href="{{ route($item['route']) }}" class="admin-sidebar-link {{ $menuActive($item['route']) ? 'is-active' : '' }}">
                                 @include('admin.partials.icon', ['name' => $item['icon']])
-                                {{ $item['label'] }}
+                                <span class="flex-1">{{ $item['label'] }}</span>
+                                @if ($item['route'] === 'admin.orders.index' && ($newOrdersCount ?? 0) > 0)
+                                    <span class="inline-flex h-5 min-w-[1.25rem] items-center justify-center rounded-full bg-red-500 px-1.5 text-xs font-bold text-white">{{ $newOrdersCount }}</span>
+                                @endif
                             </a>
                         @endif
                     @endif

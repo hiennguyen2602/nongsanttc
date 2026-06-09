@@ -32,9 +32,15 @@
                     </div>
 
                     <div class="mb-3" x-data="productImages(@js($existingImages))">
-                        <label class="form-label">Hình ảnh sản phẩm</label>
+                        <label class="form-label">Hình ảnh sản phẩm *</label>
                         <input type="file" x-ref="fileInput" name="images[]" accept="image/*" multiple @change="addFiles($event)" class="form-control">
                         <p class="mt-1 text-xs text-slate-500">Có thể chọn nhiều ảnh cùng lúc. Chọn "Ảnh chính" để làm ảnh đại diện hiển thị ở danh sách.</p>
+                        @error('images')<p class="field-error">{{ $message }}</p>@enderror
+                        @foreach ($errors->get('images.*') as $imageErrors)
+                            @foreach ($imageErrors as $imageError)
+                                <p class="field-error">{{ $imageError }}</p>
+                            @endforeach
+                        @endforeach
 
                         <input type="hidden" name="main_selector" :value="mainPayload">
                         <template x-for="item in existing" :key="'hidden-' + item.path">

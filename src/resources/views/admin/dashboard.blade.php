@@ -67,7 +67,7 @@
                         @forelse ($recentOrders as $order)
                             <tr>
                                 <td>
-                                    <a href="{{ route('admin.orders.show', $order) }}" class="font-medium text-gent-accent hover:underline">{{ $order->order_code }}</a>
+                                    <a href="{{ route('admin.orders.show', $order) }}" class="font-medium text-[#015096] hover:underline">{{ $order->order_code }}</a>
                                 </td>
                                 <td>{{ $order->customer_name }}</td>
                                 <td>{{ $order->formattedTotal() }}</td>

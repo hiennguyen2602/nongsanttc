@@ -69,9 +69,17 @@ class AuthController extends Controller
 
         $status = Password::sendResetLink($request->only('email'));
 
-        return $status === Password::RESET_LINK_SENT
-            ? back()->with('status', 'Link đặt lại mật khẩu đã được gửi qua email.')
-            : back()->withErrors(['email' => 'Không tìm thấy email trong hệ thống.']);
+        if ($status === Password::RESET_LINK_SENT) {
+            return back()->with('status', 'Link đặt lại mật khẩu đã được gửi qua email.');
+        }
+
+        $message = match ($status) {
+            Password::RESET_THROTTLED => 'Bạn vừa yêu cầu gửi link. Vui lòng đợi một lát trước khi thử lại.',
+            Password::INVALID_USER => 'Không tìm thấy email trong hệ thống.',
+            default => 'Không thể gửi link đặt lại mật khẩu. Vui lòng thử lại sau.',
+        };
+
+        return back()->withInput($request->only('email'))->withErrors(['email' => $message]);
     }
 
     public function showResetPassword(string $token): View

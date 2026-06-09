@@ -297,7 +297,7 @@
 
 .admin-body .table .table-actions .btn + .inline,
 .admin-body .table .table-actions .inline {
-    margin-left: 1rem;
+    margin-left: 0.5rem;
 }
 
 /* ─── Alerts ─── */
@@ -727,6 +727,25 @@
     width: auto;
     display: inline-block;
 }
+
+/* Nhãn cho dropdown Font & Size tùy chỉnh của Quill */
+.admin-body .rich-editor .ql-snow .ql-picker.ql-font .ql-picker-label[data-value]::before,
+.admin-body .rich-editor .ql-snow .ql-picker.ql-font .ql-picker-item[data-value]::before,
+.admin-body .rich-editor .ql-snow .ql-picker.ql-size .ql-picker-label[data-value]::before,
+.admin-body .rich-editor .ql-snow .ql-picker.ql-size .ql-picker-item[data-value]::before {
+    content: attr(data-value);
+}
+
+.admin-body .rich-editor .ql-snow .ql-picker.ql-font {
+    width: 130px;
+}
+
+.admin-body .rich-editor .ql-snow .ql-picker.ql-font .ql-picker-item[data-value="Arial"]::before { font-family: Arial, sans-serif; }
+.admin-body .rich-editor .ql-snow .ql-picker.ql-font .ql-picker-item[data-value="Times New Roman"]::before { font-family: "Times New Roman", serif; }
+.admin-body .rich-editor .ql-snow .ql-picker.ql-font .ql-picker-item[data-value="Georgia"]::before { font-family: Georgia, serif; }
+.admin-body .rich-editor .ql-snow .ql-picker.ql-font .ql-picker-item[data-value="Tahoma"]::before { font-family: Tahoma, sans-serif; }
+.admin-body .rich-editor .ql-snow .ql-picker.ql-font .ql-picker-item[data-value="Verdana"]::before { font-family: Verdana, sans-serif; }
+.admin-body .rich-editor .ql-snow .ql-picker.ql-font .ql-picker-item[data-value="Courier New"]::before { font-family: "Courier New", monospace; }
 
 /* ─── Stat tiles ─── */
 .admin-body .admin-stat {

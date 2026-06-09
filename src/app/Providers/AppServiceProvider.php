@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Models\Order;
 use App\Services\CartService;
 use App\Services\SettingService;
 use Illuminate\Auth\Notifications\ResetPassword;
@@ -21,6 +22,10 @@ class AppServiceProvider extends ServiceProvider
     {
         View::composer(['store.*', 'store.layouts.*', 'store.partials.*'], function ($view) {
             $view->with('cartCount', app(CartService::class)->count());
+        });
+
+        View::composer('admin.partials.sidebar', function ($view) {
+            $view->with('newOrdersCount', Order::query()->new()->count());
         });
 
         $this->configurePasswordResetMail();

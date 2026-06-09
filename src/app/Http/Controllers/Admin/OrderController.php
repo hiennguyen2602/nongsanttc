@@ -19,7 +19,7 @@ class OrderController extends Controller
         [$fromDate, $toDate] = $this->resolveDateRange($period, $request);
 
         $orders = Order::query()
-            ->with('items.product')
+            ->with('items')
             ->when($request->status, fn ($q) => $q->where('status', $request->status))
             ->when($request->q, fn ($q) => $q->where(function ($builder) use ($request) {
                 $builder->where('order_code', 'like', '%' . $request->q . '%')
@@ -44,7 +44,8 @@ class OrderController extends Controller
 
     public function show(Order $order): View
     {
-        $order->load('items');
+        $order->markViewed();
+        $order->load('items.product');
 
         return view('admin.orders.show', compact('order'));
     }
