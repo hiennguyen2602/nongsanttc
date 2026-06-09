@@ -22,8 +22,8 @@
             <div class="mb-3">
                 <label class="form-label">Vai trò</label>
                 <select name="type" class="form-select">
-                    @foreach([\App\Models\User::TYPE_ADMIN => 'Admin', \App\Models\User::TYPE_STAFF => 'Staff', \App\Models\User::TYPE_USER => 'User'] as $val => $label)
-                        <option value="{{ $val }}" @selected(old('type', $user->type ?? \App\Models\User::TYPE_USER)==$val)>{{ $label }}</option>
+                    @foreach(\App\Models\User::roleLabels() as $val => $label)
+                        <option value="{{ $val }}" @selected(old('type', $user->type ?? \App\Models\User::TYPE_STAFF)==$val)>{{ $label }}</option>
                     @endforeach
                 </select>
             </div>

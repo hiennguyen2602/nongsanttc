@@ -44,7 +44,9 @@ document.addEventListener('alpine:init', () => {
         },
     }));
 
-    Alpine.data('productVariants', (initial = []) => ({
+    Alpine.data('productVariants', (initial = [], variantErrors = {}) => ({
+        variantErrors,
+
         variants: initial.length
             ? initial.map((v) => ({
                 id: v.id ?? '',
@@ -54,6 +56,10 @@ document.addEventListener('alpine:init', () => {
                 stock: v.stock != null ? String(v.stock) : '0',
             }))
             : [{ id: '', flavor: '', size: '', price: '', stock: '0' }],
+
+        errorFor(index) {
+            return this.variantErrors[index] ?? '';
+        },
 
         add() {
             this.variants.push({ id: '', flavor: '', size: '', price: '', stock: '0' });

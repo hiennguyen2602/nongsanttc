@@ -43,6 +43,7 @@ class ProductController extends Controller
     {
         $data = $this->validated($request);
         $this->ensureHasImage($request);
+        $this->validateVariants($request);
 
         [$image, $gallery] = $this->handleImages($request, $uploader, null);
         $data['image'] = $image;
@@ -68,6 +69,7 @@ class ProductController extends Controller
     {
         $data = $this->validated($request, $product);
         $this->ensureHasImage($request);
+        $this->validateVariants($request);
 
         [$image, $gallery] = $this->handleImages($request, $uploader, $product);
         $data['image'] = $image;
@@ -126,6 +128,28 @@ class ProductController extends Controller
         $data['is_active'] = $request->boolean('is_active', true);
 
         return $data;
+    }
+
+    /**
+     * Biến thể có Vị hoặc Size thì bắt buộc phải có giá.
+     */
+    private function validateVariants(Request $request): void
+    {
+        $errors = [];
+
+        foreach ((array) $request->input('variants', []) as $index => $variant) {
+            $flavor = trim((string) ($variant['flavor'] ?? ''));
+            $size = trim((string) ($variant['size'] ?? ''));
+            $price = trim((string) ($variant['price'] ?? ''));
+
+            if (($flavor !== '' || $size !== '') && $price === '') {
+                $errors["variants.{$index}.price"] = 'Vui lòng nhập giá cho biến thể.';
+            }
+        }
+
+        if ($errors !== []) {
+            throw ValidationException::withMessages($errors);
+        }
     }
 
     /**

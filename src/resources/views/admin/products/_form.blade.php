@@ -9,6 +9,13 @@
         }
     }
     $existingImages = $existingImages->values();
+
+    $variantFieldErrors = [];
+    foreach ($errors->getMessages() as $key => $messages) {
+        if (preg_match('/^variants\.(\d+)\./', $key, $matches)) {
+            $variantFieldErrors[(int) $matches[1]] = $messages[0];
+        }
+    }
 @endphp
 
 <form method="POST" action="{{ $action }}" enctype="multipart/form-data">
@@ -82,22 +89,25 @@
                 </div>
             </div>
 
-            <div class="x_panel" x-data="productVariants(@js(old('variants', isset($product) ? $product->variants->map(fn($v) => ['id' => $v->id, 'flavor' => $v->flavor, 'size' => $v->size, 'price' => $v->price, 'stock' => $v->stock])->toArray() : [])))">
+            <div class="x_panel" x-data="productVariants(@js(old('variants', isset($product) ? $product->variants->map(fn($v) => ['id' => $v->id, 'flavor' => $v->flavor, 'size' => $v->size, 'price' => $v->price, 'stock' => $v->stock])->toArray() : [])), @js($variantFieldErrors))">
                 <div class="x_title">
                     <h3>Biến thể</h3>
                     <button type="button" @click="add()" class="btn btn-secondary btn-sm">+ Thêm biến thể</button>
                 </div>
                 <div class="x_content">
                     <template x-for="(variant, index) in variants" :key="index">
-                        <div class="mb-3 grid grid-cols-2 items-center gap-2 rounded border border-slate-200 bg-slate-50 p-3 md:grid-cols-[1fr_1fr_1fr_1fr_auto]">
-                            <input type="hidden" :name="'variants['+index+'][id]'" :value="variant.id">
-                            <input type="text" :name="'variants['+index+'][flavor]'" x-model="variant.flavor" placeholder="Vị" class="form-control">
-                            <input type="text" :name="'variants['+index+'][size]'" x-model="variant.size" placeholder="Size" class="form-control">
-                            <input type="hidden" :name="'variants['+index+'][price]'" :value="variant.price">
-                            <input type="text" inputmode="numeric" :value="format(variant.price)" @input="setDigits(index, 'price', $event.target.value)" placeholder="Giá" class="form-control">
-                            <input type="hidden" :name="'variants['+index+'][stock]'" :value="variant.stock">
-                            <input type="text" inputmode="numeric" :value="format(variant.stock)" @input="setDigits(index, 'stock', $event.target.value)" placeholder="Tồn" class="form-control">
-                            <button type="button" @click="remove(index)" class="btn btn-link btn-link-danger btn-sm" title="Xóa biến thể">Xóa</button>
+                        <div class="variant-block">
+                            <p x-show="errorFor(index)" x-text="errorFor(index)" x-cloak class="field-error variant-error"></p>
+                            <div class="variant-row">
+                                <input type="hidden" :name="'variants['+index+'][id]'" :value="variant.id">
+                                <input type="text" :name="'variants['+index+'][flavor]'" x-model="variant.flavor" placeholder="Vị" class="form-control">
+                                <input type="text" :name="'variants['+index+'][size]'" x-model="variant.size" placeholder="Size" class="form-control">
+                                <input type="hidden" :name="'variants['+index+'][price]'" :value="variant.price">
+                                <input type="text" inputmode="numeric" :value="format(variant.price)" @input="setDigits(index, 'price', $event.target.value)" placeholder="Giá" class="form-control">
+                                <input type="hidden" :name="'variants['+index+'][stock]'" :value="variant.stock">
+                                <input type="text" inputmode="numeric" :value="format(variant.stock)" @input="setDigits(index, 'stock', $event.target.value)" placeholder="Tồn" class="form-control">
+                                <button type="button" @click="remove(index)" class="variant-remove-btn btn btn-link btn-link-danger btn-sm" title="Xóa biến thể">Xóa</button>
+                            </div>
                         </div>
                     </template>
                 </div>

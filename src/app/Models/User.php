@@ -66,12 +66,17 @@ class User extends Authenticatable
         return (int) $this->status === 1;
     }
 
+    public static function roleLabels(): array
+    {
+        return [
+            self::TYPE_ADMIN => 'Quản trị viên',
+            self::TYPE_STAFF => 'Nhân viên',
+            self::TYPE_USER => 'Khách hàng',
+        ];
+    }
+
     public function roleLabel(): string
     {
-        return match ((int) $this->type) {
-            self::TYPE_ADMIN => 'Admin',
-            self::TYPE_STAFF => 'Staff',
-            default => 'User',
-        };
+        return self::roleLabels()[(int) $this->type] ?? 'Khách hàng';
     }
 }
