@@ -45,7 +45,7 @@ class OrderController extends Controller
     public function show(Order $order): View
     {
         $order->markViewed();
-        $order->load('items.product');
+        $order->load(['items.product', 'customer']);
 
         return view('admin.orders.show', compact('order'));
     }

@@ -2,15 +2,18 @@
 
 namespace App\Services;
 
+use App\Models\Customer;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\ProductVariant;
+use App\Services\CustomerService;
 use Illuminate\Support\Str;
 
 class OrderService
 {
     public function __construct(
         private CartService $cart,
+        private CustomerService $customers,
     ) {}
 
     public function createFromCart(array $customer, ?string $promoCode = null): Order
@@ -25,11 +28,17 @@ class OrderService
         $shipping = $this->cart->shippingFee();
         $discount = $this->cart->discount($promoCode);
         $total = $this->cart->total($promoCode);
+        $phone = Customer::normalizePhone($customer['phone']);
+        $record = $this->customers->resolveFromCheckout([
+            ...$customer,
+            'phone' => $phone,
+        ]);
 
         $order = Order::query()->create([
             'order_code' => $this->generateOrderCode(),
+            'customer_id' => $record->id,
             'customer_name' => $customer['name'],
-            'customer_phone' => $customer['phone'],
+            'customer_phone' => $phone,
             'customer_email' => $customer['email'] ?? null,
             'customer_address' => $customer['address'],
             'note' => $customer['note'] ?? null,

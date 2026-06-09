@@ -14,7 +14,10 @@ class UserController extends Controller
     public function index(): View
     {
         return view('admin.users.index', [
-            'users' => User::latest()->paginate(20),
+            'users' => User::query()
+                ->whereIn('type', [User::TYPE_ADMIN, User::TYPE_STAFF])
+                ->latest()
+                ->paginate(20),
         ]);
     }
 
@@ -58,7 +61,7 @@ class UserController extends Controller
         $rules = [
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'email', 'max:255', Rule::unique('users')->ignore($user?->id)],
-            'type' => ['required', Rule::in([User::TYPE_ADMIN, User::TYPE_STAFF, User::TYPE_USER])],
+            'type' => ['required', Rule::in([User::TYPE_ADMIN, User::TYPE_STAFF])],
             'status' => ['required', Rule::in([0, 1])],
         ];
 

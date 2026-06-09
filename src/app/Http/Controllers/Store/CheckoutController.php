@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Store;
 
 use App\Http\Controllers\Controller;
+use App\Models\Customer;
 use App\Models\Order;
 use App\Models\Promotion;
 use App\Services\CartService;
@@ -63,11 +64,17 @@ class CheckoutController extends Controller
 
         $customer = $request->validate([
             'name' => ['required', 'string', 'max:255'],
-            'phone' => ['required', 'string', 'max:20'],
+            'phone' => ['required', 'string', 'max:20', function (string $attribute, mixed $value, \Closure $fail) {
+                if (! Customer::isValidVietnamesePhone((string) $value)) {
+                    $fail('Số điện thoại phải có 10 chữ số (Việt Nam).');
+                }
+            }],
             'email' => ['nullable', 'email', 'max:255'],
             'address' => ['required', 'string', 'max:500'],
             'note' => ['nullable', 'string', 'max:1000'],
         ]);
+
+        $customer['phone'] = Customer::normalizePhone($customer['phone']);
 
         $promoCode = $request->session()->get('promo_code');
 

@@ -1,10 +1,10 @@
 @extends('admin.layouts.app')
-@section('title', 'Tin tức')
-@section('page-title', 'Tin tức')
+@section('title', 'Bài viết')
+@section('page-title', 'Bài viết')
 @section('content')
     <div class="x_panel">
         <div class="x_title">
-            <h2>Tin tức</h2>
+            <h2>Bài viết</h2>
             <a href="{{ route('admin.posts.create') }}" class="btn btn-primary btn-sm">+ Thêm bài viết</a>
         </div>
         <div class="x_content">
@@ -14,7 +14,7 @@
                     <tbody>
                         @foreach ($posts as $post)
                             <tr>
-                                <td class="font-medium">{{ $post->title }}</td>
+                                <td class="font-medium"><a href="{{ route('admin.posts.show', $post) }}" class="text-[#015096] hover:underline">{{ $post->title }}</a></td>
                                 <td>{{ $post->published_at?->format('d/m/Y') }}</td>
                                 <td><span class="badge {{ $post->is_published ? 'badge-success' : 'badge-secondary' }}">{{ $post->is_published ? 'Đã xuất bản' : 'Nháp' }}</span></td>
                                 <td class="table-actions">

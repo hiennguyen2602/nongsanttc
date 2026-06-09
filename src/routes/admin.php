@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\AuthController;
 use App\Http\Controllers\Admin\BannerController;
+use App\Http\Controllers\Admin\CustomerController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\MediaController;
@@ -34,7 +35,7 @@ Route::middleware(['auth', 'admin'])->group(function () {
 
     Route::resource('products', ProductController::class);
     Route::resource('categories', CategoryController::class)->except(['show']);
-    Route::resource('posts', PostController::class)->except(['show']);
+    Route::resource('posts', PostController::class);
     Route::resource('banners', BannerController::class)->except(['show']);
     Route::resource('promotions', PromotionController::class)->except(['show']);
     Route::resource('users', UserController::class)->except(['show']);
@@ -42,6 +43,9 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('orders', [OrderController::class, 'index'])->name('orders.index');
     Route::get('orders/{order}', [OrderController::class, 'show'])->name('orders.show');
     Route::patch('orders/{order}/status', [OrderController::class, 'updateStatus'])->name('orders.status');
+
+    Route::get('customers', [CustomerController::class, 'index'])->name('customers.index');
+    Route::get('customers/{customer}', [CustomerController::class, 'show'])->name('customers.show');
 
     Route::get('settings', [SettingController::class, 'edit'])->name('settings.edit');
     Route::put('settings', [SettingController::class, 'update'])->name('settings.update');

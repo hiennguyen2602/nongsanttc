@@ -39,11 +39,23 @@
                     <dl class="space-y-2">
                         <div class="flex gap-2">
                             <dt class="w-15 shrink-0 font-semibold text-slate-500">Tên</dt>
-                            <dd class="flex-1">{{ $order->customer_name }}</dd>
+                            <dd class="flex-1">
+                                @if($order->customer)
+                                    <a href="{{ route('admin.customers.show', $order->customer) }}" class="text-[#015096] hover:underline">{{ $order->customer_name }}</a>
+                                @else
+                                    {{ $order->customer_name }}
+                                @endif
+                            </dd>
                         </div>
                         <div class="flex gap-2">
-                            <dt class="w-15 shrink-0 font-semibold text-slate-500">Phone</dt>
-                            <dd class="flex-1">{{ $order->customer_phone }}</dd>
+                            <dt class="w-15 shrink-0 font-semibold text-slate-500">Số điện thoại</dt>
+                            <dd class="flex-1">
+                                @if($order->customer)
+                                    <a href="{{ route('admin.customers.show', $order->customer) }}" class="text-[#015096] hover:underline">{{ $order->customer_phone }}</a>
+                                @else
+                                    {{ $order->customer_phone }}
+                                @endif
+                            </dd>
                         </div>
                         @if($order->customer_email)
                             <div class="flex gap-2">    

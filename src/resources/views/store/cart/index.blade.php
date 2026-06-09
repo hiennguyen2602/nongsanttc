@@ -34,7 +34,7 @@
                                 <form method="POST" action="{{ route('cart.update') }}" class="flex items-center gap-2">
                                     @csrf @method('PATCH')
                                     <input type="hidden" name="key" value="{{ $item['key'] }}">
-                                    <input type="number" name="quantity" value="{{ $item['quantity'] }}" min="1" max="99" class="w-16 rounded border-slate-300 text-sm">
+                                    <input type="number" name="quantity" value="{{ $item['quantity'] }}" min="1" max="99" class="store-form-control w-16">
                                     <button class="text-sm text-brand hover:underline">Cập nhật</button>
                                 </form>
                                 <form method="POST" action="{{ route('cart.remove', $item['key']) }}">

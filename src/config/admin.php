@@ -23,12 +23,12 @@ return [
             'icon' => 'orders',
         ],
         [
-            'label' => 'Người dùng',
-            'route' => 'admin.users.index',
-            'icon' => 'users',
+            'label' => 'Khách hàng',
+            'route' => 'admin.customers.index',
+            'icon' => 'customers',
         ],
         [
-            'label' => 'Tin tức',
+            'label' => 'Bài viết',
             'route' => 'admin.posts.index',
             'icon' => 'news',
         ],
@@ -36,6 +36,11 @@ return [
             'label' => 'Khuyến mãi',
             'route' => 'admin.promotions.index',
             'icon' => 'promo',
+        ],
+        [
+            'label' => 'Quản trị',
+            'route' => 'admin.users.index',
+            'icon' => 'users',
         ],
         [
             'label' => 'Banner',

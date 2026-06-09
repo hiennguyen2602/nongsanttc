@@ -66,17 +66,23 @@ class User extends Authenticatable
         return (int) $this->status === 1;
     }
 
-    public static function roleLabels(): array
+    public static function adminRoleLabels(): array
     {
         return [
             self::TYPE_ADMIN => 'Quản trị viên',
             self::TYPE_STAFF => 'Nhân viên',
+        ];
+    }
+
+    public static function roleLabels(): array
+    {
+        return self::adminRoleLabels() + [
             self::TYPE_USER => 'Khách hàng',
         ];
     }
 
     public function roleLabel(): string
     {
-        return self::roleLabels()[(int) $this->type] ?? 'Khách hàng';
+        return self::roleLabels()[(int) $this->type] ?? '—';
     }
 }

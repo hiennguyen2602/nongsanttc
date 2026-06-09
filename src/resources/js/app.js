@@ -155,6 +155,46 @@ document.addEventListener('alpine:init', () => {
             return index >= 0 ? 'new:' + index : '';
         },
     }));
+
+    Alpine.data('featuredImage', (existing = null) => ({
+        existing: existing ? { path: existing.path, url: existing.url } : null,
+        newImage: null,
+
+        addFile(event) {
+            const file = event.target.files?.[0];
+            if (! file) {
+                return;
+            }
+
+            if (this.newImage?.url) {
+                URL.revokeObjectURL(this.newImage.url);
+            }
+
+            this.newImage = { file, url: URL.createObjectURL(file) };
+            this.existing = null;
+            this.syncFileInput();
+        },
+
+        removeExisting() {
+            this.existing = null;
+        },
+
+        removeNew() {
+            if (this.newImage?.url) {
+                URL.revokeObjectURL(this.newImage.url);
+            }
+            this.newImage = null;
+            this.syncFileInput();
+        },
+
+        syncFileInput() {
+            const data = new DataTransfer();
+            if (this.newImage) {
+                data.items.add(this.newImage.file);
+            }
+            this.$refs.fileInput.files = data.files;
+        },
+    }));
 });
 
 Alpine.start();

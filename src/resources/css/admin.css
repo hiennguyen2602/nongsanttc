@@ -424,18 +424,35 @@
     flex-wrap: nowrap;
     align-items: center;
     gap: 0.5rem;
+    width: 100%;
 }
 
 .admin-body .admin-search .form-control,
 .admin-body .admin-search .form-select {
     width: auto !important;
-    flex: 1 1 auto;
-    min-width: 0;
+    flex: 0 1 24rem;
+    min-width: 18rem;
 }
 
 .admin-body .admin-search .btn {
     flex: 0 0 auto;
     white-space: nowrap;
+}
+
+@media (max-width: 640px) {
+    .admin-body .admin-toolbar {
+        align-items: stretch;
+    }
+
+    .admin-body .admin-search {
+        width: 100%;
+    }
+
+    .admin-body .admin-search .form-control,
+    .admin-body .admin-search .form-select {
+        flex: 1 1 auto;
+        min-width: 0;
+    }
 }
 
 /* ─── Dashboard filter ─── */
@@ -575,6 +592,12 @@
 /* ─── Centered narrow forms ─── */
 .admin-body .admin-form-narrow {
     max-width: 640px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.admin-body .admin-form-post {
+    max-width: 800px;
     margin-left: auto;
     margin-right: auto;
 }
