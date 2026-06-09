@@ -17,8 +17,10 @@
             :style="`transform: translateY(${parallax}px) scale(1.05)`"
         >
             <img
-                src="{{ store_media_url(config('store.images.hero')) }}"
-                alt="Nông sản TTC"
+                src="{{ store_media_url(store_setting('hero_desktop', config('store.images.hero')), 'large') }}"
+                srcset="{{ store_media_url(store_setting('hero_mobile', store_setting('hero_desktop', config('store.images.hero'))), 'large') }} 768w, {{ store_media_url(store_setting('hero_desktop', config('store.images.hero')), 'large') }} 1920w"
+                sizes="100vw"
+                alt="{{ store_setting('name') }}"
                 class="h-full w-full object-cover"
                 fetchpriority="high"
                 decoding="async"

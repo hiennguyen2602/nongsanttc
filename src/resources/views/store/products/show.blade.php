@@ -91,12 +91,25 @@
                 </div>
 
                 <div class="mt-8 flex flex-col gap-3 sm:flex-row">
-                    <button type="button" class="flex-1 rounded border-2 border-accent-red py-3 text-sm font-bold uppercase text-accent-red transition hover:bg-accent-red hover:text-white">
-                        Thêm vào giỏ
-                    </button>
-                    <button type="button" class="flex-1 rounded bg-accent-red py-3 text-sm font-bold uppercase text-white transition hover:bg-red-700">
-                        Mua ngay
-                    </button>
+                    <form method="POST" action="{{ route('cart.add') }}" class="flex-1">
+                        @csrf
+                        <input type="hidden" name="product_id" value="{{ $product->id }}">
+                        <input type="hidden" name="variant_id" :value="selectedVariant">
+                        <input type="hidden" name="quantity" :value="quantity">
+                        <button type="submit" class="w-full rounded border-2 border-accent-red py-3 text-sm font-bold uppercase text-accent-red transition hover:bg-accent-red hover:text-white">
+                            Thêm vào giỏ
+                        </button>
+                    </form>
+                    <form method="POST" action="{{ route('cart.add') }}" class="flex-1">
+                        @csrf
+                        <input type="hidden" name="product_id" value="{{ $product->id }}">
+                        <input type="hidden" name="variant_id" :value="selectedVariant">
+                        <input type="hidden" name="quantity" :value="quantity">
+                        <input type="hidden" name="buy_now" value="1">
+                        <button type="submit" class="w-full rounded bg-accent-red py-3 text-sm font-bold uppercase text-white transition hover:bg-red-700">
+                            Mua ngay
+                        </button>
+                    </form>
                 </div>
 
                 <div class="mt-6 flex gap-2">
@@ -144,12 +157,12 @@
         <div class="mt-12">
             <h2 class="mb-6 text-lg font-bold text-slate-900">Khuyến mãi dành cho bạn</h2>
             <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-                @foreach (config('store.promotions') as $promo)
+                @foreach ($promotions as $promo)
                     <div class="rounded-lg border border-slate-200 p-4">
-                        <p class="font-semibold text-brand">{{ $promo['title'] }}</p>
-                        <p class="mt-1 text-sm text-slate-600">{{ $promo['desc'] }}</p>
-                        <p class="mt-2 text-xs text-slate-400">Mã: {{ $promo['code'] }}</p>
-                        <button type="button" onclick="navigator.clipboard.writeText('{{ $promo['code'] }}')" class="mt-3 w-full rounded bg-brand py-2 text-xs font-semibold uppercase text-white hover:bg-brand-dark">
+                        <p class="font-semibold text-brand">{{ $promo->title }}</p>
+                        <p class="mt-1 text-sm text-slate-600">{{ $promo->description }}</p>
+                        <p class="mt-2 text-xs text-slate-400">Mã: {{ $promo->code }}</p>
+                        <button type="button" onclick="navigator.clipboard.writeText('{{ $promo->code }}')" class="mt-3 w-full rounded bg-brand py-2 text-xs font-semibold uppercase text-white hover:bg-brand-dark">
                             Sao chép mã
                         </button>
                     </div>
@@ -175,6 +188,20 @@
                     @foreach ($relatedProducts as $related)
                         <div class="h-full">
                             @include('store.partials.product-card', ['product' => $related])
+                        </div>
+                    @endforeach
+                </div>
+            </div>
+        @endif
+
+        {{-- Sản phẩm đã xem --}}
+        @if ($viewedProducts->isNotEmpty())
+            <div class="mt-12 border-t border-slate-200 pt-10">
+                <h2 class="mb-6 text-lg font-bold text-slate-900">Sản phẩm đã xem</h2>
+                <div class="product-grid-equal grid grid-cols-2 gap-4 sm:grid-cols-4">
+                    @foreach ($viewedProducts as $viewed)
+                        <div class="h-full">
+                            @include('store.partials.product-card', ['product' => $viewed])
                         </div>
                     @endforeach
                 </div>

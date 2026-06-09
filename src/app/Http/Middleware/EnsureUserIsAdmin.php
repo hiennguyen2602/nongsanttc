@@ -10,7 +10,9 @@ class EnsureUserIsAdmin
 {
     public function handle(Request $request, Closure $next): Response
     {
-        if (! $request->user()?->is_admin) {
+        $user = $request->user();
+
+        if (! $user?->canAccessAdminPanel() || ! $user->isActive()) {
             if ($request->expectsJson()) {
                 abort(403, 'Unauthorized.');
             }
