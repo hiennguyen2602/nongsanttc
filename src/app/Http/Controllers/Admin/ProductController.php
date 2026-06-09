@@ -9,7 +9,6 @@ use App\Models\ProductVariant;
 use App\Services\ImageUploadService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Str;
 use Illuminate\View\View;
 
 class ProductController extends Controller
@@ -25,10 +24,18 @@ class ProductController extends Controller
         return view('admin.products.index', compact('products'));
     }
 
+    public function show(Product $product): View
+    {
+        $product->load(['category', 'variants']);
+
+        return view('admin.products.show', compact('product'));
+    }
+
     public function create(): View
     {
         return view('admin.products.create', [
             'categories' => Category::orderBy('sort_order')->get(),
+            'suggestedSku' => generate_unique_sku(),
         ]);
     }
 
@@ -36,9 +43,9 @@ class ProductController extends Controller
     {
         $data = $this->validated($request);
 
-        if ($request->hasFile('image')) {
-            $data['image'] = $uploader->upload($request->file('image'), 'uploads/products/' . date('Y/m'))['path'];
-        }
+        [$image, $gallery] = $this->handleImages($request, $uploader, null);
+        $data['image'] = $image;
+        $data['gallery'] = $gallery;
 
         $product = Product::query()->create($data);
         $this->syncVariants($product, $request);
@@ -60,10 +67,9 @@ class ProductController extends Controller
     {
         $data = $this->validated($request, $product);
 
-        if ($request->hasFile('image')) {
-            $uploader->delete($product->image);
-            $data['image'] = $uploader->upload($request->file('image'), 'uploads/products/' . date('Y/m'))['path'];
-        }
+        [$image, $gallery] = $this->handleImages($request, $uploader, $product);
+        $data['image'] = $image;
+        $data['gallery'] = $gallery;
 
         $product->update($data);
         $product->variants()->delete();
@@ -74,7 +80,10 @@ class ProductController extends Controller
 
     public function destroy(Product $product, ImageUploadService $uploader): RedirectResponse
     {
-        $uploader->delete($product->image);
+        foreach (array_filter(array_merge([$product->image], (array) $product->gallery)) as $path) {
+            $uploader->delete($path);
+        }
+
         $product->delete();
 
         return redirect()->route('admin.products.index')->with('success', 'Xóa sản phẩm thành công.');
@@ -85,10 +94,9 @@ class ProductController extends Controller
         $data = $request->validate([
             'category_id' => ['nullable', 'exists:categories,id'],
             'name' => ['required', 'string', 'max:255'],
-            'slug' => ['nullable', 'string', 'max:255'],
             'sku' => ['nullable', 'string', 'max:100'],
             'description' => ['nullable', 'string'],
-            'short_description' => ['nullable', 'string', 'max:500'],
+            'short_description' => ['nullable', 'string', 'max:1000'],
             'price' => ['required', 'integer', 'min:0'],
             'sale_price' => ['nullable', 'integer', 'min:0'],
             'stock' => ['required', 'integer', 'min:0'],
@@ -96,11 +104,62 @@ class ProductController extends Controller
             'is_active' => ['nullable', 'boolean'],
         ]);
 
-        $data['slug'] = Str::slug($data['slug'] ?: $data['name']);
+        $data['slug'] = generate_unique_slug($data['name'], 'products', $product?->id);
+
+        $sku = trim((string) ($data['sku'] ?? ''));
+        $data['sku'] = $sku !== '' ? $sku : generate_unique_sku();
+
         $data['is_featured'] = $request->boolean('is_featured');
         $data['is_active'] = $request->boolean('is_active', true);
 
         return $data;
+    }
+
+    /**
+     * Xử lý ảnh: giữ ảnh cũ, upload ảnh mới, chọn ảnh chính.
+     *
+     * @return array{0: ?string, 1: array<int, string>}
+     */
+    private function handleImages(Request $request, ImageUploadService $uploader, ?Product $product): array
+    {
+        $kept = array_values(array_filter((array) $request->input('existing_images', [])));
+
+        if ($product) {
+            $previous = array_filter(array_merge([$product->image], (array) $product->gallery));
+            foreach ($previous as $path) {
+                if (! in_array($path, $kept, true)) {
+                    $uploader->delete($path);
+                }
+            }
+        }
+
+        $uploaded = [];
+        foreach ((array) $request->file('images', []) as $file) {
+            if ($file) {
+                $uploaded[] = $uploader->upload($file, 'uploads/products/' . date('Y/m'))['path'];
+            }
+        }
+
+        $all = array_values(array_merge($kept, $uploaded));
+
+        $selector = (string) $request->input('main_selector', '');
+        $main = null;
+
+        if (str_starts_with($selector, 'existing:')) {
+            $candidate = substr($selector, 9);
+            $main = in_array($candidate, $all, true) ? $candidate : null;
+        } elseif (str_starts_with($selector, 'new:')) {
+            $index = (int) substr($selector, 4);
+            $main = $uploaded[$index] ?? null;
+        }
+
+        if (! $main) {
+            $main = $all[0] ?? null;
+        }
+
+        $gallery = array_values(array_filter($all, fn ($path) => $path !== $main));
+
+        return [$main, $gallery];
     }
 
     private function syncVariants(Product $product, Request $request): void

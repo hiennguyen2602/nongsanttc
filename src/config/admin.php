@@ -23,7 +23,7 @@ return [
             'icon' => 'orders',
         ],
         [
-            'label' => 'Khách hàng',
+            'label' => 'Người dùng',
             'route' => 'admin.users.index',
             'icon' => 'users',
         ],

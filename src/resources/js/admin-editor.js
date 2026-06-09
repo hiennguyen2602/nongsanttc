@@ -18,10 +18,16 @@ export function initRichEditors() {
             modules: {
                 toolbar: {
                     container: [
-                        [{ header: [2, 3, false] }],
-                        ['bold', 'italic', 'underline'],
+                        [{ font: [] }, { size: ['small', false, 'large', 'huge'] }],
+                        [{ header: [1, 2, 3, 4, 5, 6, false] }],
+                        ['bold', 'italic', 'underline', 'strike'],
+                        [{ color: [] }, { background: [] }],
+                        [{ script: 'sub' }, { script: 'super' }],
                         [{ list: 'ordered' }, { list: 'bullet' }],
-                        ['link', 'image'],
+                        [{ indent: '-1' }, { indent: '+1' }],
+                        [{ align: [] }],
+                        ['blockquote', 'code-block'],
+                        ['link', 'image', 'video'],
                         ['clean'],
                     ],
                     handlers: {

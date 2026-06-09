@@ -14,7 +14,7 @@
         <div class="flex min-w-0 flex-1 flex-col lg:pl-64">
             @include('admin.partials.topbar')
 
-            <main class="flex-1 p-4 sm:p-6" role="main">
+            <main class="admin-main flex-1 p-4 sm:p-6" role="main">
                 <div class="admin-page-frame">
                     @include('admin.partials.alerts')
                     @yield('content')

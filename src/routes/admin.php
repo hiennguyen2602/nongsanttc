@@ -31,7 +31,7 @@ Route::middleware(['auth', 'admin'])->group(function () {
 
     Route::post('media/upload', [MediaController::class, 'upload'])->name('media.upload');
 
-    Route::resource('products', ProductController::class)->except(['show']);
+    Route::resource('products', ProductController::class);
     Route::resource('categories', CategoryController::class)->except(['show']);
     Route::resource('posts', PostController::class)->except(['show']);
     Route::resource('banners', BannerController::class)->except(['show']);

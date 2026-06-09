@@ -1,7 +1,7 @@
 <div class="x_panel">
     <div class="x_title"><h2>{{ isset($user) ? 'Sửa người dùng' : 'Thêm người dùng' }}</h2></div>
     <div class="x_content">
-        <form method="POST" action="{{ isset($user) ? route('admin.users.update', $user) : route('admin.users.store') }}" class="max-w-xl">
+        <form method="POST" action="{{ isset($user) ? route('admin.users.update', $user) : route('admin.users.store') }}" class="admin-form-narrow">
             @csrf @if(isset($user)) @method('PUT') @endif
             <div class="mb-3">
                 <label class="form-label">Tên *</label>
@@ -34,8 +34,10 @@
                     <option value="0" @selected(old('status', $user->status ?? 1)==0)>Khóa</option>
                 </select>
             </div>
-            <button type="submit" class="btn btn-primary">Lưu</button>
-            <a href="{{ route('admin.users.index') }}" class="btn btn-secondary">Hủy</a>
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">Lưu</button>
+                <a href="{{ route('admin.users.index') }}" class="btn btn-secondary">Hủy</a>
+            </div>
         </form>
     </div>
 </div>

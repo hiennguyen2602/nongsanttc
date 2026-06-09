@@ -1,7 +1,7 @@
 <div class="x_panel">
     <div class="x_title"><h2>{{ isset($banner) ? 'Sửa banner' : 'Thêm banner' }}</h2></div>
     <div class="x_content">
-        <form method="POST" action="{{ isset($banner) ? route('admin.banners.update', $banner) : route('admin.banners.store') }}" enctype="multipart/form-data" class="max-w-2xl">
+        <form method="POST" action="{{ isset($banner) ? route('admin.banners.update', $banner) : route('admin.banners.store') }}" enctype="multipart/form-data" class="admin-form-narrow">
             @csrf @if(isset($banner)) @method('PUT') @endif
             <div class="mb-3"><label class="form-label">Tiêu đề *</label><input name="title" value="{{ old('title', $banner->title ?? '') }}" required class="form-control"></div>
             <div class="mb-3"><label class="form-label">Phụ đề</label><input name="subtitle" value="{{ old('subtitle', $banner->subtitle ?? '') }}" class="form-control"></div>
@@ -22,8 +22,10 @@
                 <input type="checkbox" name="is_active" value="1" id="is_active" class="form-check-input" @checked(old('is_active', $banner->is_active ?? true))>
                 <label for="is_active" class="form-check-label">Hiển thị</label>
             </div>
-            <button type="submit" class="btn btn-primary">Lưu</button>
-            <a href="{{ route('admin.banners.index') }}" class="btn btn-secondary">Hủy</a>
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">Lưu</button>
+                <a href="{{ route('admin.banners.index') }}" class="btn btn-secondary">Hủy</a>
+            </div>
         </form>
     </div>
 </div>

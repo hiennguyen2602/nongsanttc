@@ -49,6 +49,32 @@ class Order extends Model
         ];
     }
 
+    /**
+     * Màu đại diện cho từng trạng thái (dùng cho số liệu thống kê).
+     *
+     * @return array<string, string>
+     */
+    public static function statusColors(): array
+    {
+        return [
+            self::STATUS_PENDING => 'orange',
+            self::STATUS_CONFIRMED => 'blue',
+            self::STATUS_SHIPPING => 'fuchsia',
+            self::STATUS_COMPLETED => 'green',
+            self::STATUS_CANCELLED => 'red',
+        ];
+    }
+
+    public function statusColor(): string
+    {
+        return self::statusColors()[$this->status] ?? '#64748b';
+    }
+
+    public function statusBadgeClass(): string
+    {
+        return 'badge-status-' . $this->status;
+    }
+
     public function statusLabel(): string
     {
         return self::statusLabels()[$this->status] ?? $this->status;
