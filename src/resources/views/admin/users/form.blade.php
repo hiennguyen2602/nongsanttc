@@ -13,11 +13,11 @@
             </div>
             <div class="mb-3">
                 <label class="form-label">Mật khẩu {{ isset($user) ? '(để trống nếu không đổi)' : '*' }}</label>
-                <input type="password" name="password" {{ isset($user) ? '' : 'required' }} class="form-control">
+                <input type="password" name="password" {{ isset($user) ? '' : 'required' }} autocomplete="new-password" class="form-control">
             </div>
             <div class="mb-3">
                 <label class="form-label">Xác nhận mật khẩu</label>
-                <input type="password" name="password_confirmation" class="form-control">
+                <input type="password" name="password_confirmation" autocomplete="new-password" class="form-control">
             </div>
             <div class="mb-3">
                 <label class="form-label">Vai trò</label>

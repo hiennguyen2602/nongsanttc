@@ -15,8 +15,8 @@
                 @csrf
                 <input type="hidden" name="token" value="{{ $token }}">
                 <div class="mb-3"><label class="form-label">Email</label><input type="email" name="email" value="{{ old('email', $email) }}" required class="form-control"></div>
-                <div class="mb-3"><label class="form-label">Mật khẩu mới</label><input type="password" name="password" required class="form-control"></div>
-                <div class="mb-4"><label class="form-label">Xác nhận mật khẩu</label><input type="password" name="password_confirmation" required class="form-control"></div>
+                <div class="mb-3"><label class="form-label">Mật khẩu mới</label><input type="password" name="password" required autocomplete="new-password" class="form-control"></div>
+                <div class="mb-4"><label class="form-label">Xác nhận mật khẩu</label><input type="password" name="password_confirmation" required autocomplete="new-password" class="form-control"></div>
                 <button type="submit" class="btn-primary">Đặt lại mật khẩu</button>
             </form>
         </div>

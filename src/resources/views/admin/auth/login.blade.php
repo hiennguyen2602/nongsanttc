@@ -36,7 +36,7 @@
                         <label for="password" class="form-label mb-0">Mật khẩu</label>
                         <a href="{{ route('admin.password.forgot') }}" class="text-xs text-gent-accent hover:underline">Quên mật khẩu?</a>
                     </div>
-                    <input type="password" name="password" id="password" required class="form-control">
+                    <input type="password" name="password" id="password" required autocomplete="new-password" class="form-control">
                 </div>
 
                 <label class="mb-4 flex items-center gap-2 text-sm text-slate-600">
