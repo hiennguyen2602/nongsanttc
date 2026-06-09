@@ -67,7 +67,12 @@
                         @forelse ($recentOrders as $order)
                             <tr>
                                 <td>
-                                    <a href="{{ route('admin.orders.show', $order) }}" class="font-medium text-[#015096] hover:underline">{{ $order->order_code }}</a>
+                                    <a href="{{ route('admin.orders.show', $order) }}" class="inline-flex items-start gap-1 font-medium text-[#015096] hover:underline">
+                                        <span>{{ $order->order_code }}</span>
+                                        @if($order->isNew())
+                                            <span class="inline-flex h-5 w-5 -translate-y-1 items-center justify-center rounded-full bg-red-500 text-[7px] font-bold leading-none text-white" title="Đơn hàng mới">New</span>
+                                        @endif
+                                    </a>
                                 </td>
                                 <td>{{ $order->customer_name }}</td>
                                 <td>{{ $order->formattedTotal() }}</td>

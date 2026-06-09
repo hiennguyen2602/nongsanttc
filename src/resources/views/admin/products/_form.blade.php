@@ -75,11 +75,6 @@
                         </div>
                     </div>
 
-                    <div class="mb-3">
-                        <label class="form-label">Mô tả ngắn</label>
-                        <textarea name="short_description" rows="10" class="form-control">{{ old('short_description', $product->short_description ?? '') }}</textarea>
-                    </div>
-
                     <div class="mb-1">
                         <label class="form-label">Mô tả chi tiết</label>
                         @include('admin.partials.rich-editor', ['name' => 'description', 'value' => $product->description ?? ''])
@@ -87,20 +82,22 @@
                 </div>
             </div>
 
-            <div class="x_panel" x-data="{ variants: @js(old('variants', isset($product) ? $product->variants->map(fn($v) => ['id' => $v->id, 'flavor' => $v->flavor, 'size' => $v->size, 'price' => $v->price, 'sku' => $v->sku, 'stock' => $v->stock])->toArray() : [['id' => '', 'flavor' => '', 'size' => '', 'price' => '', 'sku' => '', 'stock' => 0]])) }">
+            <div class="x_panel" x-data="productVariants(@js(old('variants', isset($product) ? $product->variants->map(fn($v) => ['id' => $v->id, 'flavor' => $v->flavor, 'size' => $v->size, 'price' => $v->price, 'stock' => $v->stock])->toArray() : [])))">
                 <div class="x_title">
                     <h3>Biến thể</h3>
-                    <button type="button" @click="variants.push({id:'',flavor:'',size:'',price:'',sku:'',stock:0})" class="btn btn-secondary btn-sm">+ Thêm biến thể</button>
+                    <button type="button" @click="add()" class="btn btn-secondary btn-sm">+ Thêm biến thể</button>
                 </div>
                 <div class="x_content">
                     <template x-for="(variant, index) in variants" :key="index">
-                        <div class="mb-3 grid grid-cols-2 gap-2 rounded border border-slate-200 bg-slate-50 p-3 md:grid-cols-5">
+                        <div class="mb-3 grid grid-cols-2 items-center gap-2 rounded border border-slate-200 bg-slate-50 p-3 md:grid-cols-[1fr_1fr_1fr_1fr_auto]">
                             <input type="hidden" :name="'variants['+index+'][id]'" :value="variant.id">
                             <input type="text" :name="'variants['+index+'][flavor]'" x-model="variant.flavor" placeholder="Vị" class="form-control">
                             <input type="text" :name="'variants['+index+'][size]'" x-model="variant.size" placeholder="Size" class="form-control">
-                            <input type="number" :name="'variants['+index+'][price]'" x-model="variant.price" placeholder="Giá" class="form-control">
-                            <input type="text" :name="'variants['+index+'][sku]'" x-model="variant.sku" placeholder="SKU" class="form-control">
-                            <input type="number" :name="'variants['+index+'][stock]'" x-model="variant.stock" placeholder="Tồn" class="form-control">
+                            <input type="hidden" :name="'variants['+index+'][price]'" :value="variant.price">
+                            <input type="text" inputmode="numeric" :value="format(variant.price)" @input="setDigits(index, 'price', $event.target.value)" placeholder="Giá" class="form-control">
+                            <input type="hidden" :name="'variants['+index+'][stock]'" :value="variant.stock">
+                            <input type="text" inputmode="numeric" :value="format(variant.stock)" @input="setDigits(index, 'stock', $event.target.value)" placeholder="Tồn" class="form-control">
+                            <button type="button" @click="remove(index)" class="btn btn-link btn-link-danger btn-sm" title="Xóa biến thể">Xóa</button>
                         </div>
                     </template>
                 </div>

@@ -25,4 +25,18 @@ class MediaController extends Controller
             'path' => $result['path'],
         ]);
     }
+
+    public function destroy(Request $request, ImageUploadService $uploader): JsonResponse
+    {
+        $path = ltrim((string) $request->input('path'), '/');
+
+        // Chỉ cho phép xóa ảnh trong thư mục editor để tránh xóa nhầm file khác.
+        if ($path === '' || ! str_starts_with($path, 'uploads/editor/')) {
+            return response()->json(['deleted' => false], 422);
+        }
+
+        $uploader->delete($path);
+
+        return response()->json(['deleted' => true]);
+    }
 }

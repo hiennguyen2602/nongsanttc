@@ -18,7 +18,7 @@ class ProductController extends Controller
         $products = Product::query()
             ->with('category')
             ->when($request->q, fn ($q) => $q->where('name', 'like', '%' . $request->q . '%'))
-            ->latest()
+            ->latest('updated_at')
             ->paginate(15);
 
         return view('admin.products.index', compact('products'));
@@ -101,7 +101,6 @@ class ProductController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'sku' => ['nullable', 'string', 'max:100'],
             'description' => ['nullable', 'string'],
-            'short_description' => ['nullable', 'string', 'max:1000'],
             'price' => ['required', 'integer', 'min:0'],
             'sale_price' => ['nullable', 'integer', 'min:0'],
             'stock' => ['required', 'integer', 'min:0'],
@@ -211,7 +210,6 @@ class ProductController extends Controller
                 'flavor' => $variant['flavor'] ?? null,
                 'size' => $variant['size'] ?? null,
                 'price' => (int) $variant['price'],
-                'sku' => $variant['sku'] ?? null,
                 'stock' => (int) ($variant['stock'] ?? 0),
             ];
 

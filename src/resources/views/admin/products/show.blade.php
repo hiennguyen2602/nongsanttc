@@ -79,12 +79,6 @@
                         </div>
                     </dl>
 
-                    @if ($product->short_description)
-                        <div class="mt-5">
-                            <h3 class="panel-title mb-1">Mô tả ngắn</h3>
-                            <p class="text-slate-600">{{ $product->short_description }}</p>
-                        </div>
-                    @endif
                 </div>
 
                 {{-- Lightbox --}}
@@ -92,7 +86,7 @@
                     <div x-show="lightbox" x-cloak x-transition.opacity @keydown.escape.window="close()" class="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 p-4" @click.self="close()">
                         <button type="button" @click="close()" class="absolute right-4 top-4 flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-2xl text-white hover:bg-white/20">&times;</button>
                         <button type="button" @click="prev()" x-show="images.length > 1" class="absolute left-4 top-1/2 flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full bg-white/10 text-3xl text-white hover:bg-white/20">&lsaquo;</button>
-                        <img :src="current.full" alt="" class="max-h-[90vh] max-w-[92vw] object-contain">
+                        <img :src="current.full" alt="" x-show="lightbox" x-transition:enter="transition duration-300 ease-out" x-transition:enter-start="opacity-0 scale-90" x-transition:enter-end="opacity-100 scale-100" class="max-h-[90vh] max-w-[92vw] object-contain">
                         <button type="button" @click="next()" x-show="images.length > 1" class="absolute right-4 top-1/2 flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full bg-white/10 text-3xl text-white hover:bg-white/20">&rsaquo;</button>
                     </div>
                 </template>
@@ -103,13 +97,12 @@
                     <h3 class="panel-title mb-2">Biến thể</h3>
                     <div class="table-responsive">
                         <table class="table table-striped">
-                            <thead><tr><th>Hương vị</th><th>Kích cỡ</th><th>SKU</th><th>Giá</th><th>Tồn kho</th></tr></thead>
+                            <thead><tr><th>Hương vị</th><th>Kích cỡ</th><th>Giá</th><th>Tồn kho</th></tr></thead>
                             <tbody>
                                 @foreach ($product->variants as $variant)
                                     <tr>
                                         <td>{{ $variant->flavor ?? '—' }}</td>
                                         <td>{{ $variant->size ?? '—' }}</td>
-                                        <td>{{ $variant->sku ?? '—' }}</td>
                                         <td>{{ number_format($variant->price, 0, ',', '.') }}đ</td>
                                         <td>{{ number_format($variant->stock, 0, ',', '.') }}</td>
                                     </tr>

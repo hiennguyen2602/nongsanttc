@@ -107,7 +107,6 @@ class StoreSeeder extends Seeder
                     'category_id' => $category?->id,
                     'name' => $data['name'],
                     'sku' => $data['sku'],
-                    'short_description' => 'Sản phẩm nông sản sạch, nguồn gốc rõ ràng, đóng gói cẩn thận.',
                     'description' => '<p>Sản phẩm được tuyển chọn từ vùng nguyên liệu đạt chuẩn, quy trình sản xuất khép kín, đảm bảo chất lượng và an toàn thực phẩm.</p><p>Phù hợp làm quà biếu hoặc sử dụng hàng ngày cho gia đình.</p>',
                     'price' => $data['price'],
                     'sale_price' => $data['sale_price'] ?? null,

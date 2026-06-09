@@ -37,6 +37,8 @@ export function initRichEditors() {
         const textarea = wrapper.querySelector('.rich-editor-input');
         const area = wrapper.querySelector('.rich-editor-area');
         const uploadUrl = wrapper.dataset.uploadUrl;
+        const deleteUrl = wrapper.dataset.deleteUrl;
+        const urlToPath = new Map();
 
         const quill = new Quill(area, {
             theme: 'snow',
@@ -81,6 +83,9 @@ export function initRichEditors() {
                                 }
 
                                 const data = await response.json();
+                                if (data.path) {
+                                    urlToPath.set(data.url, data.path);
+                                }
                                 const range = quill.getSelection(true);
                                 quill.insertEmbed(range.index, 'image', data.url);
                                 quill.setSelection(range.index + 1);
@@ -103,5 +108,105 @@ export function initRichEditors() {
         wrapper.closest('form')?.addEventListener('submit', () => {
             textarea.value = quill.root.innerHTML;
         });
+
+        if (deleteUrl) {
+            attachImageDeletion(quill, wrapper, deleteUrl, urlToPath);
+        }
+    });
+}
+
+function deleteServerImage(src, deleteUrl, urlToPath) {
+    let path = urlToPath.get(src);
+
+    if (! path) {
+        try {
+            path = new URL(src, window.location.origin).pathname.replace(/^\/+/, '');
+        } catch (e) {
+            return;
+        }
+    }
+
+    const token = document.querySelector('meta[name="csrf-token"]')?.content;
+
+    fetch(deleteUrl, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            'X-CSRF-TOKEN': token,
+        },
+        body: JSON.stringify({ path }),
+    }).catch(() => {});
+}
+
+function attachImageDeletion(quill, wrapper, deleteUrl, urlToPath) {
+    const editorRoot = quill.root;
+
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'rich-editor-img-delete';
+    btn.innerHTML = '&times;';
+    btn.title = 'Xóa ảnh';
+    wrapper.appendChild(btn);
+
+    let currentImg = null;
+    let hideTimer = null;
+
+    const position = () => {
+        if (! currentImg) {
+            return;
+        }
+        const imgRect = currentImg.getBoundingClientRect();
+        const wrapRect = wrapper.getBoundingClientRect();
+        btn.style.top = (imgRect.top - wrapRect.top + 6) + 'px';
+        btn.style.left = (imgRect.right - wrapRect.left - 30) + 'px';
+    };
+
+    const show = (img) => {
+        clearTimeout(hideTimer);
+        currentImg = img;
+        position();
+        btn.classList.add('is-visible');
+    };
+
+    const scheduleHide = () => {
+        hideTimer = setTimeout(() => {
+            if (! btn.matches(':hover')) {
+                btn.classList.remove('is-visible');
+                currentImg = null;
+            }
+        }, 150);
+    };
+
+    editorRoot.addEventListener('mouseover', (event) => {
+        if (event.target.tagName === 'IMG') {
+            show(event.target);
+        }
+    });
+
+    editorRoot.addEventListener('mouseout', (event) => {
+        if (event.target.tagName === 'IMG') {
+            scheduleHide();
+        }
+    });
+
+    editorRoot.addEventListener('scroll', position);
+    btn.addEventListener('mouseleave', scheduleHide);
+
+    btn.addEventListener('click', () => {
+        if (! currentImg) {
+            return;
+        }
+
+        const src = currentImg.getAttribute('src');
+        const blot = Quill.find(currentImg);
+
+        if (blot) {
+            quill.deleteText(quill.getIndex(blot), 1);
+        }
+
+        deleteServerImage(src, deleteUrl, urlToPath);
+        btn.classList.remove('is-visible');
+        currentImg = null;
     });
 }

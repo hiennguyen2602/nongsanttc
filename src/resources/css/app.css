@@ -9,6 +9,18 @@
     display: none !important;
 }
 
+/* Ảnh trong nội dung mô tả chi tiết: màn nhỏ co về 100% (không tràn ngang), màn to tối đa 600px */
+.prose img {
+    max-width: 100%;
+    height: auto;
+}
+
+@media (min-width: 768px) {
+    .prose img {
+        max-width: 600px;
+    }
+}
+
 @theme {
     --font-sans: 'Segoe UI', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
         'Segoe UI Symbol', 'Noto Color Emoji';

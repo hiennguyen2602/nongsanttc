@@ -157,7 +157,6 @@ return [
         'title' => 'tiêu đề',
         'content' => 'nội dung',
         'description' => 'mô tả',
-        'short_description' => 'mô tả ngắn',
         'price' => 'giá',
         'sale_price' => 'giá khuyến mãi',
         'stock' => 'tồn kho',

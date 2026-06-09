@@ -22,9 +22,7 @@ class ProductController extends Controller
 
         if ($request->filled('q')) {
             $q = $request->q;
-            $query->where(fn ($builder) => $builder
-                ->where('name', 'like', "%{$q}%")
-                ->orWhere('short_description', 'like', "%{$q}%"));
+            $query->where('name', 'like', "%{$q}%");
         }
 
         return view('store.products.index', [

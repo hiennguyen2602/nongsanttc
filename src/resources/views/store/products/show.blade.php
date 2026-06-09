@@ -54,7 +54,7 @@
                 <div x-show="lightbox" x-cloak x-transition.opacity @keydown.escape.window="lightbox = false" class="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 p-4" @click.self="lightbox = false">
                     <button type="button" @click="lightbox = false" class="absolute right-4 top-4 flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-2xl text-white hover:bg-white/20">&times;</button>
                     <button type="button" @click="prev()" x-show="gallery.length > 1" class="absolute left-4 top-1/2 flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full bg-white/10 text-3xl text-white hover:bg-white/20">&lsaquo;</button>
-                    <img :src="gallery[activeIndex]?.full" alt="{{ $product->name }}" class="max-h-[90vh] max-w-[92vw] object-contain">
+                    <img :src="gallery[activeIndex]?.full" alt="{{ $product->name }}" x-show="lightbox" x-transition:enter="transition duration-300 ease-out" x-transition:enter-start="opacity-0 scale-90" x-transition:enter-end="opacity-100 scale-100" class="max-h-[90vh] max-w-[92vw] object-contain">
                     <button type="button" @click="next()" x-show="gallery.length > 1" class="absolute right-4 top-1/2 flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full bg-white/10 text-3xl text-white hover:bg-white/20">&rsaquo;</button>
                 </div>
             </template>

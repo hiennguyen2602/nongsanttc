@@ -44,6 +44,35 @@ document.addEventListener('alpine:init', () => {
         },
     }));
 
+    Alpine.data('productVariants', (initial = []) => ({
+        variants: initial.length
+            ? initial.map((v) => ({
+                id: v.id ?? '',
+                flavor: v.flavor ?? '',
+                size: v.size ?? '',
+                price: v.price != null ? String(v.price) : '',
+                stock: v.stock != null ? String(v.stock) : '0',
+            }))
+            : [{ id: '', flavor: '', size: '', price: '', stock: '0' }],
+
+        add() {
+            this.variants.push({ id: '', flavor: '', size: '', price: '', stock: '0' });
+        },
+
+        remove(index) {
+            this.variants.splice(index, 1);
+        },
+
+        format(value) {
+            const digits = String(value ?? '').replace(/\D/g, '');
+            return digits.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+        },
+
+        setDigits(index, field, value) {
+            this.variants[index][field] = value.replace(/\D/g, '');
+        },
+    }));
+
     Alpine.data('productImages', (existing = []) => ({
         existing: existing.map((item) => ({ path: item.path, url: item.url })),
         newImages: [],

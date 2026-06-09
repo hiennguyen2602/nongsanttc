@@ -421,7 +421,7 @@
 
 .admin-body .admin-search {
     display: flex;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
     align-items: center;
     gap: 0.5rem;
 }
@@ -429,8 +429,8 @@
 .admin-body .admin-search .form-control,
 .admin-body .admin-search .form-select {
     width: auto !important;
-    flex: 1 1 14rem;
-    min-width: 10rem;
+    flex: 1 1 auto;
+    min-width: 0;
 }
 
 .admin-body .admin-search .btn {
@@ -711,8 +711,52 @@
     font-size: 0.9375rem;
 }
 
+.admin-body .rich-editor {
+    position: relative;
+}
+
 .admin-body .rich-editor .ql-editor {
     min-height: 280px;
+}
+
+/* Ảnh trong editor: màn nhỏ co về 100% (không tràn ngang), màn to tối đa 600px */
+.admin-body .rich-editor .ql-editor img {
+    max-width: 100%;
+    height: auto;
+}
+
+@media (min-width: 1300px) {
+    .admin-body .rich-editor .ql-editor img {
+        max-width: 600px;
+    }
+}
+
+/* Nút xóa ảnh (hover) trong editor */
+.admin-body .rich-editor .rich-editor-img-delete {
+    position: absolute;
+    z-index: 6;
+    display: none;
+    width: 26px;
+    height: 26px;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    border: 2px solid #fff;
+    border-radius: 9999px;
+    background: rgba(220, 38, 38, 0.95);
+    color: #fff;
+    font-size: 17px;
+    line-height: 1;
+    cursor: pointer;
+    box-shadow: 0 1px 4px rgb(0 0 0 / 0.35);
+}
+
+.admin-body .rich-editor .rich-editor-img-delete.is-visible {
+    display: inline-flex;
+}
+
+.admin-body .rich-editor .rich-editor-img-delete:hover {
+    background: #b91c1c;
 }
 
 /* Ẩn textarea thô — global CSS textarea đang ép hiển thị, gây vỡ layout editor */

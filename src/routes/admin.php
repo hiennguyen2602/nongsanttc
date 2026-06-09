@@ -30,6 +30,7 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::post('password/change', [AuthController::class, 'changePassword'])->name('password.change.submit');
 
     Route::post('media/upload', [MediaController::class, 'upload'])->name('media.upload');
+    Route::post('media/delete', [MediaController::class, 'destroy'])->name('media.delete');
 
     Route::resource('products', ProductController::class);
     Route::resource('categories', CategoryController::class)->except(['show']);
