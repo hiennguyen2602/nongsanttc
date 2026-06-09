@@ -13,7 +13,14 @@
                             <tbody>
                                 @foreach($order->items as $item)
                                     <tr>
-                                        <td>{{ $item->product_name }} @if($item->variant_label)<span class="text-xs text-slate-500">({{ $item->variant_label }})</span>@endif</td>
+                                        <td>
+                                            @if($item->product)
+                                                <a href="{{ route('admin.products.show', $item->product) }}" class="hover:underline">{{ $item->product_name }}</a>
+                                            @else
+                                                {{ $item->product_name }}
+                                            @endif
+                                            @if($item->variant_label)<span class="text-xs text-red-600">({{ $item->variant_label }})</span>@endif
+                                        </td>
                                         <td>{{ $item->quantity }}</td>
                                         <td>{{ format_money($item->unit_price) }}</td>
                                         <td class="text-end">{{ format_money($item->line_total) }}</td>
@@ -28,12 +35,33 @@
         <div class="space-y-4">
             <div class="x_panel">
                 <div class="x_title"><h2>Khách hàng</h2></div>
-                <div class="x_content text-sm space-y-1">
-                    <p><strong>{{ $order->customer_name }}</strong></p>
-                    <p>{{ $order->customer_phone }}</p>
-                    @if($order->customer_email)<p>{{ $order->customer_email }}</p>@endif
-                    <p class="pt-2 text-slate-600">{{ $order->customer_address }}</p>
-                    @if($order->note)<p class="pt-2 italic text-slate-500">Ghi chú: {{ $order->note }}</p>@endif
+                <div class="x_content text-sm">
+                    <dl class="space-y-2">
+                        <div class="flex gap-2">
+                            <dt class="w-15 shrink-0 font-semibold text-slate-500">Tên</dt>
+                            <dd class="flex-1">{{ $order->customer_name }}</dd>
+                        </div>
+                        <div class="flex gap-2">
+                            <dt class="w-15 shrink-0 font-semibold text-slate-500">Phone</dt>
+                            <dd class="flex-1">{{ $order->customer_phone }}</dd>
+                        </div>
+                        @if($order->customer_email)
+                            <div class="flex gap-2">    
+                                <dt class="w-15 shrink-0 font-semibold text-slate-500">Email</dt>
+                                <dd class="flex-1">{{ $order->customer_email }}</dd>
+                            </div>
+                        @endif
+                        <div class="flex gap-2">
+                            <dt class="w-15 shrink-0 font-semibold text-slate-500">Địa chỉ</dt>
+                            <dd class="flex-1">{{ $order->customer_address }}</dd>
+                        </div>
+                        @if($order->note)
+                            <div class="flex gap-2">
+                                <dt class="w-15 shrink-0 font-semibold text-slate-500">Ghi chú</dt>
+                                <dd class="flex-1 italic text-slate-600">{{ $order->note }}</dd>
+                            </div>
+                        @endif
+                    </dl>
                 </div>
             </div>
             <div class="x_panel">

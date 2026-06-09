@@ -28,6 +28,7 @@ class SettingController extends Controller
 
             if ($item->type === 'image') {
                 if ($request->hasFile($key)) {
+                    $uploader->delete($item->value);
                     $preset = in_array($key, ['hero_desktop', 'hero_mobile'], true) ? $key : null;
                     $folder = 'uploads/settings/' . date('Y/m');
                     $result = $uploader->upload($request->file($key), $folder, $preset);

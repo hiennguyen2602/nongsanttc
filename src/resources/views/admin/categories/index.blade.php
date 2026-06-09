@@ -10,12 +10,11 @@
         <div class="x_content">
             <div class="table-responsive">
                 <table class="table table-striped">
-                    <thead><tr><th>Tên</th><th>Slug</th><th>Thứ tự</th><th class="table-actions"></th></tr></thead>
+                    <thead><tr><th>Tên</th><th>Thứ tự</th><th class="table-actions"></th></tr></thead>
                     <tbody>
                         @foreach ($categories as $category)
                             <tr>
                                 <td>{{ $category->name }}</td>
-                                <td>{{ $category->slug }}</td>
                                 <td>{{ $category->sort_order }}</td>
                                 <td class="table-actions">
                                     <a href="{{ route('admin.categories.edit', $category) }}" class="btn btn-link btn-sm">Sửa</a>

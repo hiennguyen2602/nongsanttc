@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Models\Category;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Str;
 use Illuminate\View\View;
 
 class CategoryController extends Controller
@@ -54,12 +53,11 @@ class CategoryController extends Controller
     {
         $data = $request->validate([
             'name' => ['required', 'string', 'max:255'],
-            'slug' => ['nullable', 'string', 'max:255'],
-            'sort_order' => ['nullable', 'integer', 'min:0'],
+            'sort_order' => ['nullable', 'integer', 'min:1'],
         ]);
 
-        $data['slug'] = Str::slug($data['slug'] ?: $data['name']);
-        $data['sort_order'] = (int) ($data['sort_order'] ?? 0);
+        $data['slug'] = generate_unique_slug($data['name'], 'categories', $category?->id);
+        $data['sort_order'] = max(1, (int) ($data['sort_order'] ?? 1));
 
         return $data;
     }

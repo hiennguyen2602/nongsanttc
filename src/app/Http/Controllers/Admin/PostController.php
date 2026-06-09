@@ -7,7 +7,6 @@ use App\Models\Post;
 use App\Services\ImageUploadService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Str;
 use Illuminate\View\View;
 
 class PostController extends Controller
@@ -68,14 +67,13 @@ class PostController extends Controller
     {
         $data = $request->validate([
             'title' => ['required', 'string', 'max:255'],
-            'slug' => ['nullable', 'string', 'max:255'],
-            'excerpt' => ['nullable', 'string', 'max:500'],
+            'excerpt' => ['nullable', 'string', 'max:2000'],
             'content' => ['nullable', 'string'],
             'is_published' => ['nullable', 'boolean'],
             'published_at' => ['nullable', 'date'],
         ]);
 
-        $data['slug'] = Str::slug($data['slug'] ?: $data['title']);
+        $data['slug'] = generate_unique_slug($data['title'], 'posts', $post?->id);
         $data['is_published'] = $request->boolean('is_published', true);
         $data['published_at'] = $data['published_at'] ?? now();
 

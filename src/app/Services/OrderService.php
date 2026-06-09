@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\Order;
 use App\Models\OrderItem;
+use App\Models\ProductVariant;
 use Illuminate\Support\Str;
 
 class OrderService
@@ -42,10 +43,17 @@ class OrderService
         ]);
 
         foreach ($items as $item) {
+            $variantId = $item['variant_id'] ?? null;
+
+            // Biến thể có thể đã bị xóa/đổi sau khi thêm vào giỏ — tránh lỗi khóa ngoại.
+            if ($variantId && ! ProductVariant::query()->whereKey($variantId)->exists()) {
+                $variantId = null;
+            }
+
             OrderItem::query()->create([
                 'order_id' => $order->id,
                 'product_id' => $item['product_id'],
-                'product_variant_id' => $item['variant_id'],
+                'product_variant_id' => $variantId,
                 'product_name' => $item['name'],
                 'variant_label' => $item['variant_label'],
                 'quantity' => $item['quantity'],

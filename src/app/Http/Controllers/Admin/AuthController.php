@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -14,8 +15,16 @@ class AuthController extends Controller
 {
     public function showLogin(): View|RedirectResponse
     {
-        if (Auth::check() && Auth::user()->canAccessAdminPanel()) {
+        $user = Auth::user();
+
+        if ($user?->canAccessAdminPanel() && $user->isActive()) {
             return redirect()->route('admin.dashboard');
+        }
+
+        if ($user && ! $user->canAccessAdminPanel()) {
+            Auth::logout();
+            request()->session()->invalidate();
+            request()->session()->regenerateToken();
         }
 
         return view('admin.auth.login');
@@ -41,12 +50,12 @@ class AuthController extends Controller
 
             return back()
                 ->withInput($request->only('email'))
-                ->withErrors(['email' => 'Tài khoản không có quyền truy cập admin.']);
+                ->withErrors(['email' => 'Khách hàng không có quyền truy cập trang quản trị.']);
         }
 
         $request->session()->regenerate();
 
-        return redirect()->intended(route('admin.dashboard'));
+        return redirect()->route('admin.dashboard');
     }
 
     public function logout(Request $request): RedirectResponse
@@ -67,11 +76,27 @@ class AuthController extends Controller
     {
         $request->validate(['email' => ['required', 'email']]);
 
+        $user = User::query()->where('email', $request->input('email'))->first();
+
+        if ($user && ! $user->canAccessAdminPanel()) {
+            return back()
+                ->withInput($request->only('email'))
+                ->withErrors(['email' => 'Khách hàng không có quyền đặt lại mật khẩu qua trang quản trị.']);
+        }
+
         $status = Password::sendResetLink($request->only('email'));
 
-        return $status === Password::RESET_LINK_SENT
-            ? back()->with('status', 'Link đặt lại mật khẩu đã được gửi qua email.')
-            : back()->withErrors(['email' => 'Không tìm thấy email trong hệ thống.']);
+        if ($status === Password::RESET_LINK_SENT) {
+            return back()->with('status', 'Link đặt lại mật khẩu đã được gửi qua email.');
+        }
+
+        $message = match ($status) {
+            Password::RESET_THROTTLED => 'Bạn vừa yêu cầu gửi link. Vui lòng đợi một lát trước khi thử lại.',
+            Password::INVALID_USER => 'Không tìm thấy email trong hệ thống.',
+            default => 'Không thể gửi link đặt lại mật khẩu. Vui lòng thử lại sau.',
+        };
+
+        return back()->withInput($request->only('email'))->withErrors(['email' => $message]);
     }
 
     public function showResetPassword(string $token): View
@@ -89,6 +114,12 @@ class AuthController extends Controller
             'email' => ['required', 'email'],
             'password' => ['required', 'min:8', 'confirmed'],
         ]);
+
+        $user = User::query()->where('email', $request->input('email'))->first();
+
+        if ($user && ! $user->canAccessAdminPanel()) {
+            return back()->withErrors(['email' => 'Khách hàng không có quyền đặt lại mật khẩu qua trang quản trị.']);
+        }
 
         $status = Password::reset(
             $request->only('email', 'password', 'password_confirmation', 'token'),

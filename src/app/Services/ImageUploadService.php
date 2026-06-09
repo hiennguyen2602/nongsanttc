@@ -15,6 +15,9 @@ class ImageUploadService
         'large' => 1200,
     ];
 
+    /** Giới hạn chiều rộng ảnh gốc để tránh file quá nặng. */
+    private const ORIGINAL_MAX_WIDTH = 1600;
+
     /** @var array<string, array{width: int, height: int}> */
     private const PRESETS = [
         'hero_desktop' => ['width' => 1920, 'height' => 700],
@@ -54,6 +57,10 @@ class ImageUploadService
                 $this->resizeImage($absolutePath, $directory . '/' . $variantFilename, $maxWidth);
                 $variants[$name] = $variantRelative;
             }
+
+            // Nén/thu nhỏ ảnh gốc để tránh file quá nặng.
+            $this->resizeImage($absolutePath, $absolutePath, self::ORIGINAL_MAX_WIDTH);
+
             $variants['original'] = $relativePath;
         }
 
@@ -92,8 +99,9 @@ class ImageUploadService
             throw new RuntimeException('Định dạng ảnh không hợp lệ.');
         }
 
-        if ($file->getSize() > 5 * 1024 * 1024) {
-            throw new RuntimeException('Ảnh không được vượt quá 5MB.');
+        $maxMb = (float) config('media.max_image_mb', 5);
+        if ($file->getSize() > $maxMb * 1024 * 1024) {
+            throw new RuntimeException('Ảnh không được vượt quá ' . rtrim(rtrim(number_format($maxMb, 1), '0'), '.') . 'MB.');
         }
     }
 
@@ -146,7 +154,9 @@ class ImageUploadService
         [$width, $height, $type] = $this->loadImageInfo($sourcePath);
 
         if ($width <= $maxWidth) {
-            copy($sourcePath, $destPath);
+            if ($sourcePath !== $destPath) {
+                copy($sourcePath, $destPath);
+            }
 
             return;
         }

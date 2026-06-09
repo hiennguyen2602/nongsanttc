@@ -7,14 +7,14 @@
     <title>@yield('title', 'Admin') — {{ config('admin.name') }}</title>
     @vite(['resources/css/app.css', 'resources/css/admin.css', 'resources/js/app.js'])
 </head>
-<body class="admin-body bg-gent-content font-sans text-slate-700 antialiased" x-data="{ sidebarOpen: false }">
+<body class="admin-body bg-gent-content font-sans text-[#212529] antialiased" x-data="{ sidebarOpen: false }">
     <div class="flex min-h-screen">
         @include('admin.partials.sidebar')
 
         <div class="flex min-w-0 flex-1 flex-col lg:pl-64">
             @include('admin.partials.topbar')
 
-            <main class="flex-1 p-4 sm:p-6" role="main">
+            <main class="admin-main flex-1 p-4 sm:p-6" role="main">
                 <div class="admin-page-frame">
                     @include('admin.partials.alerts')
                     @yield('content')

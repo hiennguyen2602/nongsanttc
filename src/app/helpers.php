@@ -1,6 +1,50 @@
 <?php
 
 use App\Services\SettingService;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
+
+if (! function_exists('generate_unique_slug')) {
+    /**
+     * Sinh slug duy nhất từ chuỗi nguồn (dùng chung cho mọi model có cột slug).
+     */
+    function generate_unique_slug(string $source, string $table, ?int $ignoreId = null, string $column = 'slug'): string
+    {
+        $base = Str::slug($source);
+
+        if ($base === '') {
+            $base = 'item';
+        }
+
+        $slug = $base;
+        $suffix = 1;
+
+        while (
+            DB::table($table)
+                ->where($column, $slug)
+                ->when($ignoreId, fn ($query) => $query->where('id', '!=', $ignoreId))
+                ->exists()
+        ) {
+            $slug = $base . '-' . $suffix++;
+        }
+
+        return $slug;
+    }
+}
+
+if (! function_exists('generate_unique_sku')) {
+    /**
+     * Sinh mã sản phẩm (SKU) duy nhất.
+     */
+    function generate_unique_sku(string $prefix = 'SP', string $table = 'products', string $column = 'sku'): string
+    {
+        do {
+            $sku = $prefix . strtoupper(Str::random(8));
+        } while (DB::table($table)->where($column, $sku)->exists());
+
+        return $sku;
+    }
+}
 
 if (! function_exists('store_media_url')) {
     /**
