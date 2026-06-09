@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Category;
 use App\Models\Product;
-use App\Models\ProductVariant;
 use App\Services\ImageUploadService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -75,7 +74,6 @@ class ProductController extends Controller
         $data['gallery'] = $gallery;
 
         $product->update($data);
-        $product->variants()->delete();
         $this->syncVariants($product, $request);
 
         return redirect()->route('admin.products.index')->with('success', 'Cập nhật sản phẩm thành công.');
@@ -195,23 +193,39 @@ class ProductController extends Controller
         return [$main, $gallery];
     }
 
+    /**
+     * Đồng bộ biến thể: giữ nguyên ID của biến thể cũ (update), tạo mới biến thể chưa có,
+     * và chỉ xóa những biến thể đã bị bỏ. Tránh đổi ID làm hỏng giỏ hàng/đơn cũ.
+     */
     private function syncVariants(Product $product, Request $request): void
     {
         $variants = $request->input('variants', []);
+        $keptIds = [];
 
         foreach ($variants as $variant) {
             if (empty($variant['price'])) {
                 continue;
             }
 
-            ProductVariant::query()->create([
-                'product_id' => $product->id,
+            $payload = [
                 'flavor' => $variant['flavor'] ?? null,
                 'size' => $variant['size'] ?? null,
                 'price' => (int) $variant['price'],
                 'sku' => $variant['sku'] ?? null,
                 'stock' => (int) ($variant['stock'] ?? 0),
-            ]);
+            ];
+
+            $id = $variant['id'] ?? null;
+            $existing = $id ? $product->variants()->whereKey($id)->first() : null;
+
+            if ($existing) {
+                $existing->update($payload);
+                $keptIds[] = $existing->id;
+            } else {
+                $keptIds[] = $product->variants()->create($payload)->id;
+            }
         }
+
+        $product->variants()->whereNotIn('id', $keptIds)->delete();
     }
 }

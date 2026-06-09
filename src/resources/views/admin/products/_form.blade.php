@@ -87,14 +87,15 @@
                 </div>
             </div>
 
-            <div class="x_panel" x-data="{ variants: @js(old('variants', isset($product) ? $product->variants->map(fn($v) => ['flavor' => $v->flavor, 'size' => $v->size, 'price' => $v->price, 'sku' => $v->sku, 'stock' => $v->stock])->toArray() : [['flavor' => '', 'size' => '', 'price' => '', 'sku' => '', 'stock' => 0]])) }">
+            <div class="x_panel" x-data="{ variants: @js(old('variants', isset($product) ? $product->variants->map(fn($v) => ['id' => $v->id, 'flavor' => $v->flavor, 'size' => $v->size, 'price' => $v->price, 'sku' => $v->sku, 'stock' => $v->stock])->toArray() : [['id' => '', 'flavor' => '', 'size' => '', 'price' => '', 'sku' => '', 'stock' => 0]])) }">
                 <div class="x_title">
                     <h3>Biến thể</h3>
-                    <button type="button" @click="variants.push({flavor:'',size:'',price:'',sku:'',stock:0})" class="btn btn-secondary btn-sm">+ Thêm biến thể</button>
+                    <button type="button" @click="variants.push({id:'',flavor:'',size:'',price:'',sku:'',stock:0})" class="btn btn-secondary btn-sm">+ Thêm biến thể</button>
                 </div>
                 <div class="x_content">
                     <template x-for="(variant, index) in variants" :key="index">
                         <div class="mb-3 grid grid-cols-2 gap-2 rounded border border-slate-200 bg-slate-50 p-3 md:grid-cols-5">
+                            <input type="hidden" :name="'variants['+index+'][id]'" :value="variant.id">
                             <input type="text" :name="'variants['+index+'][flavor]'" x-model="variant.flavor" placeholder="Vị" class="form-control">
                             <input type="text" :name="'variants['+index+'][size]'" x-model="variant.size" placeholder="Size" class="form-control">
                             <input type="number" :name="'variants['+index+'][price]'" x-model="variant.price" placeholder="Giá" class="form-control">
