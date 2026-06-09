@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -13,39 +12,66 @@ class User extends Authenticatable
     /** @use HasFactory<UserFactory> */
     use HasFactory, Notifiable;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var list<string>
-     */
+    public const TYPE_ADMIN = 1;
+
+    public const TYPE_STAFF = 2;
+
+    public const TYPE_USER = 3;
+
     protected $fillable = [
         'name',
         'email',
         'password',
-        'is_admin',
+        'type',
+        'status',
     ];
 
-    /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var list<string>
-     */
     protected $hidden = [
         'password',
         'remember_token',
     ];
 
-    /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
-     */
     protected function casts(): array
     {
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
-            'is_admin' => 'boolean',
+            'type' => 'integer',
+            'status' => 'integer',
         ];
+    }
+
+    public function isAdmin(): bool
+    {
+        return (int) $this->type === self::TYPE_ADMIN;
+    }
+
+    public function isStaff(): bool
+    {
+        return (int) $this->type === self::TYPE_STAFF;
+    }
+
+    public function isUser(): bool
+    {
+        return (int) $this->type === self::TYPE_USER;
+    }
+
+    public function canAccessAdminPanel(): bool
+    {
+        return $this->isAdmin() || $this->isStaff();
+    }
+
+    public function isActive(): bool
+    {
+        return (int) $this->status === 1;
+    }
+
+    public function roleLabel(): string
+    {
+        return match ((int) $this->type) {
+            self::TYPE_ADMIN => 'Admin',
+            self::TYPE_STAFF => 'Staff',
+            default => 'User',
+        };
     }
 }

@@ -27,7 +27,7 @@
                     class="font-display text-lg font-semibold tracking-wide transition-colors sm:text-xl"
                     :class="transparent && !scrolled ? 'text-white' : 'text-white'"
                 >
-                    {{ config('store.name') }}
+                    {{ store_setting('name') }}
                 </span>
                 <span
                     class="text-[10px] font-medium uppercase tracking-[0.25em] transition-colors sm:text-xs"
@@ -77,21 +77,23 @@
             {{-- Right: hotline + actions --}}
             <div class="flex items-center gap-2 sm:gap-3">
                 <a
-                    href="tel:{{ preg_replace('/\s+/', '', config('store.phone')) }}"
+                    href="tel:{{ preg_replace('/\s+/', '', store_setting('phone')) }}"
                     class="hidden items-center border px-3 py-1.5 text-xs transition lg:inline-flex"
                     :class="transparent && !scrolled
                         ? 'border-white/60 text-white hover:bg-white/10'
                         : 'border-white/30 text-white hover:border-brand-light'"
                 >
-                    Hotline: {{ config('store.phone') }}
+                    Hotline: {{ store_setting('phone') }}
                 </a>
 
                 <button type="button" @click="searchOpen = !searchOpen" class="rounded p-2 text-white/90 hover:text-white" aria-label="Tìm kiếm">
                     <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
                 </button>
-                <button type="button" class="relative rounded p-2 text-white/90 hover:text-white" aria-label="Giỏ hàng">
+                <button type="button" class="relative rounded p-2 text-white/90 hover:text-white" aria-label="Giỏ hàng" onclick="window.location='{{ route('cart.index') }}'">
                     <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
-                    <span class="absolute -right-0.5 -top-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-accent-red text-[10px] font-bold text-white">0</span>
+                    @if ($cartCount > 0)
+                        <span class="absolute -right-0.5 -top-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-accent-red text-[10px] font-bold text-white">{{ $cartCount }}</span>
+                    @endif
                 </button>
                 <button type="button" @click="mobileOpen = !mobileOpen" class="rounded p-2 text-white lg:hidden" aria-label="Menu">
                     <svg x-show="!mobileOpen" class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
@@ -128,8 +130,8 @@
             <a href="{{ route('products.index') }}" class="block px-3 py-2.5 text-sm uppercase tracking-wide text-white/90 hover:text-white">Sản phẩm</a>
             <a href="{{ route('posts.index') }}" class="block px-3 py-2.5 text-sm uppercase tracking-wide text-white/90 hover:text-white">Tin tức</a>
             <a href="#lien-he" class="block px-3 py-2.5 text-sm uppercase tracking-wide text-white/90 hover:text-white">Liên hệ</a>
-            <a href="tel:{{ preg_replace('/\s+/', '', config('store.phone')) }}" class="mt-2 block border border-white/30 px-3 py-2.5 text-center text-sm text-white">
-                {{ config('store.phone') }}
+            <a href="tel:{{ preg_replace('/\s+/', '', store_setting('phone')) }}" class="mt-2 block border border-white/30 px-3 py-2.5 text-center text-sm text-white">
+                {{ store_setting('phone') }}
             </a>
         </nav>
     </div>

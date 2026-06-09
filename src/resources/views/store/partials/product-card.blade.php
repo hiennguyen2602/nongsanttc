@@ -6,7 +6,7 @@
     <a href="{{ route('products.show', $product->slug) }}" class="flex h-full flex-col">
         <div class="relative aspect-square shrink-0 overflow-hidden bg-brand-muted">
             <img
-                src="{{ store_media_url($product->image) }}"
+                src="{{ store_media_url($product->image, 'medium') }}"
                 alt="{{ $product->name }}"
                 class="h-full w-full object-cover transition duration-500 group-hover:scale-110"
                 loading="lazy"
