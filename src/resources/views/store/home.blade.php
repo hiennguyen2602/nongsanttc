@@ -241,21 +241,9 @@
 
             <div class="grid grid-cols-1 gap-8 md:grid-cols-3" data-reveal-group>
                 @foreach ($posts as $post)
-                    <article data-reveal="fade-up" class="group overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-slate-200/80 transition hover:-translate-y-1 hover:shadow-xl">
-                        <a href="{{ route('posts.show', $post->slug) }}">
-                            <div class="aspect-[16/10] overflow-hidden">
-                                <img src="{{ store_media_url($post->image) }}" alt="{{ $post->title }}" class="h-full w-full object-cover transition duration-500 group-hover:scale-105" loading="lazy">
-                            </div>
-                            <div class="p-6">
-                                <time class="text-xs font-medium uppercase tracking-wider text-brand">{{ $post->published_at?->format('d/m/Y') }}</time>
-                                <h3 class="mt-2 mb-2 line-clamp-2 text-lg font-bold text-slate-800 transition group-hover:text-brand">{{ $post->title }}</h3>
-                                <p class="line-clamp-3 text-sm leading-relaxed text-slate-600">{{ $post->excerpt }}</p>
-                                <span class="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-brand opacity-0 transition group-hover:opacity-100">
-                                    Đọc thêm →
-                                </span>
-                            </div>
-                        </a>
-                    </article>
+                    <div data-reveal="fade-up" class="h-full">
+                        @include('store.partials.post-card', ['post' => $post])
+                    </div>
                 @endforeach
             </div>
 

@@ -43,7 +43,7 @@
             </div>
 
             {{-- Newsletter — Ogani style --}}
-            <div>
+            <div class="footer-newsletter min-w-0">
                 <h3 class="mb-4 text-sm font-bold uppercase tracking-wide text-slate-800">Đăng ký nhận tin</h3>
                 <p class="mb-4 text-sm">Nhận thông tin khuyến mãi và sản phẩm mới qua email.</p>
                 <form class="flex flex-nowrap items-stretch gap-2" onsubmit="return false;">

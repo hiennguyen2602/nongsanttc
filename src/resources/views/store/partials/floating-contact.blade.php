@@ -11,27 +11,27 @@
     x-transition:leave="transition ease-in duration-200"
     x-transition:leave-start="opacity-100 translate-y-0"
     x-transition:leave-end="opacity-0 translate-y-4"
-    class="fixed bottom-4 right-4 z-40 flex flex-col items-end gap-2 sm:bottom-8 sm:right-6"
+    class="pointer-events-none fixed bottom-4 right-4 z-40 flex flex-col items-end gap-2 sm:bottom-8 sm:right-6"
     style="display: none;"
 >
     @if (store_setting('zalo'))
     <a href="{{ store_setting('zalo') }}" target="_blank" rel="noopener"
-       class="flex h-11 w-11 items-center justify-center rounded-full bg-blue-500 text-xs font-bold text-white shadow-lg transition hover:scale-105"
+       class="pointer-events-auto flex h-11 w-11 items-center justify-center rounded-full bg-blue-500 text-xs font-bold text-white shadow-lg transition hover:scale-105"
        title="Zalo">Zalo</a>
     @endif
     @if (store_setting('messenger'))
     <a href="{{ store_setting('messenger') }}" target="_blank" rel="noopener"
-       class="flex h-11 w-11 items-center justify-center rounded-full bg-[#0084FF] text-white shadow-lg transition hover:scale-105"
+       class="pointer-events-auto flex h-11 w-11 items-center justify-center rounded-full bg-[#0084FF] text-white shadow-lg transition hover:scale-105"
        title="Messenger">
         <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
             <path d="M12 0C5.373 0 0 4.975 0 11.111c0 3.497 1.745 6.616 4.472 8.652V24l4.086-2.242c1.09.3 2.246.464 3.442.464 6.627 0 12-4.974 12-11.111C24 4.975 18.627 0 12 0zm1.191 14.963l-3.055-3.26-5.963 3.26L10.732 8.8l3.13 3.26 5.89-3.26-3.561 6.163z"/>
         </svg>
     </a>
     @endif
-    <div class="flex items-center gap-2">
+    <div class="pointer-events-auto flex max-w-[calc(100vw-2rem)] items-center gap-2 sm:max-w-none">
         @if ($contactUrl)
         <a href="{{ $contactUrl }}" target="_blank" rel="noopener"
-           class="flex max-w-[calc(100vw-5.5rem)] items-center gap-2 rounded-full bg-brand px-4 py-2.5 text-sm font-medium text-white shadow-lg transition hover:bg-brand-dark sm:max-w-xs">
+           class="flex min-w-0 items-center gap-2 rounded-full bg-brand px-4 py-2.5 text-sm font-medium text-white shadow-lg transition hover:bg-brand-dark">
             <svg class="h-5 w-5 shrink-0" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                 <path d="M12 0C5.373 0 0 4.975 0 11.111c0 3.497 1.745 6.616 4.472 8.652V24l4.086-2.242c1.09.3 2.246.464 3.442.464 6.627 0 12-4.974 12-11.111C24 4.975 18.627 0 12 0zm1.191 14.963l-3.055-3.26-5.963 3.26L10.732 8.8l3.13 3.26 5.89-3.26-3.561 6.163z"/>
             </svg>

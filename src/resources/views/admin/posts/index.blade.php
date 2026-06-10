@@ -10,10 +10,15 @@
         <div class="x_content">
             <div class="table-responsive">
                 <table class="table table-striped posts-table">
-                    <thead><tr><th>Tiêu đề</th><th>Ngày</th><th>Trạng thái</th><th class="table-actions"></th></tr></thead>
+                    <thead><tr><th>Ảnh</th><th>Tiêu đề</th><th>Ngày</th><th>Trạng thái</th><th class="table-actions"></th></tr></thead>
                     <tbody>
                         @foreach ($posts as $post)
                             <tr>
+                                <td>
+                                    @if ($post->image)
+                                        <img src="{{ store_media_url($post->image, 'thumbnail') }}" alt="" class="h-12 w-20 max-w-none shrink-0 rounded object-cover ring-1 ring-slate-200">
+                                    @endif
+                                </td>
                                 <td class="font-medium"><a href="{{ route('admin.posts.show', $post) }}" class="admin-link hover:underline">{{ $post->title }}</a></td>
                                 <td>{{ $post->published_at?->format('d/m/Y') }}</td>
                                 <td>@include('admin.partials.status-badge', ['label' => $post->publishStatusLabel(), 'class' => $post->publishStatusBadgeClass()])</td>

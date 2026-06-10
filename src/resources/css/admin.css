@@ -342,8 +342,8 @@
 }
 
 @media (max-width: 640px) {
-    .admin-body .posts-table th:first-child,
-    .admin-body .posts-table td:first-child {
+    .admin-body .posts-table th:nth-child(2),
+    .admin-body .posts-table td:nth-child(2) {
         min-width: 200px;
     }
 }
@@ -580,6 +580,19 @@
     padding: 0.7rem 1rem;
     margin: 0;
     color: var(--admin-text);
+}
+
+.admin-body .admin-post-featured-image {
+    display: block;
+    max-height: 12rem;
+}
+
+@media (min-width: 768px) {
+    .admin-body .admin-post-featured-image {
+        width: 220px;
+        max-width: 100%;
+        max-height: none;
+    }
 }
 
 /* ─── Orders filter (responsive) ─── */

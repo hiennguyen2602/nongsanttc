@@ -23,6 +23,14 @@
                 gallery: @js(collect(array_merge([$product->image], $product->gallery ?? []))->filter()->unique()->map(fn ($img) => ['thumb' => store_media_url($img, 'thumbnail'), 'display' => store_media_url($img, 'medium'), 'full' => store_media_url($img, 'large')])->values()->all()),
                 activeIndex: 0,
                 lightbox: false,
+                openLightbox() {
+                    this.lightbox = true;
+                    document.documentElement.classList.add('overflow-hidden');
+                },
+                closeLightbox() {
+                    this.lightbox = false;
+                    document.documentElement.classList.remove('overflow-hidden');
+                },
                 next() { if (this.gallery.length) this.activeIndex = (this.activeIndex + 1) % this.gallery.length; },
                 prev() { if (this.gallery.length) this.activeIndex = (this.activeIndex - 1 + this.gallery.length) % this.gallery.length; }
             }"
@@ -30,10 +38,10 @@
             {{-- Gallery --}}
             <div class="lg:col-span-5">
                 <div class="relative mb-4 aspect-square overflow-hidden rounded-lg border border-slate-200 bg-slate-50">
-                    <div class="flex h-full transition-transform duration-300 ease-out" :style="`transform: translateX(-${activeIndex * 100}%)`">
+                    <div class="flex h-full transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]" :style="`transform: translateX(-${activeIndex * 100}%)`">
                         <template x-for="(img, i) in gallery" :key="i">
-                            <div class="h-full w-full shrink-0 cursor-zoom-in" @click="lightbox = true">
-                                <img :src="img.display" alt="{{ $product->name }}" class="h-full w-full object-cover">
+                            <div class="group/main h-full w-full shrink-0 cursor-zoom-in" @click="openLightbox()">
+                                <img :src="img.display" alt="{{ $product->name }}" class="h-full w-full object-cover transition-transform duration-500 ease-out group-hover/main:scale-[1.03]">
                             </div>
                         </template>
                     </div>
@@ -51,11 +59,55 @@
 
             {{-- Lightbox --}}
             <template x-teleport="body">
-                <div x-show="lightbox" x-cloak x-transition.opacity @keydown.escape.window="lightbox = false" class="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 p-4" @click.self="lightbox = false">
-                    <button type="button" @click="lightbox = false" class="absolute right-4 top-4 flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-2xl text-white hover:bg-white/20">&times;</button>
-                    <button type="button" @click="prev()" x-show="gallery.length > 1" class="absolute left-4 top-1/2 flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full bg-white/10 text-3xl text-white hover:bg-white/20">&lsaquo;</button>
-                    <img :src="gallery[activeIndex]?.full" alt="{{ $product->name }}" x-show="lightbox" x-transition:enter="transition duration-300 ease-out" x-transition:enter-start="opacity-0 scale-90" x-transition:enter-end="opacity-100 scale-100" class="max-h-[90vh] max-w-[92vw] object-contain">
-                    <button type="button" @click="next()" x-show="gallery.length > 1" class="absolute right-4 top-1/2 flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full bg-white/10 text-3xl text-white hover:bg-white/20">&rsaquo;</button>
+                <div
+                    x-show="lightbox"
+                    x-cloak
+                    @keydown.escape.window="closeLightbox()"
+                    class="fixed inset-0 z-[100]"
+                    role="dialog"
+                    aria-modal="true"
+                >
+                    <div
+                        class="product-lightbox-backdrop absolute inset-0"
+                        x-show="lightbox"
+                        x-transition:enter="transition ease-out duration-300"
+                        x-transition:enter-start="opacity-0"
+                        x-transition:enter-end="opacity-100"
+                        x-transition:leave="transition ease-in duration-200"
+                        x-transition:leave-start="opacity-100"
+                        x-transition:leave-end="opacity-0"
+                        @click="closeLightbox()"
+                    ></div>
+
+                    <div class="relative flex h-full items-center justify-center p-4 sm:p-8" @click.self="closeLightbox()">
+                        <button type="button" @click="closeLightbox()" class="absolute right-4 top-4 z-10 flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-2xl text-white transition hover:bg-white/20">&times;</button>
+                        <button type="button" @click.stop="prev()" x-show="gallery.length > 1" class="absolute left-2 top-1/2 z-10 flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full bg-white/10 text-3xl text-white transition hover:bg-white/20 sm:left-4">&lsaquo;</button>
+
+                        <div
+                            x-show="lightbox"
+                            x-transition:enter="transition ease-[cubic-bezier(0.16,1,0.3,1)] duration-500"
+                            x-transition:enter-start="opacity-0 scale-[0.82]"
+                            x-transition:enter-end="opacity-100 scale-100"
+                            x-transition:leave="transition ease-in duration-250"
+                            x-transition:leave-start="opacity-100 scale-100"
+                            x-transition:leave-end="opacity-0 scale-[0.94]"
+                            class="product-lightbox-image relative z-[1] flex max-h-[90vh] max-w-[92vw] items-center justify-center"
+                            @click.stop
+                        >
+                            <img
+                                :src="gallery[activeIndex]?.full"
+                                :key="activeIndex"
+                                alt="{{ $product->name }}"
+                                x-show="lightbox"
+                                x-transition:enter="transition ease-[cubic-bezier(0.16,1,0.3,1)] duration-300"
+                                x-transition:enter-start="opacity-0 scale-95"
+                                x-transition:enter-end="opacity-100 scale-100"
+                                class="max-h-[90vh] max-w-[92vw] object-contain"
+                            >
+                        </div>
+
+                        <button type="button" @click.stop="next()" x-show="gallery.length > 1" class="absolute right-2 top-1/2 z-10 flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full bg-white/10 text-3xl text-white transition hover:bg-white/20 sm:right-4">&rsaquo;</button>
+                    </div>
                 </div>
             </template>
 

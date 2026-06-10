@@ -12,6 +12,14 @@ use Illuminate\View\View;
 
 class SettingController extends Controller
 {
+    /** @var list<string> */
+    private const GROUP_ORDER = [
+        'general',
+        'contact',
+        'social',
+        'banner',
+    ];
+
     /** @var array<string, list<string>> */
     private const GROUP_KEY_ORDER = [
         'contact' => [
@@ -22,6 +30,48 @@ class SettingController extends Controller
             'google_maps_url',
             'google_maps_embed',
         ],
+        'social' => [
+            'zalo',
+            'facebook',
+            'messenger',
+            'youtube',
+            'tiktok',
+        ],
+        'banner' => [
+            'hero_desktop',
+            'hero_mobile',
+            'about_main',
+            'about_small',
+        ],
+    ];
+
+    /** @var array<string, string> */
+    private const GROUP_LABELS = [
+        'general' => 'Chung',
+        'contact' => 'Contact',
+        'social' => 'Social',
+        'banner' => 'Banner',
+    ];
+
+    /** @var array<string, int> 1 = nửa cột, 2 = full width trên md */
+    private const FIELD_COL_SPAN = [
+        'name' => 1,
+        'tagline' => 2,
+        'company_name' => 2,
+        'phone' => 1,
+        'email' => 1,
+        'address' => 2,
+        'google_maps_url' => 2,
+        'google_maps_embed' => 2,
+        'zalo' => 1,
+        'facebook' => 1,
+        'messenger' => 1,
+        'youtube' => 1,
+        'tiktok' => 1,
+        'hero_desktop' => 1,
+        'hero_mobile' => 1,
+        'about_main' => 1,
+        'about_small' => 1,
     ];
 
     public function edit(SettingService $settings): View
@@ -40,7 +90,14 @@ class SettingController extends Controller
                 ->values();
         }
 
-        return view('admin.settings.edit', compact('groups'));
+        $groups = $groups->sortBy(fn ($items, $group) => ($index = array_search($group, self::GROUP_ORDER, true)) !== false
+            ? $index
+            : 999);
+
+        $groupLabels = self::GROUP_LABELS;
+        $fieldColSpan = self::FIELD_COL_SPAN;
+
+        return view('admin.settings.edit', compact('groups', 'groupLabels', 'fieldColSpan'));
     }
 
     public function update(Request $request, SettingService $settings, ImageUploadService $uploader): RedirectResponse
@@ -51,12 +108,19 @@ class SettingController extends Controller
             $key = $item->key;
 
             if ($item->type === 'image') {
+                $existingField = 'existing_' . $key;
+
                 if ($request->hasFile($key)) {
                     $uploader->delete($item->value);
                     $preset = in_array($key, ['hero_desktop', 'hero_mobile'], true) ? $key : null;
                     $folder = 'uploads/settings/' . date('Y/m');
                     $result = $uploader->upload($request->file($key), $folder, $preset);
                     $settings->set($key, $result['path']);
+                } elseif ($request->filled($existingField)) {
+                    // Giữ ảnh hiện tại.
+                } elseif ($item->value) {
+                    $uploader->delete($item->value);
+                    $settings->set($key, '');
                 }
 
                 continue;

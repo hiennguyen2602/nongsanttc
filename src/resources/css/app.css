@@ -207,6 +207,27 @@ html {
     box-shadow: 0 20px 40px -12px rgb(47 115 72 / 0.25);
 }
 
+/* Post card — hover tách khỏi scroll-reveal để không giật */
+.post-card-hover {
+    transition:
+        transform 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+        box-shadow 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.post-card-hover:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 20px 40px -12px rgb(15 23 42 / 0.14);
+}
+
+/* Product gallery lightbox */
+.product-lightbox-backdrop {
+    background-color: rgb(0 0 0 / 0.88);
+}
+
+.product-lightbox-image {
+    transform-origin: center center;
+}
+
 /* Homepage banner CTA — equal height, image fill */
 .banner-cta-grid {
     align-items: stretch;

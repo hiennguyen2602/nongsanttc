@@ -11,34 +11,13 @@
             @csrf @if(isset($post)) @method('PUT') @endif
             <div class="mb-3"><label class="form-label">Tiêu đề *</label><input name="title" value="{{ old('title', $post->title ?? '') }}" required class="form-control"></div>
 
-            <div class="mb-3" x-data="featuredImage(@js($existingFeaturedImage))">
-                <label class="form-label">Ảnh đại diện *</label>
-                <input type="file" x-ref="fileInput" name="image" accept="image/*" @change="addFile($event)" class="form-control">
-                @error('image')<p class="field-error">{{ $message }}</p>@enderror
-
-                <template x-if="existing">
-                    <input type="hidden" name="existing_image" :value="existing.path">
-                </template>
-
-                <div class="image-grid" x-show="existing || newImage" style="display:none">
-                    <template x-if="existing">
-                        <div class="image-card">
-                            <img :src="existing.url" alt="">
-                            <div class="image-card-bar">
-                                <button type="button" class="image-card-remove" @click="removeExisting()">Xóa</button>
-                            </div>
-                        </div>
-                    </template>
-                    <template x-if="newImage">
-                        <div class="image-card">
-                            <img :src="newImage.url" alt="">
-                            <div class="image-card-bar">
-                                <button type="button" class="image-card-remove" @click="removeNew()">Xóa</button>
-                            </div>
-                        </div>
-                    </template>
-                </div>
-            </div>
+            @include('admin.partials.image-upload', [
+                'name' => 'image',
+                'label' => 'Ảnh đại diện',
+                'existing' => $existingFeaturedImage,
+                'existingField' => 'existing_image',
+                'required' => ! isset($post),
+            ])
 
             <div class="mb-3"><label class="form-label">Tóm tắt</label><textarea name="excerpt" rows="10" class="form-control">{{ old('excerpt', $post->excerpt ?? '') }}</textarea></div>
             <div class="mb-3">

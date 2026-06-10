@@ -64,26 +64,51 @@ document.addEventListener('alpine:init', () => {
 
     Alpine.data('floatingContact', () => ({
         visible: false,
+        productsReady: false,
+        footerInView: false,
+
+        updateVisibility() {
+            const hasProductSection = document.getElementById('san-pham');
+            const ready = hasProductSection ? this.productsReady : true;
+            this.visible = ready && ! this.footerInView;
+        },
+
         init() {
-            const target = document.getElementById('san-pham');
-            if (!target) {
-                this.visible = true;
-                return;
+            const productSection = document.getElementById('san-pham');
+
+            if (productSection) {
+                const productObserver = new IntersectionObserver(
+                    (entries) => {
+                        entries.forEach((entry) => {
+                            if (entry.isIntersecting) {
+                                this.productsReady = true;
+                                return;
+                            }
+
+                            this.productsReady = entry.boundingClientRect.top < 0;
+                        });
+                        this.updateVisibility();
+                    },
+                    { threshold: 0 },
+                );
+                productObserver.observe(productSection);
+            } else {
+                this.productsReady = true;
             }
 
-            const observer = new IntersectionObserver(
-                (entries) => {
-                    entries.forEach((entry) => {
-                        if (entry.isIntersecting) {
-                            this.visible = true;
-                            return;
-                        }
-                        this.visible = entry.boundingClientRect.top < 0;
-                    });
-                },
-                { threshold: 0 },
-            );
-            observer.observe(target);
+            const footer = document.getElementById('lien-he');
+            if (footer) {
+                const footerObserver = new IntersectionObserver(
+                    (entries) => {
+                        this.footerInView = entries.some((entry) => entry.isIntersecting);
+                        this.updateVisibility();
+                    },
+                    { threshold: 0 },
+                );
+                footerObserver.observe(footer);
+            }
+
+            this.updateVisibility();
         },
     }));
 });

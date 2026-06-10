@@ -8,22 +8,34 @@
 
         @foreach ($groups as $group => $items)
             <div class="x_panel">
-                <div class="x_title"><h2>{{ ucfirst($group) }}</h2></div>
+                <div class="x_title"><h2>{{ $groupLabels[$group] ?? ucfirst($group) }}</h2></div>
                 <div class="x_content">
                     <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
                         @foreach ($items as $item)
-                            <div class="mb-3 {{ in_array($item->type, ['textarea', 'image']) ? 'md:col-span-2' : '' }}">
-                                <label class="form-label">{{ $item->label ?? $item->key }}</label>
-
+                            @php
+                                $colSpan = $fieldColSpan[$item->key] ?? ($item->type === 'textarea' ? 2 : 1);
+                            @endphp
+                            <div class="mb-3 {{ $colSpan === 2 ? 'md:col-span-2' : '' }}">
                                 @if ($item->type === 'image')
-                                    @if ($item->value)
-                                        <img src="{{ store_media_url($item->value, 'medium') }}" alt="" class="mb-2 h-24 rounded object-cover ring-1 ring-slate-200">
-                                    @endif
-                                    <input type="file" name="{{ $item->key }}" accept="image/*" class="form-control">
-                                @elseif ($item->type === 'textarea')
-                                    <textarea name="{{ $item->key }}" rows="4" class="form-control">{{ old($item->key, $item->value) }}</textarea>
+                                    @php
+                                        $existingSettingImage = $item->value
+                                            ? ['path' => $item->value, 'url' => store_media_url($item->value, 'medium')]
+                                            : null;
+                                    @endphp
+                                    @include('admin.partials.image-upload', [
+                                        'name' => $item->key,
+                                        'label' => $item->label ?? $item->key,
+                                        'existing' => $existingSettingImage,
+                                        'existingField' => 'existing_' . $item->key,
+                                    ])
                                 @else
-                                    <input type="text" name="{{ $item->key }}" value="{{ old($item->key, $item->value) }}" class="form-control">
+                                    <label class="form-label">{{ $item->label ?? $item->key }}</label>
+
+                                    @if ($item->type === 'textarea')
+                                        <textarea name="{{ $item->key }}" rows="4" class="form-control">{{ old($item->key, $item->value) }}</textarea>
+                                    @else
+                                        <input type="text" name="{{ $item->key }}" value="{{ old($item->key, $item->value) }}" class="form-control">
+                                    @endif
                                 @endif
                             </div>
                         @endforeach

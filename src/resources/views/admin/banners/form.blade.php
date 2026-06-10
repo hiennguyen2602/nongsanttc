@@ -27,61 +27,24 @@
             </div>
             <div class="mb-3"><label class="form-label">Thứ tự</label><input type="number" name="sort_order" value="{{ old('sort_order', $banner->sort_order ?? 0) }}" min="0" class="form-control"></div>
 
-            <div class="mb-3" x-data="featuredImage(@js($existingDesktop))">
-                <label class="form-label">Ảnh desktop {{ isset($banner) ? '' : '*' }}</label>
-                <input type="file" x-ref="fileInput" name="image" accept="image/*" @change="addFile($event)" {{ isset($banner) ? '' : 'required' }} class="form-control">
-                @error('image')<p class="field-error">{{ $message }}</p>@enderror
-                <p class="mt-1 text-xs text-slate-500">Giữ nguyên tỷ lệ khi lưu. Trên web hiển thị khung ngang 16:10 — nên dùng ảnh ngang (vd. 1200×750) để đẹp nhất.</p>
-                <template x-if="existing">
-                    <input type="hidden" name="existing_image" :value="existing.path">
-                </template>
-                <div class="image-grid mt-2" x-show="existing || newImage" style="display:none">
-                    <template x-if="existing">
-                        <div class="image-card">
-                            <img :src="existing.url" alt="" class="aspect-[3/1] w-full object-cover">
-                            <div class="image-card-bar">
-                                <button type="button" class="image-card-remove" @click="removeExisting()">Xóa</button>
-                            </div>
-                        </div>
-                    </template>
-                    <template x-if="newImage">
-                        <div class="image-card">
-                            <img :src="newImage.url" alt="" class="aspect-[3/1] w-full object-cover">
-                            <div class="image-card-bar">
-                                <button type="button" class="image-card-remove" @click="removeNew()">Xóa</button>
-                            </div>
-                        </div>
-                    </template>
-                </div>
-            </div>
+            @include('admin.partials.image-upload', [
+                'name' => 'image',
+                'label' => 'Ảnh desktop',
+                'existing' => $existingDesktop,
+                'existingField' => 'existing_image',
+                'required' => ! isset($banner),
+                'imgClass' => 'aspect-[3/1] w-full object-cover',
+                'hint' => 'Giữ nguyên tỷ lệ khi lưu. Trên web hiển thị khung ngang 16:10 — nên dùng ảnh ngang (vd. 1200×750) để đẹp nhất.',
+            ])
 
-            <div class="mb-3" x-data="featuredImage(@js($existingMobile))">
-                <label class="form-label">Ảnh mobile</label>
-                <input type="file" x-ref="fileInput" name="image_mobile" accept="image/*" @change="addFile($event)" class="form-control">
-                @error('image_mobile')<p class="field-error">{{ $message }}</p>@enderror
-                <p class="mt-1 text-xs text-slate-500">Giữ nguyên tỷ lệ ảnh — chỉ thu nhỏ nếu rộng hơn 768px. Nếu bỏ trống sẽ dùng ảnh desktop.</p>
-                <template x-if="existing">
-                    <input type="hidden" name="existing_image_mobile" :value="existing.path">
-                </template>
-                <div class="image-grid mt-2" x-show="existing || newImage" style="display:none">
-                    <template x-if="existing">
-                        <div class="image-card">
-                            <img :src="existing.url" alt="" class="aspect-[768/500] w-full object-cover">
-                            <div class="image-card-bar">
-                                <button type="button" class="image-card-remove" @click="removeExisting()">Xóa</button>
-                            </div>
-                        </div>
-                    </template>
-                    <template x-if="newImage">
-                        <div class="image-card">
-                            <img :src="newImage.url" alt="" class="aspect-[768/500] w-full object-cover">
-                            <div class="image-card-bar">
-                                <button type="button" class="image-card-remove" @click="removeNew()">Xóa</button>
-                            </div>
-                        </div>
-                    </template>
-                </div>
-            </div>
+            @include('admin.partials.image-upload', [
+                'name' => 'image_mobile',
+                'label' => 'Ảnh mobile',
+                'existing' => $existingMobile,
+                'existingField' => 'existing_image_mobile',
+                'imgClass' => 'aspect-[768/500] w-full object-cover',
+                'hint' => 'Giữ nguyên tỷ lệ ảnh — chỉ thu nhỏ nếu rộng hơn 768px. Nếu bỏ trống sẽ dùng ảnh desktop.',
+            ])
 
             <div class="form-check mb-4">
                 <input type="hidden" name="is_active" value="0">

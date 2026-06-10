@@ -16,21 +16,46 @@
             </div>
         </div>
         <div class="x_content">
-            <article class="admin-post-preview mx-auto max-w-4xl">
-                <header class="mb-8">
-                    <p class="mb-2 text-sm text-slate-500">{{ $post->published_at?->format('d/m/Y') }}</p>
-                    @include('admin.partials.status-badge', ['label' => $post->publishStatusLabel(), 'class' => $post->publishStatusBadgeClass()])
-                    <h1 class="mt-4 text-2xl font-bold text-slate-900 sm:text-3xl">{{ $post->title }}</h1>
-                </header>
-
-                @if ($post->excerpt)
-                    <p class="mb-8 text-lg leading-relaxed text-slate-600">{{ $post->excerpt }}</p>
-                @endif
-
-                @if ($post->content)
-                    <div class="prose prose-slate max-w-none text-slate-700">{!! $post->content !!}</div>
-                @endif
-            </article>
+            <dl class="product-detail-list admin-post-detail">
+                <div>
+                    <dt>Ngày đăng</dt>
+                    <dd>{{ $post->published_at?->format('d/m/Y') ?: '—' }}</dd>
+                </div>
+                <div>
+                    <dt>Trạng thái</dt>
+                    <dd>
+                        @include('admin.partials.status-badge', ['label' => $post->publishStatusLabel(), 'class' => $post->publishStatusBadgeClass()])
+                    </dd>
+                </div>
+                <div>
+                    <dt>Ảnh đại diện</dt>
+                    <dd>
+                        @if ($post->image)
+                            <img
+                                src="{{ store_media_url($post->image, 'medium') }}"
+                                alt=""
+                                class="admin-post-featured-image w-full rounded-lg object-cover ring-1 ring-slate-200"
+                            >
+                        @else
+                            —
+                        @endif
+                    </dd>
+                </div>
+                <div>
+                    <dt>Tóm tắt</dt>
+                    <dd class="whitespace-pre-wrap text-slate-600">{{ $post->excerpt ?: '—' }}</dd>
+                </div>
+                <div>
+                    <dt>Nội dung</dt>
+                    <dd>
+                        @if ($post->content)
+                            <div class="prose prose-slate max-w-none text-slate-700">{!! $post->content !!}</div>
+                        @else
+                            —
+                        @endif
+                    </dd>
+                </div>
+            </dl>
         </div>
     </div>
 @endsection
