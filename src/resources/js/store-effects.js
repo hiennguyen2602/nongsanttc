@@ -1,4 +1,124 @@
 document.addEventListener('alpine:init', () => {
+    const formatVnd = (amount) => `${Number(amount).toLocaleString('vi-VN')}đ`;
+
+    Alpine.data('cartPage', (initial = {}) => ({
+        subtotal: Number(initial.subtotal ?? 0),
+        shippingFee: Number(initial.shippingFee ?? 0),
+        grandTotal: Number(initial.grandTotal ?? 0),
+        freeShipThreshold: 350000,
+
+        get shipRemaining() {
+            return Math.max(0, this.freeShipThreshold - this.subtotal);
+        },
+
+        get shipProgress() {
+            if (this.subtotal >= this.freeShipThreshold) {
+                return 100;
+            }
+
+            return Math.min(100, (this.subtotal / this.freeShipThreshold) * 100);
+        },
+
+        get hasFreeShip() {
+            return this.subtotal >= this.freeShipThreshold;
+        },
+
+        formatMoney(amount) {
+            return formatVnd(amount);
+        },
+
+        applyTotals(detail) {
+            this.subtotal = Number(detail.subtotal ?? 0);
+            this.shippingFee = Number(detail.shipping_fee ?? 0);
+            this.grandTotal = Number(detail.grand_total ?? 0);
+        },
+    }));
+
+    Alpine.data('cartLineItem', (cartKey, unitPrice, initialQty, updateUrl) => ({
+        cartKey,
+        unitPrice: Number(unitPrice) || 0,
+        qty: Number(initialQty) || 1,
+        lineTotal: (Number(initialQty) || 1) * (Number(unitPrice) || 0),
+        updateUrl,
+        busy: false,
+        lastSyncedQty: Number(initialQty) || 1,
+
+        formatMoney(amount) {
+            return formatVnd(amount);
+        },
+
+        async syncQuantity(newQty) {
+            if (this.busy) {
+                return;
+            }
+
+            const token = document.querySelector('meta[name="csrf-token"]')?.content;
+            const body = new FormData();
+            body.append('_token', token ?? '');
+            body.append('_method', 'PATCH');
+            body.append('key', this.cartKey);
+            body.append('quantity', String(newQty));
+
+            this.busy = true;
+
+            try {
+                const response = await fetch(this.updateUrl, {
+                    method: 'POST',
+                    headers: {
+                        Accept: 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest',
+                    },
+                    body,
+                    credentials: 'same-origin',
+                });
+
+                const data = await response.json().catch(() => ({}));
+
+                if (! response.ok) {
+                    throw new Error(data.message ?? 'Không cập nhật được giỏ hàng.');
+                }
+
+                if (data.quantity === 0) {
+                    window.location.reload();
+
+                    return;
+                }
+
+                this.qty = data.quantity;
+                this.lineTotal = data.line_total;
+                this.lastSyncedQty = data.quantity;
+                this.$dispatch('cart-totals-updated', data);
+            } catch (error) {
+                window.alert(error instanceof Error ? error.message : 'Không cập nhật được giỏ hàng.');
+                window.location.reload();
+            } finally {
+                this.busy = false;
+            }
+        },
+
+        decrement() {
+            const n = parseInt(String(this.qty).replace(/\D/g, ''), 10) || 1;
+            if (n <= 1) {
+                return;
+            }
+            this.syncQuantity(n - 1);
+        },
+
+        increment() {
+            const n = parseInt(String(this.qty).replace(/\D/g, ''), 10) || 0;
+            this.syncQuantity(n + 1);
+        },
+
+        normalizeQty() {
+            const n = parseInt(String(this.qty).replace(/\D/g, ''), 10);
+            const next = Number.isNaN(n) || n < 1 ? 1 : n;
+            this.qty = next;
+            if (next !== this.lastSyncedQty) {
+                this.syncQuantity(next);
+            }
+        },
+    }));
+
     Alpine.data('heroSection', () => ({
         parallax: 0,
         init() {
@@ -59,41 +179,6 @@ document.addEventListener('alpine:init', () => {
         },
         go() {
             window.scrollTo({ top: 0, behavior: 'smooth' });
-        },
-    }));
-
-    Alpine.data('cartLineItem', (initialQty = 1) => ({
-        qty: Number(initialQty) || 1,
-
-        submitQty() {
-            this.$nextTick(() => {
-                if (typeof this.$el.requestSubmit === 'function') {
-                    this.$el.requestSubmit();
-                } else {
-                    this.$el.submit();
-                }
-            });
-        },
-
-        decrement() {
-            const n = parseInt(String(this.qty).replace(/\D/g, ''), 10) || 1;
-            if (n <= 1) {
-                return;
-            }
-            this.qty = n - 1;
-            this.submitQty();
-        },
-
-        increment() {
-            const n = parseInt(String(this.qty).replace(/\D/g, ''), 10) || 0;
-            this.qty = n + 1;
-            this.submitQty();
-        },
-
-        normalizeQty() {
-            const n = parseInt(String(this.qty).replace(/\D/g, ''), 10);
-            this.qty = Number.isNaN(n) || n < 1 ? 1 : n;
-            this.submitQty();
         },
     }));
 
