@@ -6,6 +6,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('title', config('store.name'))</title>
     <meta name="description" content="@yield('meta_description', config('store.tagline'))">
+    @include('partials.favicon')
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @stack('head')
 </head>
