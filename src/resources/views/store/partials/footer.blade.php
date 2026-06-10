@@ -35,10 +35,15 @@
             <div>
                 <h3 class="mb-4 text-sm font-bold uppercase tracking-wide text-slate-800">Danh mục</h3>
                 <ul class="space-y-2 text-sm">
-                    <li><a href="{{ route('products.index', ['category' => 'gao-ngu-coc']) }}" class="hover:text-brand">Gạo & Ngũ cốc</a></li>
-                    <li><a href="{{ route('products.index', ['category' => 'trai-cay-rau-cu']) }}" class="hover:text-brand">Trái cây & Rau củ</a></li>
-                    <li><a href="{{ route('products.index', ['category' => 'dac-san-vung-mien']) }}" class="hover:text-brand">Đặc sản vùng miền</a></li>
-                    <li><a href="{{ route('products.index', ['category' => 'qua-tang']) }}" class="hover:text-brand">Quà tặng</a></li>
+                    @forelse ($footerCategories as $category)
+                        <li>
+                            <a href="{{ route('products.index', ['category' => $category->slug]) }}" class="hover:text-brand">
+                                {{ $category->name }}
+                            </a>
+                        </li>
+                    @empty
+                        <li class="text-slate-400">Chưa có danh mục</li>
+                    @endforelse
                 </ul>
             </div>
 
