@@ -2,49 +2,48 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Http\Controllers\Concerns\ResolvesDateRange;
 use App\Http\Controllers\Controller;
+use App\Models\Order;
+use Illuminate\Http\Request;
 use Illuminate\View\View;
 
 class DashboardController extends Controller
 {
-    public function index(): View
+    use ResolvesDateRange;
+
+    public function index(Request $request): View
     {
-        $stats = [
-            [
-                'label' => 'Tổng đơn hàng',
-                'value' => '0',
-                'change' => '0%',
-                'trend' => 'up',
-                'icon' => 'orders',
-            ],
-            [
-                'label' => 'Doanh thu',
-                'value' => '0đ',
-                'change' => '0%',
-                'trend' => 'up',
-                'icon' => 'revenue',
-            ],
-            [
-                'label' => 'Sản phẩm',
-                'value' => '0',
-                'change' => '0 mới',
-                'trend' => 'neutral',
-                'icon' => 'products',
-            ],
-            [
-                'label' => 'Khách hàng',
-                'value' => '0',
-                'change' => '0 mới',
-                'trend' => 'up',
-                'icon' => 'users',
-            ],
-        ];
+        $period = $request->input('period', 'recent');
+        [$fromDate, $toDate] = $this->resolveDateRange($period, $request);
 
-        $recentOrders = [];
-        $recentActivities = [
-            ['message' => 'Chào mừng đến với hệ thống quản trị Nông Sản TTC.', 'time' => 'Vừa xong'],
-        ];
+        $query = Order::query();
 
-        return view('admin.dashboard', compact('stats', 'recentOrders', 'recentActivities'));
+        if ($fromDate) {
+            $query->where('created_at', '>=', $fromDate);
+        }
+
+        if ($toDate) {
+            $query->where('created_at', '<=', $toDate);
+        }
+
+        $statusCounts = (clone $query)
+            ->selectRaw('status, COUNT(*) as aggregate')
+            ->groupBy('status')
+            ->pluck('aggregate', 'status');
+
+        $statusLabels = Order::statusLabels();
+
+        return view('admin.dashboard', [
+            'totalOrders' => (int) $statusCounts->sum(),
+            'statusLabels' => $statusLabels,
+            'statusCounts' => $statusCounts,
+            'statusColors' => Order::statusColors(),
+            'recentOrders' => (clone $query)->latest()->limit(8)->get(),
+            'periods' => $this->datePeriods(),
+            'period' => $period,
+            'fromInput' => $fromDate?->format('Y-m-d'),
+            'toInput' => $toDate?->format('Y-m-d'),
+        ]);
     }
 }

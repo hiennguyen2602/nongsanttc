@@ -1,5 +1,8 @@
 # Local dev — copy thành docker-compose.override.yml (một lần)
 # cp docker-compose.override.yml.example docker-compose.override.yml
+#
+# Vite: build + watch (tải trang nhanh, tự build lại khi sửa code — F5 trình duyệt)
+# HMR tức thì (chậm lần đầu): VITE_MODE=dev trong environment bên dưới
 
 services:
   web:
@@ -18,10 +21,13 @@ services:
       CHOKIDAR_USEPOLLING: "true"
       CHOKIDAR_INTERVAL: "1000"
       TZ: Asia/Ho_Chi_Minh
+      # Bỏ comment dòng dưới nếu muốn HMR giống vite dev (lần đầu có thể rất chậm trên Windows)
+      # VITE_MODE: dev
     volumes:
       - ./src:/var/www/html
+      - ./docker/vite/start.sh:/docker/vite/start.sh:ro
       - vite_node_modules:/var/www/html/node_modules
-    command: sh -c "npm install && npm run dev"
+    command: sh -c "sed 's/\\r$//' /docker/vite/start.sh | sh"
     ports:
       - "5173:5173"
     depends_on:

@@ -1,35 +1,48 @@
 @extends('store.layouts.app')
 
-@section('title', 'Về chúng tôi — ' . config('store.name'))
+@section('title', 'Về chúng tôi — ' . store_setting('name'))
 
 @section('content')
+    @php
+        $aboutMainUrl = store_media_url(store_setting('about_main'));
+        $aboutSmallUrl = store_media_url(store_setting('about_small'));
+    @endphp
+
     {{-- Hero nhỏ --}}
-    <section class="relative flex min-h-[40vh] items-center justify-center overflow-hidden">
-        <img src="https://images.unsplash.com/photo-1464226184884-fa280b87c399?w=1920&h=600&fit=crop" alt="" class="absolute inset-0 h-full w-full object-cover">
+    <section class="relative flex min-h-[40vh] items-center justify-center overflow-hidden {{ $aboutMainUrl ? '' : 'bg-brand-dark' }}">
+        @if ($aboutMainUrl)
+            <img src="{{ $aboutMainUrl }}" alt="" class="absolute inset-0 h-full w-full object-cover">
+        @endif
         <div class="absolute inset-0 bg-black/50"></div>
-        <div class="relative z-10 px-4 text-center text-white">
+        <div class="relative z-10 store-container text-center text-white">
             <p class="font-display mb-2 italic text-amber-200/90">Về chúng tôi</p>
-            <h1 class="text-3xl font-bold sm:text-4xl">Câu chuyện {{ config('store.name') }}</h1>
+            <h1 class="text-3xl font-bold sm:text-4xl">Câu chuyện {{ store_setting('name') }}</h1>
         </div>
     </section>
 
     <section class="py-16 lg:py-24">
-        <div class="mx-auto grid max-w-7xl grid-cols-1 items-center gap-12 px-4 sm:px-6 lg:grid-cols-2">
+        <div class="store-container grid grid-cols-1 items-center gap-12 lg:grid-cols-2">
             <div>
                 <h2 class="mb-4 text-2xl font-bold text-slate-900">Sứ mệnh của chúng tôi</h2>
                 <p class="mb-4 text-slate-600 leading-relaxed">
-                    {{ config('store.name') }} cam kết mang đến nông sản sạch, an toàn và đậm đà bản sắc Việt. Chúng tôi làm việc trực tiếp với nông dân và hợp tác xã, minh bạch hóa toàn bộ chuỗi cung ứng từ ruộng đến tay người tiêu dùng.
+                    {{ store_setting('name') }} cam kết mang đến nông sản sạch, an toàn và đậm đà bản sắc Việt. Chúng tôi làm việc trực tiếp với nông dân và hợp tác xã, minh bạch hóa toàn bộ chuỗi cung ứng từ ruộng đến tay người tiêu dùng.
                 </p>
                 <p class="text-slate-600 leading-relaxed">
                     Mỗi sản phẩm đều được kiểm tra chất lượng, đóng gói cẩn thận và giao đến tay khách hàng với sự tận tâm cao nhất.
                 </p>
             </div>
-            <img src="https://images.unsplash.com/photo-1625246333195-78d9c38ad449?w=800&h=600&fit=crop" alt="Nông trại" class="rounded-xl object-cover shadow-lg">
+            @if ($aboutSmallUrl)
+                <img src="{{ $aboutSmallUrl }}" alt="Nông trại" class="aspect-[4/3] w-full rounded-xl object-cover shadow-lg">
+            @else
+                <div class="aspect-[4/3] w-full overflow-hidden rounded-xl shadow-lg ring-1 ring-slate-200/50">
+                    @include('store.partials.media-placeholder')
+                </div>
+            @endif
         </div>
     </section>
 
     <section class="bg-slate-50 py-16">
-        <div class="mx-auto max-w-7xl px-4 text-center sm:px-6">
+        <div class="store-container text-center">
             <h2 class="mb-10 text-2xl font-bold text-slate-900">Giá trị cốt lõi</h2>
             <div class="grid grid-cols-1 gap-8 sm:grid-cols-3">
                 <div class="rounded-xl bg-white p-6 shadow-sm">

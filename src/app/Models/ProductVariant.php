@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class ProductVariant extends Model
 {
-    protected $fillable = ['product_id', 'flavor', 'size', 'price', 'sku', 'stock'];
+    protected $fillable = ['product_id', 'flavor', 'size', 'price', 'stock'];
 
     public function product(): BelongsTo
     {

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Banner;
 use App\Models\Post;
 use App\Models\Product;
+use App\Models\Promotion;
 use Illuminate\View\View;
 
 class HomeController extends Controller
@@ -27,7 +28,12 @@ class HomeController extends Controller
             'banners' => Banner::query()
                 ->where('is_active', true)
                 ->where('position', 'home_cta')
+                ->where('image', '!=', '')
                 ->orderBy('sort_order')
+                ->get(),
+            'promotions' => Promotion::query()
+                ->where('is_active', true)
+                ->orderBy('min_order')
                 ->get(),
         ]);
     }

@@ -1,0 +1,115 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+
+class Order extends Model
+{
+    public const STATUS_PENDING = 'pending';
+
+    public const STATUS_CONFIRMED = 'confirmed';
+
+    public const STATUS_SHIPPING = 'shipping';
+
+    public const STATUS_COMPLETED = 'completed';
+
+    public const STATUS_CANCELLED = 'cancelled';
+
+    protected $fillable = [
+        'order_code',
+        'public_token',
+        'customer_id',
+        'customer_name',
+        'customer_phone',
+        'customer_email',
+        'customer_address',
+        'note',
+        'subtotal',
+        'shipping_fee',
+        'discount',
+        'total',
+        'promo_code',
+        'payment_method',
+        'status',
+        'viewed_at',
+    ];
+
+    protected function casts(): array
+    {
+        return [
+            'viewed_at' => 'datetime',
+        ];
+    }
+
+    public function customer(): BelongsTo
+    {
+        return $this->belongsTo(Customer::class);
+    }
+
+    public function items(): HasMany
+    {
+        return $this->hasMany(OrderItem::class);
+    }
+
+    public function scopeNew(Builder $query): Builder
+    {
+        return $query->whereNull('viewed_at');
+    }
+
+    public function isNew(): bool
+    {
+        return $this->viewed_at === null;
+    }
+
+    public function markViewed(): void
+    {
+        if ($this->viewed_at === null) {
+            $this->forceFill(['viewed_at' => now()])->save();
+        }
+    }
+
+    public static function statusLabels(): array
+    {
+        return config('labels.order_status');
+    }
+
+    /**
+     * Màu đại diện cho từng trạng thái (dùng cho số liệu thống kê).
+     *
+     * @return array<string, string>
+     */
+    public static function statusColors(): array
+    {
+        return [
+            self::STATUS_PENDING => 'orange',
+            self::STATUS_CONFIRMED => 'blue',
+            self::STATUS_SHIPPING => 'fuchsia',
+            self::STATUS_COMPLETED => 'green',
+            self::STATUS_CANCELLED => 'red',
+        ];
+    }
+
+    public function statusColor(): string
+    {
+        return self::statusColors()[$this->status] ?? '#64748b';
+    }
+
+    public function statusBadgeClass(): string
+    {
+        return 'badge-status-' . $this->status;
+    }
+
+    public function statusLabel(): string
+    {
+        return self::statusLabels()[$this->status] ?? $this->status;
+    }
+
+    public function formattedTotal(): string
+    {
+        return number_format($this->total, 0, ',', '.') . 'đ';
+    }
+}

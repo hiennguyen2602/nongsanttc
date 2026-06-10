@@ -1,6 +1,6 @@
 # Production / VPS: docker compose up -d --build
 # Local dev: cp docker-compose.override.yml.example docker-compose.override.yml
-# Frontend dev (HMR): docker compose --profile dev up -d
+# Frontend dev (HMR): copy docker-compose.override.yml.example → override, tùy chọn VITE_MODE=dev
 
 services:
   app:
@@ -18,9 +18,41 @@ services:
       AUTO_MIGRATE: "false"
       TZ: Asia/Ho_Chi_Minh
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "php-fpm -t 2>/dev/null || exit 1"]
+      interval: 5s
+      timeout: 3s
+      retries: 12
+      start_period: 30s
     depends_on:
       db:
         condition: service_healthy
+    networks:
+      - nongsanttc
+
+  scheduler:
+    build:
+      context: .
+      dockerfile: docker/php/Dockerfile
+    container_name: nongsanttc-scheduler
+    working_dir: /var/www/html
+    volumes:
+      - ./src:/var/www/html
+      - app_vendor:/var/www/html/vendor
+      - app_storage:/var/www/html/storage
+      - app_bootstrap_cache:/var/www/html/bootstrap/cache
+    environment:
+      TZ: Asia/Ho_Chi_Minh
+    restart: unless-stopped
+    depends_on:
+      app:
+        condition: service_healthy
+      db:
+        condition: service_healthy
+    command:
+      - sh
+      - -c
+      - "while true; do php artisan schedule:run; sleep 60; done"
     networks:
       - nongsanttc
 
@@ -28,7 +60,8 @@ services:
     image: nginx:1.27-alpine
     container_name: nongsanttc-web
     depends_on:
-      - app
+      app:
+        condition: service_healthy
     restart: unless-stopped
     environment:
       TZ: Asia/Ho_Chi_Minh
@@ -112,8 +145,10 @@ services:
     networks:
       - nongsanttc
 
-  # Build assets một lần: docker compose run --rm vite-build
+  # Chạy thủ công: docker compose run --rm vite-build
   vite-build:
+    profiles: [build]
+    restart: "no"
     image: node:22-alpine
     working_dir: /var/www/html
     volumes:

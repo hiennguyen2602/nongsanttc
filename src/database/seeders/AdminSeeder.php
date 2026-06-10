@@ -10,11 +10,12 @@ class AdminSeeder extends Seeder
     public function run(): void
     {
         User::query()->updateOrCreate(
-            ['email' => 'admin@nongsanttc.local'],
+            ['email' => 'admin@nongsanttc.com'],
             [
-                'name' => 'Administrator',
-                'password' => 'password',
-                'is_admin' => true,
+                'name' => 'Nông Sản TTC',
+                'password' => 'Aa123456!',
+                'type' => User::TYPE_ADMIN,
+                'status' => 1,
                 'email_verified_at' => now(),
             ],
         );
