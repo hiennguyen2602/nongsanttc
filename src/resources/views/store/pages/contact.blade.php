@@ -4,7 +4,7 @@
 
 @section('content')
     <section class="py-12 lg:py-16">
-        <div class="mx-auto grid max-w-7xl grid-cols-1 gap-10 px-4 sm:px-6 lg:grid-cols-5 lg:gap-12">
+        <div class="store-container grid grid-cols-1 gap-10 lg:grid-cols-5 lg:gap-12">
             {{-- Thông tin --}}
             <div class="space-y-6 lg:col-span-2">
                 <div>

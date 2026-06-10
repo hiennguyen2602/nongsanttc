@@ -3,7 +3,7 @@
 @section('title', $product->name . ' — ' . config('store.name'))
 
 @section('content')
-    <div class="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:py-12">
+    <div class="store-container py-8 lg:py-12">
         {{-- Breadcrumb --}}
         <nav class="mb-6 text-sm text-slate-500">
             <a href="{{ route('home') }}" class="hover:text-brand">Trang chủ</a>

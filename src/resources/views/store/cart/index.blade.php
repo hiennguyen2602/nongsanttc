@@ -12,7 +12,7 @@
     @endphp
 
     <div class="bg-brand py-8 text-white sm:py-10">
-        <div class="mx-auto max-w-7xl px-4 sm:px-6">
+        <div class="store-container">
             <nav class="mb-2 text-sm text-white/75">
                 <a href="{{ route('home') }}" class="hover:text-white">Trang chủ</a>
                 <span class="mx-2">/</span>
@@ -25,7 +25,7 @@
         </div>
     </div>
 
-    <div class="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:py-10 {{ $items->isEmpty() ? '' : 'pb-24 lg:pb-10' }}">
+    <div class="store-container py-8 lg:py-10 {{ $items->isEmpty() ? '' : 'pb-24 lg:pb-10' }}">
         @if (session('success'))
             <div class="mb-6 rounded-lg border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-800">
                 {{ session('success') }}
@@ -187,7 +187,7 @@
 
             {{-- Mobile: thanh thanh toán cố định, không bị icon liên hệ che --}}
             <div class="fixed inset-x-0 bottom-0 z-50 border-t border-slate-200 bg-white px-4 py-3 shadow-[0_-4px_20px_rgba(15,23,42,0.1)] lg:hidden">
-                <div class="mx-auto flex max-w-7xl items-center gap-3">
+                <div class="store-container flex items-center gap-3">
                     <div class="min-w-0 flex-1">
                         <p class="text-xs text-slate-500">Tổng cộng</p>
                         <p class="truncate text-lg font-bold text-brand">{{ format_money($grandTotal) }}</p>

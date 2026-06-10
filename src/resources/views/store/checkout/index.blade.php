@@ -3,7 +3,7 @@
 @section('title', 'Đặt hàng — ' . store_setting('name'))
 
 @section('content')
-    <div class="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:py-12">
+    <div class="store-container py-8 lg:py-12">
         <div
             x-data="checkoutForm(@js([
                 'name' => old('name', ''),

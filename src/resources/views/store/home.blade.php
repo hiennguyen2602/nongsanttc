@@ -3,27 +3,36 @@
 @section('title', config('store.name') . ' — ' . config('store.tagline'))
 
 @push('head')
-    <link rel="preload" as="image" href="{{ store_media_url(store_setting('hero_desktop', config('store.images.hero'))) }}">
+    @if ($heroDesktopUrl = store_media_url(store_setting('hero_desktop')))
+        <link rel="preload" as="image" href="{{ $heroDesktopUrl }}">
+    @endif
 @endpush
 
 @section('content')
     {{-- Hero — parallax + entrance animation --}}
     @php
-        $heroDesktop = store_setting('hero_desktop', config('store.images.hero'));
-        $heroMobile = store_setting('hero_mobile', $heroDesktop);
+        $heroDesktop = store_setting('hero_desktop');
+        $heroMobile = store_setting('hero_mobile') ?: $heroDesktop;
+        $heroDesktopUrl = store_media_url($heroDesktop);
+        $heroMobileUrl = store_media_url($heroMobile);
+        $aboutMainUrl = store_media_url(store_setting('about_main'));
+        $aboutSmallUrl = store_media_url(store_setting('about_small'));
     @endphp
     <section
         x-data="heroSection()"
-        class="hero-section relative flex min-h-[75vh] items-center justify-center overflow-hidden lg:min-h-[90vh]"
+        class="hero-section relative flex min-h-[75vh] items-center justify-center overflow-hidden lg:min-h-[90vh] {{ $heroDesktopUrl ? '' : 'bg-brand-dark' }}"
     >
+        @if ($heroDesktopUrl)
         <div
             class="hero-section__media absolute inset-0 scale-105 will-change-transform"
             :style="`transform: translateY(${parallax}px) scale(1.05)`"
         >
             <picture>
-                <source media="(max-width: 767px)" srcset="{{ store_media_url($heroMobile) }}">
+                @if ($heroMobileUrl && $heroMobileUrl !== $heroDesktopUrl)
+                    <source media="(max-width: 767px)" srcset="{{ $heroMobileUrl }}">
+                @endif
                 <img
-                    src="{{ store_media_url($heroDesktop) }}"
+                    src="{{ $heroDesktopUrl }}"
                     alt="{{ store_setting('name') }}"
                     class="hero-section__image h-full w-full object-cover object-center"
                     fetchpriority="high"
@@ -31,9 +40,10 @@
                 >
             </picture>
         </div>
+        @endif
         <div class="absolute inset-0 bg-gradient-to-b from-black/40 via-black/50 to-black/70"></div>
 
-        <div class="relative z-10 mx-auto max-w-4xl px-4 text-center text-white">
+        <div class="relative z-10 store-container store-container--hero text-center text-white">
             <p class="hero-animate font-display mb-3 text-lg italic text-harvest sm:text-xl">{{ config('store.name') }}</p>
             <h1 class="hero-animate hero-animate-delay-1 mb-4 text-3xl font-bold leading-tight sm:text-5xl lg:text-6xl">
                 Trải nghiệm nông sản<br><span class="text-brand-light">sạch & chân thực</span>
@@ -61,7 +71,7 @@
 
     {{-- Trust stats — stagger reveal + counter --}}
     <section id="noi-dung" class="scroll-section relative z-10 -mt-1 border-b border-brand/10 bg-white shadow-[0_-20px_40px_-20px_rgba(47,115,72,0.15)]">
-        <div class="mx-auto grid max-w-7xl grid-cols-2 divide-x divide-slate-100 px-4 py-8 sm:grid-cols-4 sm:px-6 sm:py-10" data-reveal-group>
+        <div class="store-container grid grid-cols-2 divide-x divide-slate-100 py-8 sm:grid-cols-4 sm:py-10" data-reveal-group>
             <div x-data="statCounter(500, '+')" data-reveal="fade-up" class="px-4 text-center">
                 <p class="text-2xl font-bold text-brand sm:text-3xl" x-text="current + suffix">0</p>
                 <p class="mt-1 text-xs text-slate-500 sm:text-sm">Khách hàng tin dùng</p>
@@ -83,23 +93,31 @@
 
     {{-- Giới thiệu --}}
     <section class="scroll-section overflow-hidden bg-white py-20 lg:py-28">
-        <div class="mx-auto grid max-w-7xl grid-cols-1 items-center gap-12 px-4 sm:px-6 lg:grid-cols-2 lg:gap-20">
+        <div class="store-container grid grid-cols-1 items-center gap-12 lg:grid-cols-2 lg:gap-20">
             <div data-reveal="fade-left" class="relative">
                 <div data-reveal="zoom-in" data-reveal-delay="200" class="absolute -left-4 -top-4 h-24 w-24 rounded-full bg-brand-muted lg:-left-8 lg:-top-8 lg:h-32 lg:w-32"></div>
-                <img
-                    src="{{ store_media_url(config('store.images.about_main')) }}"
-                    alt="Nông dân TTC"
-                    class="relative aspect-[4/5] w-full rounded-2xl object-cover shadow-2xl ring-1 ring-slate-200/50"
-                    loading="lazy"
-                    decoding="async"
-                >
-                <img
-                    src="{{ store_media_url(config('store.images.about_small')) }}"
-                    alt="Thu hoạch"
-                    class="absolute -bottom-6 -right-4 hidden w-40 rounded-xl object-cover shadow-xl ring-4 ring-white sm:block lg:-right-8 lg:w-52"
-                    loading="lazy"
-                    decoding="async"
-                >
+                @if ($aboutMainUrl)
+                    <img
+                        src="{{ $aboutMainUrl }}"
+                        alt="Nông dân TTC"
+                        class="relative aspect-[4/5] w-full rounded-2xl object-cover shadow-2xl ring-1 ring-slate-200/50"
+                        loading="lazy"
+                        decoding="async"
+                    >
+                @else
+                    <div class="relative aspect-[4/5] w-full overflow-hidden rounded-2xl shadow-2xl ring-1 ring-slate-200/50">
+                        @include('store.partials.media-placeholder')
+                    </div>
+                @endif
+                @if ($aboutSmallUrl)
+                    <img
+                        src="{{ $aboutSmallUrl }}"
+                        alt="Thu hoạch"
+                        class="absolute -bottom-6 -right-4 hidden w-40 rounded-xl object-cover shadow-xl ring-4 ring-white sm:block lg:-right-8 lg:w-52"
+                        loading="lazy"
+                        decoding="async"
+                    >
+                @endif
                 <div data-reveal="zoom-in" data-reveal-delay="400" class="absolute -bottom-4 left-4 rounded-xl bg-brand px-4 py-3 text-white shadow-lg lg:-bottom-6 lg:left-8">
                     <p class="text-2xl font-bold">100%</p>
                     <p class="text-xs text-white/85">Nguồn gốc rõ ràng</p>
@@ -135,7 +153,7 @@
 
     {{-- Sản phẩm --}}
     <section id="san-pham" class="scroll-section bg-gradient-to-b from-brand-muted/50 to-slate-50 py-20">
-        <div class="mx-auto max-w-7xl px-4 sm:px-6">
+        <div class="store-container">
             <div data-reveal="fade-up" class="mb-10 flex items-end justify-between">
                 <div>
                     <span data-reveal="line" data-reveal-delay="300" class="mb-2 inline-block h-1 w-10 rounded-full bg-harvest"></span>
@@ -167,7 +185,7 @@
     {{-- Banner CTA --}}
     @if ($banners->isNotEmpty())
         <section class="scroll-section bg-slate-50 py-16 lg:py-20">
-            <div class="mx-auto max-w-7xl px-4 sm:px-6">
+            <div class="store-container">
                 <div data-reveal="fade-up" class="mb-10 text-center">
                     <span class="mb-2 inline-block rounded-full bg-brand/10 px-3 py-1 text-xs font-bold uppercase tracking-wider text-brand">Khám phá</span>
                     <h2 class="mt-3 text-2xl font-bold text-slate-900 sm:text-3xl">Ưu đãi &amp; chương trình</h2>
@@ -209,7 +227,7 @@
 
     {{-- Khuyến mãi --}}
     <section class="scroll-section border-y border-slate-100 bg-white py-16">
-        <div class="mx-auto max-w-7xl px-4 sm:px-6">
+        <div class="store-container">
             <div data-reveal="fade-up" class="mb-8 text-center">
                 <span class="mb-2 inline-block rounded-full bg-harvest/15 px-3 py-1 text-xs font-bold uppercase tracking-wider text-harvest-dark">Ưu đãi</span>
                 <span data-reveal="line" data-reveal-delay="250" class="mx-auto mt-4 block h-0.5 w-16 rounded-full bg-brand/30"></span>
@@ -235,7 +253,7 @@
 
     {{-- Tin tức --}}
     <section class="scroll-section bg-slate-50 py-20">
-        <div class="mx-auto max-w-7xl px-4 sm:px-6">
+        <div class="store-container">
             <div data-reveal="fade-up" class="mb-12 text-center">
                 <span data-reveal="line" data-reveal-delay="250" class="mx-auto mb-3 block h-1 w-12 rounded-full bg-brand"></span>
                 <h2 class="text-2xl font-bold text-slate-900 sm:text-3xl">Tin tức &amp; Bài viết</h2>
@@ -265,7 +283,7 @@
             <div class="absolute -left-20 -top-20 h-64 w-64 rounded-full bg-white"></div>
             <div class="absolute -bottom-16 -right-16 h-48 w-48 rounded-full bg-harvest"></div>
         </div>
-        <div class="relative mx-auto max-w-3xl px-4 text-center text-white sm:px-6">
+        <div class="relative store-container store-container--cta text-center text-white">
             <h2 class="text-2xl font-bold sm:text-3xl">Trải nghiệm nông sản sạch ngay hôm nay</h2>
             <p class="mt-3 text-white/85">Đặt hàng online — giao tận nơi — cam kết chất lượng</p>
             <div class="mt-8 flex flex-wrap justify-center gap-4">

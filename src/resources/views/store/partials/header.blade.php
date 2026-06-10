@@ -31,7 +31,7 @@
     class="site-header fixed inset-x-0 top-0 z-50 text-white transition-all duration-300 {{ $headerTransparent ? 'bg-transparent shadow-none' : 'bg-brand/95 shadow-md backdrop-blur-sm' }}"
     :class="transparent && !scrolled ? 'bg-transparent shadow-none' : 'bg-brand/95 shadow-md backdrop-blur-sm'"
 >
-    <div class="mx-auto max-w-7xl px-4 sm:px-6">
+    <div class="store-container">
         <div class="flex h-16 items-center justify-between lg:h-20">
             <a href="{{ route('home') }}" class="flex shrink-0 flex-col leading-tight">
                 <span class="font-display text-lg font-semibold tracking-wide text-white transition-colors sm:text-xl">
@@ -124,7 +124,7 @@
         class="border-t bg-brand-dark lg:hidden"
         style="display:none"
     >
-        <nav class="mx-auto max-w-7xl space-y-1 px-4 py-4">
+        <nav class="store-container space-y-1 py-4">
             <a href="{{ route('home') }}" class="block px-3 py-2.5 text-sm uppercase tracking-wide text-white/90 hover:text-white">Trang chủ</a>
             <a href="{{ route('about') }}" class="block px-3 py-2.5 text-sm uppercase tracking-wide text-white/90 hover:text-white">Về chúng tôi</a>
             <a href="{{ route('products.index') }}" class="block px-3 py-2.5 text-sm uppercase tracking-wide text-white/90 hover:text-white">Sản phẩm</a>

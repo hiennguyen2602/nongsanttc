@@ -5,12 +5,16 @@
 <article class="product-card-hover group flex h-full flex-col overflow-hidden rounded-xl border border-slate-200/80 bg-white shadow-sm">
     <a href="{{ route('products.show', $product->slug) }}" class="flex h-full flex-col">
         <div class="relative aspect-square shrink-0 overflow-hidden bg-brand-muted">
-            <img
-                src="{{ store_media_url($product->image, 'medium') }}"
-                alt="{{ $product->name }}"
-                class="h-full w-full object-cover transition duration-500 group-hover:scale-110"
-                loading="lazy"
-            >
+            @if ($productImageUrl = store_media_url($product->image, 'medium'))
+                <img
+                    src="{{ $productImageUrl }}"
+                    alt="{{ $product->name }}"
+                    class="h-full w-full object-cover transition duration-500 group-hover:scale-110"
+                    loading="lazy"
+                >
+            @else
+                @include('store.partials.media-placeholder')
+            @endif
             @if ($hasSale)
                 <span class="absolute left-3 top-3 rounded-full bg-accent-red px-2.5 py-0.5 text-xs font-bold text-white shadow-sm">Sale</span>
             @endif

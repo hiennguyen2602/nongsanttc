@@ -1,5 +1,5 @@
 <footer id="lien-he" class="mt-auto bg-slate-100 text-slate-600">
-    <div class="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:py-12">
+    <div class="store-container py-10 sm:py-12 lg:py-12">
         <div class="grid grid-cols-1 gap-10 md:grid-cols-2 lg:grid-cols-4">
             {{-- Brand --}}
             <div>
@@ -73,7 +73,7 @@
     </div>
 
     <div class="border-t border-slate-200 bg-white py-4">
-        <div class="mx-auto max-w-7xl px-4 text-center text-xs text-slate-500 sm:px-6">
+        <div class="store-container text-center text-xs text-slate-500">
             &copy; {{ date('Y') }} {{ store_setting('name') }}. All rights reserved.
         </div>
     </div>

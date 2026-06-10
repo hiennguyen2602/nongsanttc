@@ -35,7 +35,6 @@ class StoreSeeder extends Seeder
                 'category' => 'gao-ngu-coc',
                 'price' => 185000,
                 'sale_price' => 175000,
-                'image' => 'images/store/product-rice.jpg',
                 'featured' => true,
                 'variants' => [
                     ['flavor' => null, 'size' => '5kg', 'price' => 175000],
@@ -48,7 +47,6 @@ class StoreSeeder extends Seeder
                 'sku' => 'MO-500',
                 'category' => 'dac-san-vung-mien',
                 'price' => 220000,
-                'image' => 'images/store/product-honey.jpg',
                 'featured' => true,
                 'variants' => [
                     ['flavor' => 'Nguyên chất', 'size' => '500ml', 'price' => 220000],
@@ -61,7 +59,6 @@ class StoreSeeder extends Seeder
                 'sku' => 'CL-TT',
                 'category' => 'dac-san-vung-mien',
                 'price' => 85000,
-                'image' => 'images/store/product-snack.jpg',
                 'featured' => true,
                 'variants' => [
                     ['flavor' => 'Vừng', 'size' => 'Hộp 300g', 'price' => 85000],
@@ -74,7 +71,6 @@ class StoreSeeder extends Seeder
                 'sku' => 'BXL-HL',
                 'category' => 'trai-cay-rau-cu',
                 'price' => 65000,
-                'image' => 'images/store/product-fruit.jpg',
                 'featured' => true,
             ],
             [
@@ -83,7 +79,6 @@ class StoreSeeder extends Seeder
                 'sku' => 'RAU-CB',
                 'category' => 'trai-cay-rau-cu',
                 'price' => 120000,
-                'image' => 'images/store/product-vegetables.jpg',
                 'featured' => true,
             ],
             [
@@ -93,7 +88,6 @@ class StoreSeeder extends Seeder
                 'category' => 'qua-tang',
                 'price' => 450000,
                 'sale_price' => 399000,
-                'image' => 'images/store/product-gift.jpg',
                 'featured' => true,
             ],
         ];
@@ -110,8 +104,8 @@ class StoreSeeder extends Seeder
                     'description' => '<p>Sản phẩm được tuyển chọn từ vùng nguyên liệu đạt chuẩn, quy trình sản xuất khép kín, đảm bảo chất lượng và an toàn thực phẩm.</p><p>Phù hợp làm quà biếu hoặc sử dụng hàng ngày cho gia đình.</p>',
                     'price' => $data['price'],
                     'sale_price' => $data['sale_price'] ?? null,
-                    'image' => $data['image'],
-                    'gallery' => [$data['image']],
+                'image' => null,
+                'gallery' => null,
                     'is_featured' => $data['featured'] ?? false,
                     'is_active' => true,
                     'stock' => 100,
@@ -137,19 +131,16 @@ class StoreSeeder extends Seeder
                 'title' => 'Bí quyết chọn gạo ST25 chuẩn vị Sóc Trăng',
                 'slug' => 'bi-quyet-chon-gao-st25',
                 'excerpt' => 'Gạo ST25 nổi tiếng với hương thơm lá dứa đặc trưng. Cùng TTC tìm hiểu cách chọn gạo ngon, tránh hàng kém chất lượng.',
-                'image' => 'images/store/product-rice.jpg',
             ],
             [
                 'title' => '5 món quà nông sản ý nghĩa dịp Tết',
                 'slug' => '5-mon-qua-nong-san-tet',
                 'excerpt' => 'Set quà nông sản sạch vừa thể hiện tấm lòng, vừa góp phần lan tỏa đặc sản Việt đến người thân và đối tác.',
-                'image' => 'images/store/product-gift.jpg',
             ],
             [
                 'title' => 'Hành trình nông sản sạch từ nông trại đến bàn ăn',
                 'slug' => 'hanh-trinh-nong-san-sach',
                 'excerpt' => 'TTC hợp tác trực tiếp với hộ nông dân, kiểm soát chất lượng từ khâu thu hoạch đến đóng gói và vận chuyển.',
-                'image' => 'images/store/post-farm.jpg',
             ],
         ];
 
@@ -160,7 +151,7 @@ class StoreSeeder extends Seeder
                     'title' => $post['title'],
                     'excerpt' => $post['excerpt'],
                     'content' => '<p>' . $post['excerpt'] . '</p>',
-                    'image' => $post['image'],
+                    'image' => null,
                     'is_published' => true,
                     'published_at' => now()->subDays($i + 1),
                 ],

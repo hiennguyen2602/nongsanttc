@@ -23,10 +23,10 @@ class SettingSeeder extends Seeder
             ['group' => 'social', 'key' => 'messenger', 'value' => 'https://m.me/nongsanttc', 'type' => 'url', 'label' => 'Messenger'],
             ['group' => 'social', 'key' => 'youtube', 'value' => '', 'type' => 'url', 'label' => 'Youtube'],
             ['group' => 'social', 'key' => 'tiktok', 'value' => '', 'type' => 'url', 'label' => 'TikTok'],
-            ['group' => 'banner', 'key' => 'hero_desktop', 'value' => 'images/store/hero.jpg', 'type' => 'image', 'label' => 'Banner header (Desktop)'],
-            ['group' => 'banner', 'key' => 'hero_mobile', 'value' => 'images/store/hero.jpg', 'type' => 'image', 'label' => 'Banner header (Mobile)'],
-            ['group' => 'banner', 'key' => 'about_main', 'value' => 'images/store/about-farmer.jpg', 'type' => 'image', 'label' => 'Ảnh giới thiệu chính'],
-            ['group' => 'banner', 'key' => 'about_small', 'value' => 'images/store/about-harvest.jpg', 'type' => 'image', 'label' => 'Ảnh giới thiệu phụ'],
+            ['group' => 'banner', 'key' => 'hero_desktop', 'value' => '', 'type' => 'image', 'label' => 'Banner header (Desktop)'],
+            ['group' => 'banner', 'key' => 'hero_mobile', 'value' => '', 'type' => 'image', 'label' => 'Banner header (Mobile)'],
+            ['group' => 'banner', 'key' => 'about_main', 'value' => '', 'type' => 'image', 'label' => 'Ảnh giới thiệu chính'],
+            ['group' => 'banner', 'key' => 'about_small', 'value' => '', 'type' => 'image', 'label' => 'Ảnh giới thiệu phụ'],
         ];
 
         foreach ($settings as $setting) {

@@ -3,7 +3,7 @@
 @section('title', $post->title . ' — ' . config('store.name'))
 
 @section('content')
-    <article class="mx-auto max-w-4xl px-4 py-10 sm:px-6">
+    <article class="store-container store-container--article py-10">
         <nav class="mb-6 text-sm text-slate-500">
             <a href="{{ route('home') }}" class="hover:text-brand">Trang chủ</a>
             <span class="mx-2">/</span>
@@ -22,7 +22,7 @@
 
     @if ($recentPosts->isNotEmpty())
         <section class="border-t border-slate-200 bg-slate-50 py-12">
-            <div class="mx-auto max-w-7xl px-4 sm:px-6">
+            <div class="store-container">
                 <h2 class="mb-8 text-center text-2xl font-bold text-slate-900 sm:text-3xl">Bài viết khác</h2>
                 <div class="grid grid-cols-1 gap-8 md:grid-cols-3">
                     @foreach ($recentPosts as $recent)
