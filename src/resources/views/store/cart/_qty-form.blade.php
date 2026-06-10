@@ -1,6 +1,7 @@
-<form x-ref="qtyForm" method="POST" action="{{ route('cart.update') }}">
+<form x-data="cartLineItem({{ $item['quantity'] }})" method="POST" action="{{ route('cart.update') }}">
     @csrf @method('PATCH')
     <input type="hidden" name="key" value="{{ $item['key'] }}">
+    <input type="hidden" name="quantity" :value="qty">
     <div class="inline-flex items-stretch overflow-hidden rounded-lg border border-slate-300 bg-white shadow-sm">
         <button
             type="button"
@@ -11,7 +12,6 @@
         <input
             type="text"
             inputmode="numeric"
-            name="quantity"
             x-model="qty"
             @blur="normalizeQty()"
             @keydown.enter.prevent="$event.target.blur()"
