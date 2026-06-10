@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Store;
 
 use App\Http\Controllers\Controller;
 use App\Services\CartService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -51,7 +52,7 @@ class CartController extends Controller
         return back()->with('success', 'Đã thêm sản phẩm vào giỏ hàng.');
     }
 
-    public function update(Request $request, CartService $cart): RedirectResponse
+    public function update(Request $request, CartService $cart): RedirectResponse|JsonResponse
     {
         $maxQty = CartService::MAX_QUANTITY;
 
@@ -65,10 +66,38 @@ class CartController extends Controller
         try {
             $cart->update($data['key'], (int) $data['quantity']);
         } catch (RuntimeException $e) {
+            if ($request->wantsJson()) {
+                return response()->json(['message' => $e->getMessage()], 422);
+            }
+
             return back()->withErrors(['quantity' => $e->getMessage()]);
         }
 
+        if ($request->wantsJson()) {
+            return $this->cartTotalsJson($cart, $data['key']);
+        }
+
         return back()->with('success', 'Cập nhật giỏ hàng thành công.');
+    }
+
+    private function cartTotalsJson(CartService $cart, string $key): JsonResponse
+    {
+        $items = $cart->items();
+        $subtotal = $cart->subtotal($items);
+        $shippingFee = $cart->shippingFee($subtotal);
+        $item = $items->firstWhere('key', $key);
+        $quantity = $item ? (int) $item['quantity'] : 0;
+        $lineTotal = $item ? (int) $item['unit_price'] * $quantity : 0;
+
+        return response()->json([
+            'key' => $key,
+            'quantity' => $quantity,
+            'line_total' => $lineTotal,
+            'subtotal' => $subtotal,
+            'shipping_fee' => $shippingFee,
+            'grand_total' => $subtotal + $shippingFee,
+            'cart_count' => $cart->count(),
+        ]);
     }
 
     public function remove(string $key, CartService $cart): RedirectResponse

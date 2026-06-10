@@ -40,7 +40,11 @@
                 </a>
             </div>
         @else
-            <div class="grid grid-cols-1 items-start gap-8 lg:grid-cols-3">
+            <div
+                class="grid grid-cols-1 items-start gap-8 lg:grid-cols-3"
+                x-data="cartPage({ subtotal: @js($subtotal), shippingFee: @js($shippingFee), grandTotal: @js($grandTotal) })"
+                @cart-totals-updated.window="applyTotals($event.detail)"
+            >
                 <div class="space-y-4 lg:col-span-2">
                     <div class="overflow-hidden rounded-xl border border-slate-200 bg-white">
                         {{-- Desktop: bảng HTML — header và body luôn thẳng cột --}}
@@ -61,7 +65,7 @@
                                             $lineTotal = $item['unit_price'] * $item['quantity'];
                                             $productUrl = ! empty($item['slug']) ? route('products.show', $item['slug']) : route('products.index');
                                         @endphp
-                                        <tr>
+                                        <tr x-data="cartLineItem(@js($item['key']), @js($item['unit_price']), @js($item['quantity']), @js(route('cart.update')))">
                                             <td class="px-5 py-4">
                                                 <div class="flex items-center gap-4">
                                                     <a href="{{ $productUrl }}" class="block h-[4.5rem] w-[4.5rem] shrink-0 overflow-hidden rounded-lg border border-slate-200 bg-slate-50">
@@ -85,7 +89,7 @@
                                             <td class="px-4 text-center">
                                                 @include('store.cart._qty-form', ['item' => $item])
                                             </td>
-                                            <td class="px-4 text-right text-sm font-bold text-slate-900">{{ format_money($lineTotal) }}</td>
+                                            <td class="px-4 text-right text-sm font-bold text-slate-900" x-text="formatMoney(lineTotal)">{{ format_money($lineTotal) }}</td>
                                             <td class="px-3 text-center">
                                                 @include('store.cart._remove-btn', ['item' => $item, 'style' => 'icon'])
                                             </td>
@@ -102,7 +106,7 @@
                                     $lineTotal = $item['unit_price'] * $item['quantity'];
                                     $productUrl = ! empty($item['slug']) ? route('products.show', $item['slug']) : route('products.index');
                                 @endphp
-                                <article class="p-4 sm:p-5">
+                                <article class="p-4 sm:p-5" x-data="cartLineItem(@js($item['key']), @js($item['unit_price']), @js($item['quantity']), @js(route('cart.update')))">
                                     <div class="flex gap-3 sm:gap-4">
                                         <a href="{{ $productUrl }}" class="block h-20 w-20 shrink-0 overflow-hidden rounded-lg border border-slate-200 bg-slate-50">
                                             @if ($item['image'])
@@ -120,7 +124,7 @@
                                             @endif
                                             <div class="mt-2 flex items-baseline justify-between gap-2">
                                                 <span class="text-sm text-slate-500">{{ format_money($item['unit_price']) }}</span>
-                                                <span class="font-bold text-brand">{{ format_money($lineTotal) }}</span>
+                                                <span class="font-bold text-brand" x-text="formatMoney(lineTotal)">{{ format_money($lineTotal) }}</span>
                                             </div>
                                         </div>
                                     </div>
@@ -143,37 +147,28 @@
                 <div class="rounded-xl border border-slate-200 bg-white p-5 sm:p-6 lg:sticky lg:top-24">
                     <h2 class="text-lg font-bold text-slate-900">Tóm tắt đơn hàng</h2>
 
-                    @if ($subtotal < $freeShipThreshold)
-                        <div class="mt-3 rounded-lg bg-brand-muted px-3 py-2.5 text-xs text-brand-dark">
-                            Mua thêm <strong>{{ format_money($shipRemaining) }}</strong> để miễn phí ship
-                            <div class="mt-2 h-1.5 overflow-hidden rounded-full bg-white/60">
-                                <div class="h-full rounded-full bg-brand" style="width: {{ $shipProgress }}%"></div>
-                            </div>
+                    <div class="mt-3 rounded-lg bg-brand-muted px-3 py-2.5 text-xs text-brand-dark" x-show="!hasFreeShip" x-cloak>
+                        Mua thêm <strong x-text="formatMoney(shipRemaining)"></strong> để miễn phí ship
+                        <div class="mt-2 h-1.5 overflow-hidden rounded-full bg-white/60">
+                            <div class="h-full rounded-full bg-brand transition-all" :style="`width: ${shipProgress}%`"></div>
                         </div>
-                    @else
-                        <p class="mt-3 rounded-lg bg-green-50 px-3 py-2 text-xs font-medium text-green-800">
-                            ✓ Miễn phí vận chuyển
-                        </p>
-                    @endif
+                    </div>
+                    <p class="mt-3 rounded-lg bg-green-50 px-3 py-2 text-xs font-medium text-green-800" x-show="hasFreeShip" x-cloak>
+                        ✓ Miễn phí vận chuyển
+                    </p>
 
                     <dl class="mt-5 space-y-3 text-sm">
                         <div class="flex justify-between gap-3">
                             <dt class="text-slate-600">Tạm tính</dt>
-                            <dd class="whitespace-nowrap font-medium">{{ format_money($subtotal) }}</dd>
+                            <dd class="whitespace-nowrap font-medium" x-text="formatMoney(subtotal)">{{ format_money($subtotal) }}</dd>
                         </div>
                         <div class="flex justify-between gap-3">
                             <dt class="text-slate-600">Phí vận chuyển</dt>
-                            <dd class="whitespace-nowrap font-medium">
-                                @if ($shippingFee === 0)
-                                    <span class="text-green-700">Miễn phí</span>
-                                @else
-                                    {{ format_money($shippingFee) }}
-                                @endif
-                            </dd>
+                            <dd class="whitespace-nowrap font-medium" x-text="shippingFee === 0 ? 'Miễn phí' : formatMoney(shippingFee)">{{ $shippingFee === 0 ? 'Miễn phí' : format_money($shippingFee) }}</dd>
                         </div>
                         <div class="flex justify-between gap-3 border-t border-slate-200 pt-4">
                             <dt class="font-bold text-slate-900">Tổng cộng</dt>
-                            <dd class="whitespace-nowrap text-xl font-bold text-brand">{{ format_money($grandTotal) }}</dd>
+                            <dd class="whitespace-nowrap text-xl font-bold text-brand" x-text="formatMoney(grandTotal)">{{ format_money($grandTotal) }}</dd>
                         </div>
                     </dl>
 
@@ -190,7 +185,7 @@
                 <div class="store-container flex items-center gap-3">
                     <div class="min-w-0 flex-1">
                         <p class="text-xs text-slate-500">Tổng cộng</p>
-                        <p class="truncate text-lg font-bold text-brand">{{ format_money($grandTotal) }}</p>
+                        <p class="truncate text-lg font-bold text-brand" x-text="formatMoney(grandTotal)">{{ format_money($grandTotal) }}</p>
                     </div>
                     <a href="{{ route('checkout.index') }}" class="shrink-0 rounded-lg bg-accent-red px-6 py-3 text-sm font-bold uppercase text-white hover:bg-red-700">
                         Thanh toán

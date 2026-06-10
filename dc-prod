@@ -1,0 +1,23 @@
+#!/bin/sh
+# Production Docker shortcut — chạy từ thư mục gốc repo (/var/www/nongsanttc)
+# Usage:
+#   ./dc-prod ps
+#   ./dc-prod exec app php artisan migrate --force
+#   ./dc-prod vite-build
+
+set -e
+cd "$(dirname "$0")"
+
+run_compose() {
+    docker compose --env-file src/.env -f docker-compose.yml -f docker-compose.prod.yml "$@"
+}
+
+case "${1:-}" in
+    vite-build)
+        shift
+        run_compose --profile build run --rm vite-build "$@"
+        ;;
+    *)
+        run_compose "$@"
+        ;;
+esac
