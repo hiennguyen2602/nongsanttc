@@ -1,0 +1,12 @@
+# Production / VPS — dùng cùng docker-compose.yml:
+# docker compose --env-file src/.env -f docker-compose.yml -f docker-compose.prod.yml up -d --build
+#
+# Chỉ bind localhost (nginx/Caddy trên host proxy tới 8081). Không expose MySQL ra ngoài.
+
+services:
+  web:
+    ports:
+      - "127.0.0.1:8081:80"
+
+  db:
+    ports: []

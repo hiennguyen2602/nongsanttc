@@ -8,6 +8,7 @@ use App\Services\CartService;
 use App\Services\SettingService;
 use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Notifications\Messages\MailMessage;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 
@@ -21,6 +22,10 @@ class AppServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
+        if ($this->app->environment('production')) {
+            URL::forceScheme('https');
+        }
+
         View::composer(['store.*', 'store.layouts.*', 'store.partials.*'], function ($view) {
             $view->with('cartCount', app(CartService::class)->count());
         });
