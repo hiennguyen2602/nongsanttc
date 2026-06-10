@@ -1,6 +1,6 @@
 @extends('store.layouts.app')
 
-@section('title', config('store.name') . ' — ' . config('store.tagline'))
+@section('title', store_setting('name') . ' — ' . store_setting('tagline'))
 
 @push('head')
     @if ($heroDesktopUrl = store_media_url(store_setting('hero_desktop')))
@@ -44,12 +44,12 @@
         <div class="absolute inset-0 bg-gradient-to-b from-black/40 via-black/50 to-black/70"></div>
 
         <div class="relative z-10 store-container store-container--hero text-center text-white">
-            <p class="hero-animate font-display mb-3 text-lg italic text-harvest sm:text-xl">{{ config('store.name') }}</p>
+            <p class="hero-animate font-display mb-3 text-lg italic text-harvest sm:text-xl">{{ store_setting('name') }}</p>
             <h1 class="hero-animate hero-animate-delay-1 mb-4 text-3xl font-bold leading-tight sm:text-5xl lg:text-6xl">
                 Trải nghiệm nông sản<br><span class="text-brand-light">sạch & chân thực</span>
             </h1>
             <p class="hero-animate hero-animate-delay-2 mx-auto mb-8 max-w-2xl text-sm leading-relaxed text-white/90 sm:text-base">
-                {{ config('store.tagline') }}. Từ thửa ruộng xanh đến bàn ăn gia đình — chất lượng minh bạch, nguồn gốc rõ ràng.
+                {{ store_setting('tagline') }}
             </p>
             <div class="hero-animate hero-animate-delay-3 flex flex-wrap justify-center gap-3">
                 <a href="{{ route('products.index') }}" class="group inline-flex items-center gap-2 rounded-full bg-harvest px-7 py-3.5 text-sm font-semibold uppercase tracking-wide text-white shadow-lg shadow-harvest/30 transition hover:bg-harvest-dark hover:shadow-xl">
@@ -128,7 +128,7 @@
                 <p class="font-display mb-2 text-lg italic text-brand">Câu chuyện của chúng tôi</p>
                 <h2 class="mb-5 text-2xl font-bold text-slate-900 sm:text-4xl">Hành trình nông sản sạch</h2>
                 <p class="mb-4 text-slate-600 leading-relaxed">
-                    {{ config('store.name') }} ra đời từ niềm tin rằng mỗi gia đình Việt đều xứng đáng được thưởng thức nông sản an toàn, đậm đà hương vị quê nhà.
+                    {{ store_setting('name') }} ra đời từ niềm tin rằng mỗi gia đình Việt đều xứng đáng được thưởng thức nông sản an toàn, đậm đà hương vị quê nhà.
                 </p>
                 <p class="mb-8 text-slate-600 leading-relaxed">
                     Hợp tác trực tiếp với hộ nông dân — kiểm soát chất lượng từ thu hoạch đến đóng gói và vận chuyển.
@@ -225,6 +225,7 @@
         </section>
     @endif
 
+    @if ($promotions->isNotEmpty())
     {{-- Khuyến mãi --}}
     <section class="scroll-section border-y border-slate-100 bg-white py-16">
         <div class="store-container">
@@ -234,15 +235,15 @@
                 <h2 class="mt-4 text-2xl font-bold text-slate-900">Khuyến mãi dành cho bạn</h2>
             </div>
             <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4" data-reveal-group>
-                @foreach (config('store.promotions') as $promo)
+                @foreach ($promotions as $promo)
                     <div data-reveal="fade-up" class="promo-card rounded-xl border border-slate-200 bg-white p-5">
                         <div class="mb-3 flex h-10 w-10 items-center justify-center rounded-full bg-brand-muted text-brand">
                             <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A2 2 0 013 12V7a4 4 0 014-4z"/></svg>
                         </div>
-                        <p class="font-semibold text-brand">{{ $promo['title'] }}</p>
-                        <p class="mt-1 text-sm text-slate-600">{{ $promo['desc'] }}</p>
-                        <p class="mt-3 rounded bg-slate-50 px-2 py-1 font-mono text-xs text-slate-500">Mã: {{ $promo['code'] }}</p>
-                        <button type="button" onclick="navigator.clipboard.writeText('{{ $promo['code'] }}'); this.textContent='Đã sao chép!'; setTimeout(() => this.textContent='Sao chép mã', 2000)" class="mt-4 w-full rounded-lg bg-brand py-2.5 text-xs font-semibold uppercase tracking-wide text-white transition hover:bg-brand-dark">
+                        <p class="font-semibold text-brand">{{ $promo->title }}</p>
+                        <p class="mt-1 text-sm text-slate-600">{{ $promo->description }}</p>
+                        <p class="mt-3 rounded bg-slate-50 px-2 py-1 font-mono text-xs text-slate-500">Mã: {{ $promo->code }}</p>
+                        <button type="button" onclick="navigator.clipboard.writeText('{{ $promo->code }}'); this.textContent='Đã sao chép!'; setTimeout(() => this.textContent='Sao chép mã', 2000)" class="mt-4 w-full rounded-lg bg-brand py-2.5 text-xs font-semibold uppercase tracking-wide text-white transition hover:bg-brand-dark">
                             Sao chép mã
                         </button>
                     </div>
@@ -250,6 +251,7 @@
             </div>
         </div>
     </section>
+    @endif
 
     {{-- Tin tức --}}
     <section class="scroll-section bg-slate-50 py-20">
@@ -290,8 +292,8 @@
                 <a href="{{ route('products.index') }}" class="rounded-full bg-white px-8 py-3.5 text-sm font-bold uppercase tracking-wide text-brand shadow-lg transition hover:bg-brand-muted">
                     Mua sắm ngay
                 </a>
-                <a href="tel:{{ preg_replace('/\s+/', '', config('store.phone')) }}" class="rounded-full border-2 border-white/80 px-8 py-3.5 text-sm font-semibold text-white transition hover:bg-white/10">
-                    {{ config('store.phone') }}
+                <a href="tel:{{ preg_replace('/\s+/', '', store_setting('phone')) }}" class="rounded-full border-2 border-white/80 px-8 py-3.5 text-sm font-semibold text-white transition hover:bg-white/10">
+                    {{ store_setting('phone') }}
                 </a>
             </div>
         </div>

@@ -1,6 +1,6 @@
 @extends('store.layouts.app')
 
-@section('title', $product->name . ' — ' . config('store.name'))
+@section('title', $product->name . ' — ' . store_setting('name'))
 
 @section('content')
     <div class="store-container py-8 lg:py-12">
@@ -228,19 +228,23 @@
                 </div>
 
                 <div class="mt-6 flex gap-2">
-                    <a href="{{ config('store.facebook') }}" target="_blank" class="flex h-9 w-9 items-center justify-center rounded-full bg-slate-100 text-slate-600 hover:bg-brand hover:text-white">
+                    @if (store_setting('facebook'))
+                    <a href="{{ store_setting('facebook') }}" target="_blank" rel="noopener" class="flex h-9 w-9 items-center justify-center rounded-full bg-slate-100 text-slate-600 hover:bg-brand hover:text-white">
                         <svg class="h-4 w-4" fill="currentColor" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
                     </a>
-                    <a href="{{ config('store.messenger') }}" target="_blank" class="flex h-9 w-9 items-center justify-center rounded-full bg-slate-100 text-slate-600 hover:bg-brand hover:text-white">
+                    @endif
+                    @if (store_setting('messenger'))
+                    <a href="{{ store_setting('messenger') }}" target="_blank" rel="noopener" class="flex h-9 w-9 items-center justify-center rounded-full bg-slate-100 text-slate-600 hover:bg-brand hover:text-white">
                         <svg class="h-4 w-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.477 2 2 6.145 2 11.243c0 2.891 1.435 5.462 3.678 7.125L4 22l4.06-1.352C9.18 21.445 10.564 21.7 12 21.7c5.523 0 10-4.145 10-9.243S17.523 2 12 2z"/></svg>
                     </a>
+                    @endif
                 </div>
             </div>
 
             {{-- Cam kết — sidebar --}}
             <div class="lg:col-span-3">
                 <div class="rounded-lg border border-slate-200 bg-slate-50 p-5">
-                    <h2 class="mb-4 font-bold text-brand">{{ config('store.name') }} Cam kết</h2>
+                    <h2 class="mb-4 font-bold text-brand">{{ store_setting('name') }} Cam kết</h2>
                     <ul class="space-y-3">
                         @foreach (config('store.commitments') as $item)
                             <li class="flex items-start gap-3 text-sm text-slate-700">

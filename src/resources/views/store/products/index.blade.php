@@ -1,6 +1,6 @@
 @extends('store.layouts.app')
 
-@section('title', 'Sản phẩm — ' . config('store.name'))
+@section('title', 'Sản phẩm — ' . store_setting('name'))
 
 @section('content')
     <div class="bg-brand py-10 text-white">

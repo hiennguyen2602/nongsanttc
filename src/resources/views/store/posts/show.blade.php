@@ -1,6 +1,6 @@
 @extends('store.layouts.app')
 
-@section('title', $post->title . ' — ' . config('store.name'))
+@section('title', $post->title . ' — ' . store_setting('name'))
 
 @section('content')
     <article class="store-container store-container--article py-10">

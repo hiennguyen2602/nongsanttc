@@ -4,8 +4,8 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>@yield('title', config('store.name'))</title>
-    <meta name="description" content="@yield('meta_description', config('store.tagline'))">
+    <title>@yield('title', store_setting('name'))</title>
+    <meta name="description" content="@yield('meta_description', store_setting('tagline'))">
     @include('partials.favicon')
     {{-- Chữ header trắng trước khi Tailwind/Alpine load — không set background ở đây (sẽ chặn bg-brand) --}}
     <style>.site-header,.site-header a,.site-header button{color:#fff}</style>

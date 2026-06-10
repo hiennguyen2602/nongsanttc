@@ -1,6 +1,6 @@
 @extends('store.layouts.app')
 
-@section('title', 'Về chúng tôi — ' . config('store.name'))
+@section('title', 'Về chúng tôi — ' . store_setting('name'))
 
 @section('content')
     @php
@@ -16,7 +16,7 @@
         <div class="absolute inset-0 bg-black/50"></div>
         <div class="relative z-10 store-container text-center text-white">
             <p class="font-display mb-2 italic text-amber-200/90">Về chúng tôi</p>
-            <h1 class="text-3xl font-bold sm:text-4xl">Câu chuyện {{ config('store.name') }}</h1>
+            <h1 class="text-3xl font-bold sm:text-4xl">Câu chuyện {{ store_setting('name') }}</h1>
         </div>
     </section>
 
@@ -25,7 +25,7 @@
             <div>
                 <h2 class="mb-4 text-2xl font-bold text-slate-900">Sứ mệnh của chúng tôi</h2>
                 <p class="mb-4 text-slate-600 leading-relaxed">
-                    {{ config('store.name') }} cam kết mang đến nông sản sạch, an toàn và đậm đà bản sắc Việt. Chúng tôi làm việc trực tiếp với nông dân và hợp tác xã, minh bạch hóa toàn bộ chuỗi cung ứng từ ruộng đến tay người tiêu dùng.
+                    {{ store_setting('name') }} cam kết mang đến nông sản sạch, an toàn và đậm đà bản sắc Việt. Chúng tôi làm việc trực tiếp với nông dân và hợp tác xã, minh bạch hóa toàn bộ chuỗi cung ứng từ ruộng đến tay người tiêu dùng.
                 </p>
                 <p class="text-slate-600 leading-relaxed">
                     Mỗi sản phẩm đều được kiểm tra chất lượng, đóng gói cẩn thận và giao đến tay khách hàng với sự tận tâm cao nhất.
