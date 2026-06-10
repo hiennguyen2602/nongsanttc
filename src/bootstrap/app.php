@@ -31,6 +31,14 @@ return Application::configure(basePath: dirname(__DIR__))
             'reject-customer-admin' => RejectCustomerFromAdmin::class,
         ]);
 
+        $middleware->redirectGuestsTo(function (Request $request) {
+            if ($request->is('admin') || $request->is('admin/*')) {
+                return route('admin.login');
+            }
+
+            return route('home');
+        });
+
         $middleware->redirectUsersTo(function (Request $request) {
             if ($request->user()?->canAccessAdminPanel()) {
                 return route('admin.dashboard');
