@@ -85,4 +85,20 @@ class User extends Authenticatable
     {
         return self::roleLabels()[(int) $this->type] ?? '—';
     }
+
+    /** @return array{active: string, inactive: string} */
+    public static function accountStatusLabels(): array
+    {
+        return config('labels.account');
+    }
+
+    public function accountStatusLabel(): string
+    {
+        return self::accountStatusLabels()[(int) $this->status] ?? '—';
+    }
+
+    public function accountStatusBadgeClass(): string
+    {
+        return $this->isActive() ? 'badge-success' : 'badge-secondary';
+    }
 }

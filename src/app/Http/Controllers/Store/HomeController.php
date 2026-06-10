@@ -27,6 +27,7 @@ class HomeController extends Controller
             'banners' => Banner::query()
                 ->where('is_active', true)
                 ->where('position', 'home_cta')
+                ->where('image', '!=', '')
                 ->orderBy('sort_order')
                 ->get(),
         ]);

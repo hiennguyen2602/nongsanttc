@@ -12,9 +12,33 @@ use Illuminate\View\View;
 
 class SettingController extends Controller
 {
+    /** @var array<string, list<string>> */
+    private const GROUP_KEY_ORDER = [
+        'contact' => [
+            'company_name',
+            'phone',
+            'email',
+            'address',
+            'google_maps_url',
+            'google_maps_embed',
+        ],
+    ];
+
     public function edit(SettingService $settings): View
     {
         $groups = Setting::query()->orderBy('group')->orderBy('id')->get()->groupBy('group');
+
+        foreach (self::GROUP_KEY_ORDER as $group => $keys) {
+            if (! $groups->has($group)) {
+                continue;
+            }
+
+            $groups[$group] = $groups[$group]
+                ->sortBy(fn (Setting $item) => array_search($item->key, $keys, true) !== false
+                    ? array_search($item->key, $keys, true)
+                    : 999)
+                ->values();
+        }
 
         return view('admin.settings.edit', compact('groups'));
     }

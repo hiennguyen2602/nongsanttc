@@ -57,7 +57,7 @@
                                 </td>
                                 <td class="whitespace-nowrap">{{ $order->customer_name }}<br><span class="text-xs text-slate-500">{{ $order->customer_phone }}</span></td>
                                 <td>{{ $order->formattedTotal() }}</td>
-                                <td><span class="badge {{ $order->statusBadgeClass() }}">{{ $order->statusLabel() }}</span></td>
+                                <td>@include('admin.partials.status-badge', ['label' => $order->statusLabel(), 'class' => $order->statusBadgeClass()])</td>
                                 <td>{{ $order->created_at->format('d/m/Y H:i') }}</td>
                             </tr>
                         @endforeach

@@ -37,14 +37,12 @@ class DashboardController extends Controller
             ->pluck('aggregate', 'status');
 
         $statusLabels = Order::statusLabels();
-        unset($statusLabels[Order::STATUS_CANCELLED]);
 
         return view('admin.dashboard', [
             'totalOrders' => $ranged()->count(),
             'statusLabels' => $statusLabels,
             'statusCounts' => $statusCounts,
             'statusColors' => Order::statusColors(),
-            'cancelledCount' => $statusCounts[Order::STATUS_CANCELLED] ?? 0,
             'recentOrders' => $ranged()->latest()->limit(8)->get(),
             'periods' => $this->datePeriods(),
             'period' => $period,

@@ -41,9 +41,7 @@
                                 <td>{{ $product->category?->name ?? '—' }}</td>
                                 <td>{{ $product->formattedPrice() }}</td>
                                 <td>
-                                    <span class="badge {{ $product->is_active ? 'badge-success' : 'badge-secondary' }}">
-                                        {{ $product->is_active ? 'Hiển thị' : 'Ẩn' }}
-                                    </span>
+                                    @include('admin.partials.status-badge', ['label' => $product->visibilityLabel(), 'class' => $product->visibilityBadgeClass()])
                                 </td>
                                 <td class="table-actions">
                                     <a href="{{ route('admin.products.edit', $product) }}" class="btn btn-link btn-sm">Sửa</a>

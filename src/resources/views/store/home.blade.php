@@ -131,7 +131,7 @@
     </section>
 
     {{-- Sản phẩm --}}
-    <section class="scroll-section bg-gradient-to-b from-brand-muted/50 to-slate-50 py-20">
+    <section id="san-pham" class="scroll-section bg-gradient-to-b from-brand-muted/50 to-slate-50 py-20">
         <div class="mx-auto max-w-7xl px-4 sm:px-6">
             <div data-reveal="fade-up" class="mb-10 flex items-end justify-between">
                 <div>
@@ -163,27 +163,43 @@
 
     {{-- Banner CTA --}}
     @if ($banners->isNotEmpty())
-        <section class="scroll-section py-16">
-            <div class="mx-auto grid max-w-7xl grid-cols-1 gap-5 px-4 sm:px-6 md:grid-cols-2 md:gap-6" data-reveal-group>
-                @foreach ($banners as $banner)
-                    <a
-                        href="{{ $banner->link ?? '#' }}"
-                        data-reveal="fade-up"
-                        class="group relative block aspect-[2/1] overflow-hidden rounded-2xl shadow-lg ring-1 ring-black/5"
-                    >
-                        <img src="{{ store_media_url($banner->image) }}" alt="{{ $banner->title }}" class="h-full w-full object-cover transition duration-700 group-hover:scale-110" loading="lazy" decoding="async">
-                        <div class="absolute inset-0 bg-gradient-to-t from-brand-dark/90 via-brand-dark/30 to-transparent transition duration-500 group-hover:from-brand-dark/95"></div>
-                        <div class="absolute bottom-0 left-0 p-6 text-white sm:p-8">
-                            <h3 class="text-xl font-bold transition group-hover:translate-x-1 sm:text-2xl">{{ $banner->title }}</h3>
-                            @if ($banner->subtitle)
-                                <p class="mt-2 max-w-sm text-sm text-white/90">{{ $banner->subtitle }}</p>
-                            @endif
-                            <span class="mt-4 inline-flex items-center gap-1 text-xs font-semibold uppercase tracking-widest text-harvest opacity-0 transition duration-300 group-hover:opacity-100">
-                                Khám phá ngay →
-                            </span>
-                        </div>
-                    </a>
-                @endforeach
+        <section class="scroll-section bg-slate-50 py-16 lg:py-20">
+            <div class="mx-auto max-w-7xl px-4 sm:px-6">
+                <div data-reveal="fade-up" class="mb-10 text-center">
+                    <span class="mb-2 inline-block rounded-full bg-brand/10 px-3 py-1 text-xs font-bold uppercase tracking-wider text-brand">Khám phá</span>
+                    <h2 class="mt-3 text-2xl font-bold text-slate-900 sm:text-3xl">Ưu đãi &amp; chương trình</h2>
+                </div>
+                <div class="banner-cta-grid grid grid-cols-1 gap-5 md:grid-cols-2 md:gap-6" data-reveal-group>
+                    @foreach ($banners as $banner)
+                        <a
+                            href="{{ $banner->link ?? '#' }}"
+                            data-reveal="fade-up"
+                            class="banner-cta-card group relative block overflow-hidden rounded-2xl bg-slate-200 shadow-md ring-1 ring-black/5"
+                        >
+                            <picture class="absolute inset-0">
+                                <source media="(max-width: 767px)" srcset="{{ store_media_url($banner->image_mobile ?: $banner->image) }}">
+                                <img
+                                    src="{{ store_media_url($banner->image) }}"
+                                    alt="{{ $banner->title }}"
+                                    class="h-full w-full object-cover transition duration-700 ease-out group-hover:scale-105"
+                                    loading="lazy"
+                                    decoding="async"
+                                >
+                            </picture>
+                            <div class="absolute inset-0 bg-gradient-to-t from-brand-dark/95 via-brand-dark/45 to-brand-dark/10 transition duration-500 group-hover:from-brand-dark"></div>
+                            <div class="absolute inset-x-0 bottom-0 p-6 sm:p-8">
+                                <h3 class="text-xl font-bold text-white transition group-hover:translate-x-0.5 sm:text-2xl">{{ $banner->title }}</h3>
+                                @if ($banner->subtitle)
+                                    <p class="mt-2 max-w-md text-sm leading-relaxed text-white/90">{{ $banner->subtitle }}</p>
+                                @endif
+                                <span class="mt-4 inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-widest text-harvest">
+                                    Khám phá ngay
+                                    <svg class="h-3.5 w-3.5 transition group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
+                                </span>
+                            </div>
+                        </a>
+                    @endforeach
+                </div>
             </div>
         </section>
     @endif

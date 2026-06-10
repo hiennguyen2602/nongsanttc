@@ -16,7 +16,7 @@
                             <tr>
                                 <td class="font-medium"><a href="{{ route('admin.posts.show', $post) }}" class="admin-link hover:underline">{{ $post->title }}</a></td>
                                 <td>{{ $post->published_at?->format('d/m/Y') }}</td>
-                                <td><span class="badge {{ $post->is_published ? 'badge-success' : 'badge-secondary' }}">{{ $post->is_published ? 'Đã xuất bản' : 'Nháp' }}</span></td>
+                                <td>@include('admin.partials.status-badge', ['label' => $post->publishStatusLabel(), 'class' => $post->publishStatusBadgeClass()])</td>
                                 <td class="table-actions">
                                     <a href="{{ route('admin.posts.edit', $post) }}" class="btn btn-link btn-sm">Sửa</a>
                                     <form method="POST" action="{{ route('admin.posts.destroy', $post) }}" class="inline" onsubmit="return confirm('Xóa?')">@csrf @method('DELETE')<button type="submit" class="btn btn-link btn-link-danger btn-sm">Xóa</button></form>

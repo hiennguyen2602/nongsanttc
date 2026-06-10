@@ -19,7 +19,7 @@
             <article class="admin-post-preview mx-auto max-w-4xl">
                 <header class="mb-8">
                     <p class="mb-2 text-sm text-slate-500">{{ $post->published_at?->format('d/m/Y') }}</p>
-                    <span class="badge {{ $post->is_published ? 'badge-success' : 'badge-secondary' }}">{{ $post->is_published ? 'Đã xuất bản' : 'Nháp' }}</span>
+                    @include('admin.partials.status-badge', ['label' => $post->publishStatusLabel(), 'class' => $post->publishStatusBadgeClass()])
                     <h1 class="mt-4 text-2xl font-bold text-slate-900 sm:text-3xl">{{ $post->title }}</h1>
                 </header>
 

@@ -73,13 +73,7 @@ class Order extends Model
 
     public static function statusLabels(): array
     {
-        return [
-            self::STATUS_PENDING => 'Chờ xử lý',
-            self::STATUS_CONFIRMED => 'Đã xác nhận',
-            self::STATUS_SHIPPING => 'Đang giao',
-            self::STATUS_COMPLETED => 'Hoàn thành',
-            self::STATUS_CANCELLED => 'Đã hủy',
-        ];
+        return config('labels.order_status');
     }
 
     /**

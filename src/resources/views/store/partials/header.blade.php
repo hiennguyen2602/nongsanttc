@@ -67,9 +67,9 @@
                        : '{{ request()->routeIs('posts.*') ? 'border-brand-light text-white' : 'border-transparent text-white/90 hover:text-white' }}'">
                     Tin tức
                 </a>
-                <a href="#lien-he"
+                <a href="{{ route('contact') }}"
                    class="border-b border-transparent px-3 py-2 text-xs font-medium uppercase tracking-widest transition sm:px-4 sm:text-sm"
-                   :class="transparent && !scrolled ? 'text-white/85 hover:text-white' : 'text-white/90 hover:text-white'">
+                   :class="transparent && !scrolled ? 'text-white/85 hover:text-white' : '{{ request()->routeIs('contact') ? 'border-brand-light text-white' : 'text-white/90 hover:text-white' }}'">
                     Liên hệ
                 </a>
             </nav>
@@ -110,9 +110,9 @@
             :class="transparent && !scrolled ? 'border-white/10' : 'border-white/10'"
             style="display:none"
         >
-            <form action="{{ route('products.index') }}" method="GET" class="flex gap-2">
-                <input type="search" name="q" placeholder="Tìm sản phẩm..." class="flex-1 rounded border-0 px-4 py-2 text-sm text-slate-800 focus:ring-2 focus:ring-brand">
-                <button type="submit" class="rounded bg-brand px-4 py-2 text-sm font-medium text-white hover:bg-brand-dark">Tìm</button>
+            <form action="{{ route('products.index') }}" method="GET" class="mx-auto flex w-full max-w-xl gap-2">
+                <input type="search" name="q" placeholder="Tìm sản phẩm..." class="min-w-0 flex-1 rounded border-0 bg-white px-4 py-2 text-sm text-slate-800 shadow-sm focus:ring-2 focus:ring-white/80">
+                <button type="submit" class="shrink-0 rounded bg-orange-500 px-5 py-2 text-sm font-semibold text-white shadow-sm hover:bg-orange-600">Tìm</button>
             </form>
         </div>
     </div>
@@ -129,7 +129,7 @@
             <a href="{{ route('about') }}" class="block px-3 py-2.5 text-sm uppercase tracking-wide text-white/90 hover:text-white">Về chúng tôi</a>
             <a href="{{ route('products.index') }}" class="block px-3 py-2.5 text-sm uppercase tracking-wide text-white/90 hover:text-white">Sản phẩm</a>
             <a href="{{ route('posts.index') }}" class="block px-3 py-2.5 text-sm uppercase tracking-wide text-white/90 hover:text-white">Tin tức</a>
-            <a href="#lien-he" class="block px-3 py-2.5 text-sm uppercase tracking-wide text-white/90 hover:text-white">Liên hệ</a>
+            <a href="{{ route('contact') }}" class="block px-3 py-2.5 text-sm uppercase tracking-wide text-white/90 hover:text-white">Liên hệ</a>
             <a href="tel:{{ preg_replace('/\s+/', '', store_setting('phone')) }}" class="mt-2 block border border-white/30 px-3 py-2.5 text-center text-sm text-white">
                 {{ store_setting('phone') }}
             </a>

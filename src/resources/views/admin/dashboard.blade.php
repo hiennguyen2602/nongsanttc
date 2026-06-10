@@ -40,10 +40,6 @@
                 <p class="admin-stat-value" style="color:{{ $statusColors[$key] ?? '' }}">{{ $statusCounts[$key] ?? 0 }}</p>
             </div>
         @endforeach
-        <div class="admin-stat">
-            <p class="admin-stat-label">Đã hủy</p>
-            <p class="admin-stat-value" style="color:{{ $statusColors[\App\Models\Order::STATUS_CANCELLED] }}">{{ $cancelledCount }}</p>
-        </div>
     </div>
 
     <div class="x_panel">
@@ -76,7 +72,7 @@
                                 </td>
                                 <td>{{ $order->customer_name }}</td>
                                 <td>{{ $order->formattedTotal() }}</td>
-                                <td><span class="badge {{ $order->statusBadgeClass() }}">{{ $order->statusLabel() }}</span></td>
+                                <td>@include('admin.partials.status-badge', ['label' => $order->statusLabel(), 'class' => $order->statusBadgeClass()])</td>
                                 <td>{{ $order->created_at->format('d/m/Y H:i') }}</td>
                             </tr>
                         @empty

@@ -65,6 +65,9 @@
                                 @if ($item['route'] === 'admin.orders.index' && ($newOrdersCount ?? 0) > 0)
                                     <span class="inline-flex h-5 min-w-[1.25rem] items-center justify-center rounded-full bg-red-500 px-1.5 text-xs font-bold text-white">{{ $newOrdersCount }}</span>
                                 @endif
+                                @if ($item['route'] === 'admin.contact-messages.index' && ($newContactMessagesCount ?? 0) > 0)
+                                    <span class="inline-flex h-5 min-w-[1.25rem] items-center justify-center rounded-full bg-red-500 px-1.5 text-xs font-bold text-white">{{ $newContactMessagesCount }}</span>
+                                @endif
                             </a>
                         @endif
                     @endif

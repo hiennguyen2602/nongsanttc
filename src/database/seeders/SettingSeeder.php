@@ -12,6 +12,7 @@ class SettingSeeder extends Seeder
         $settings = [
             ['group' => 'general', 'key' => 'name', 'value' => 'Nông Sản TTC', 'type' => 'text', 'label' => 'Tên website'],
             ['group' => 'general', 'key' => 'tagline', 'value' => 'Đặc sản nông sản sạch — từ đồng quê đến bàn ăn', 'type' => 'text', 'label' => 'Slogan'],
+            ['group' => 'contact', 'key' => 'company_name', 'value' => 'Công ty TNHH Nông Sản TTC', 'type' => 'text', 'label' => 'Tên công ty'],
             ['group' => 'contact', 'key' => 'phone', 'value' => '0901 234 567', 'type' => 'text', 'label' => 'Số điện thoại'],
             ['group' => 'contact', 'key' => 'email', 'value' => 'hello@nongsanttc.vn', 'type' => 'text', 'label' => 'Email'],
             ['group' => 'contact', 'key' => 'address', 'value' => 'Xã Ninh Phú, Huyện Hoa Lư, Tỉnh Ninh Bình', 'type' => 'textarea', 'label' => 'Địa chỉ'],

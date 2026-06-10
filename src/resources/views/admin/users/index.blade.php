@@ -25,7 +25,7 @@
                                 <td>{{ $user->name }}</td>
                                 <td>{{ $user->email }}</td>
                                 <td>{{ $user->roleLabel() }}</td>
-                                <td><span class="badge {{ $user->isActive() ? 'badge-success' : 'badge-secondary' }}">{{ $user->isActive() ? 'Hoạt động' : 'Khóa' }}</span></td>
+                                <td>@include('admin.partials.status-badge', ['label' => $user->accountStatusLabel(), 'class' => $user->accountStatusBadgeClass()])</td>
                                 <td class="table-actions">
                                     <a href="{{ route('admin.users.edit', $user) }}" class="btn btn-link btn-sm">Sửa</a>
                                     @if($user->id !== auth()->id())

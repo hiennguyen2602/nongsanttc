@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Models\ContactMessage;
 use App\Models\Order;
 use App\Services\CartService;
 use App\Services\SettingService;
@@ -26,6 +27,7 @@ class AppServiceProvider extends ServiceProvider
 
         View::composer('admin.partials.sidebar', function ($view) {
             $view->with('newOrdersCount', Order::query()->new()->count());
+            $view->with('newContactMessagesCount', ContactMessage::query()->new()->count());
         });
 
         $this->configurePasswordResetMail();

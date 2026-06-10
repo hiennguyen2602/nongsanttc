@@ -1,5 +1,5 @@
-<footer id="lien-he" class="bg-slate-100 text-slate-600">
-    <div class="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:py-16">
+<footer id="lien-he" class="mt-auto bg-slate-100 text-slate-600">
+    <div class="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:py-12">
         <div class="grid grid-cols-1 gap-10 md:grid-cols-2 lg:grid-cols-4">
             {{-- Brand --}}
             <div>
@@ -8,7 +8,12 @@
                     <span class="text-lg font-bold text-slate-800">{{ store_setting('name') }}</span>
                 </div>
                 <ul class="space-y-2 text-sm">
-                    <li>{{ store_setting('address') }}</li>
+                    @if (store_setting('company_name'))
+                        <li class="font-semibold text-slate-800">{{ store_setting('company_name') }}</li>
+                    @endif
+                    @if (store_setting('address'))
+                        <li>{{ store_setting('address') }}</li>
+                    @endif
                     <li>Điện thoại: <a href="tel:{{ preg_replace('/\s+/', '', store_setting('phone')) }}" class="text-brand hover:underline">{{ store_setting('phone') }}</a></li>
                     <li>Email: <a href="mailto:{{ store_setting('email') }}" class="text-brand hover:underline">{{ store_setting('email') }}</a></li>
                 </ul>

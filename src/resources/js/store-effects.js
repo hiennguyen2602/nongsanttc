@@ -61,6 +61,31 @@ document.addEventListener('alpine:init', () => {
             window.scrollTo({ top: 0, behavior: 'smooth' });
         },
     }));
+
+    Alpine.data('floatingContact', () => ({
+        visible: false,
+        init() {
+            const target = document.getElementById('san-pham');
+            if (!target) {
+                this.visible = true;
+                return;
+            }
+
+            const observer = new IntersectionObserver(
+                (entries) => {
+                    entries.forEach((entry) => {
+                        if (entry.isIntersecting) {
+                            this.visible = true;
+                            return;
+                        }
+                        this.visible = entry.boundingClientRect.top < 0;
+                    });
+                },
+                { threshold: 0 },
+            );
+            observer.observe(target);
+        },
+    }));
 });
 
 function initScrollReveal() {

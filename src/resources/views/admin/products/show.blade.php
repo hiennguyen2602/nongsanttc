@@ -73,7 +73,7 @@
                         <div>
                             <dt>Trạng thái</dt>
                             <dd>
-                                <span class="badge {{ $product->is_active ? 'badge-success' : 'badge-secondary' }}">{{ $product->is_active ? 'Hiển thị' : 'Ẩn' }}</span>
+                                @include('admin.partials.status-badge', ['label' => $product->visibilityLabel(), 'class' => $product->visibilityBadgeClass()])
                                 @if ($product->is_featured)<span class="badge badge-warning">Nổi bật</span>@endif
                             </dd>
                         </div>

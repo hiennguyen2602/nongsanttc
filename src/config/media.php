@@ -25,4 +25,8 @@ return [
     /** Grace period trước khi cron xóa ảnh editor mồ côi (giờ). */
     'editor_orphan_grace_hours' => (int) env('EDITOR_ORPHAN_GRACE_HOURS', 48),
 
+    /** Banner CTA: giữ nguyên tỷ lệ, chỉ thu nhỏ nếu rộng hơn (px). */
+    'banner_desktop_max_width' => 1200,
+    'banner_mobile_max_width' => 768,
+
 ];

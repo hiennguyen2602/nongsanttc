@@ -167,24 +167,7 @@ class StoreSeeder extends Seeder
             );
         }
 
+        // Banner: không seed ảnh demo — admin upload qua /admin/banners, đường dẫn lưu trong DB (uploads/banners/...).
         Banner::query()->delete();
-
-        Banner::create([
-            'title' => 'Món quà vàng từ đồng quê',
-            'subtitle' => 'Nông sản sạch — gửi trọn tình thân',
-            'image' => 'images/store/banner-farm.jpg',
-            'link' => '/san-pham',
-            'position' => 'home_cta',
-            'sort_order' => 1,
-        ]);
-
-        Banner::create([
-            'title' => 'Trở thành đại lý',
-            'subtitle' => 'Lan tỏa đặc sản nông sản đến mọi miền',
-            'image' => 'images/store/banner-partner.jpg',
-            'link' => '#',
-            'position' => 'home_cta',
-            'sort_order' => 2,
-        ]);
     }
 }

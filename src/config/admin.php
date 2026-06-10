@@ -28,6 +28,11 @@ return [
             'icon' => 'customers',
         ],
         [
+            'label' => 'Liên hệ',
+            'route' => 'admin.contact-messages.index',
+            'icon' => 'news',
+        ],
+        [
             'label' => 'Bài viết',
             'route' => 'admin.posts.index',
             'icon' => 'news',

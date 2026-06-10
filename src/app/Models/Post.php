@@ -17,4 +17,22 @@ class Post extends Model
             'published_at' => 'datetime',
         ];
     }
+
+    /** @return array{published: string, draft: string} */
+    public static function publishStatusLabels(): array
+    {
+        return config('labels.publish');
+    }
+
+    public function publishStatusLabel(): string
+    {
+        $labels = self::publishStatusLabels();
+
+        return $this->is_published ? $labels['published'] : $labels['draft'];
+    }
+
+    public function publishStatusBadgeClass(): string
+    {
+        return $this->is_published ? 'badge-success' : 'badge-secondary';
+    }
 }

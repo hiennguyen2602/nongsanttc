@@ -168,7 +168,7 @@
                     <p class="text-lg font-bold">Trở thành đại lý — Lan tỏa nông sản sạch</p>
                     <p class="mt-1 text-sm text-white/80">Đăng ký ngay để nhận chính sách hỗ trợ tốt nhất</p>
                 </div>
-                <a href="#lien-he" class="shrink-0 rounded bg-white px-6 py-2.5 text-sm font-bold uppercase text-brand hover:bg-slate-100">
+                <a href="{{ route('contact') }}" class="shrink-0 rounded bg-white px-6 py-2.5 text-sm font-bold uppercase text-brand hover:bg-slate-100">
                     Đăng ký ngay
                 </a>
             </div>

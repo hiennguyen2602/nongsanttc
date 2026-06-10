@@ -9,10 +9,10 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @stack('head')
 </head>
-<body class="bg-white font-sans text-slate-800 antialiased">
+<body class="flex min-h-screen flex-col bg-white font-sans text-slate-800 antialiased">
     @include('store.partials.header')
 
-    <main>
+    <main class="flex-1 pb-24 sm:pb-28">
         @yield('content')
     </main>
 

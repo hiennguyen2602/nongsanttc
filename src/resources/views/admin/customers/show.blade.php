@@ -33,7 +33,7 @@
                             <tr>
                                 <td><a href="{{ route('admin.orders.show', $order) }}" class="font-medium admin-link hover:underline">{{ $order->order_code }}</a></td>
                                 <td>{{ $order->formattedTotal() }}</td>
-                                <td><span class="badge {{ $order->statusBadgeClass() }}">{{ $order->statusLabel() }}</span></td>
+                                <td>@include('admin.partials.status-badge', ['label' => $order->statusLabel(), 'class' => $order->statusBadgeClass()])</td>
                                 <td>{{ $order->created_at->format('d/m/Y H:i') }}</td>
                             </tr>
                         @empty
