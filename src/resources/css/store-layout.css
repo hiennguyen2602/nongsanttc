@@ -1,0 +1,91 @@
+/* Layout container store — dùng chung frontend + admin preview bài viết */
+
+.store-container {
+    width: 100%;
+    margin-inline: auto;
+    padding-inline: 1rem;
+    max-width: none;
+}
+
+@media (min-width: 640px) {
+    .store-container {
+        padding-inline: 1.5rem;
+    }
+}
+
+@media (min-width: 1024px) {
+    .store-container {
+        max-width: 72rem;
+    }
+}
+
+@media (min-width: 1536px) {
+    .store-container {
+        max-width: 80rem;
+        padding-inline: 2rem;
+    }
+}
+
+.store-container--article {
+    max-width: none;
+}
+
+@media (min-width: 1024px) {
+    .store-container--article {
+        max-width: 44rem;
+    }
+}
+
+@media (min-width: 1536px) {
+    .store-container--article {
+        max-width: 60rem;
+    }
+}
+
+.store-container--compact {
+    max-width: none;
+}
+
+@media (min-width: 1024px) {
+    .store-container--compact {
+        max-width: 38rem;
+    }
+}
+
+@media (min-width: 1536px) {
+    .store-container--compact {
+        max-width: 44rem;
+    }
+}
+
+.store-container--hero {
+    max-width: none;
+}
+
+@media (min-width: 1024px) {
+    .store-container--hero {
+        max-width: 52rem;
+    }
+}
+
+@media (min-width: 1536px) {
+    .store-container--hero {
+        max-width: 60rem;
+    }
+}
+
+.store-container--cta {
+    max-width: none;
+}
+
+@media (min-width: 1024px) {
+    .store-container--cta {
+        max-width: 44rem;
+    }
+}
+
+@media (min-width: 1536px) {
+    .store-container--cta {
+        max-width: 52rem;
+    }
+}
