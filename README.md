@@ -88,3 +88,58 @@ docker compose exec app php artisan optimize:clear
 ## Admin
 
 http://localhost:8080/admin/login — `admin@nongsanttc.local` / `password`
+
+## Production (VPS)
+
+Quy mô **vài chục–vài trăm truy cập/ngày**: `CACHE_STORE=database` (hoặc `file`) và `SESSION_DRIVER=database` (hoặc `file`) **đủ dùng**. Chưa cần Redis trừ khi nhiều container PHP cùng session hoặc traffic tăng rõ.
+
+### `.env` production
+
+| Biến | Giá trị |
+|------|---------|
+| `APP_ENV` | `production` |
+| `APP_DEBUG` | `false` |
+| `APP_URL` | `https://domain-cua-ban` |
+| `LOG_LEVEL` | `warning` hoặc `error` |
+| `SESSION_DRIVER` | `database` (khuyên dùng) hoặc `file` |
+| `CACHE_STORE` | `database` hoặc `file` |
+| `QUEUE_CONNECTION` | `database` (đủ nếu queue nhẹ) |
+
+### Checklist deploy
+
+```bash
+# 1. Code + dependency
+composer install --no-dev --optimize-autoloader
+npm ci && npm run build          # hoặc: docker compose run --rm vite-build
+
+# 2. App key / migrate (lần đầu hoặc có migration mới)
+php artisan key:generate --force   # chỉ lần đầu
+php artisan migrate --force
+
+# 3. Cache Laravel (chạy sau khi .env đã đúng)
+php artisan config:cache
+php artisan route:cache
+php artisan view:cache
+php artisan event:cache            # Laravel 11+
+```
+
+Docker:
+
+```bash
+docker compose exec app composer install --no-dev --optimize-autoloader
+docker compose run --rm vite-build
+docker compose exec app php artisan migrate --force
+docker compose exec app php artisan config:cache
+docker compose exec app php artisan route:cache
+docker compose exec app php artisan view:cache
+docker compose exec app php artisan event:cache
+```
+
+### Sau khi đổi `.env`, route, hoặc Blade
+
+```bash
+php artisan optimize:clear
+# sửa xong rồi cache lại (config/route/view/event)
+```
+
+**Không** bật `APP_DEBUG=true` trên production. **Không** commit `.env`.

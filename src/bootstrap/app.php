@@ -2,6 +2,7 @@
 
 use App\Http\Middleware\EnsureUserIsAdmin;
 use App\Http\Middleware\RejectCustomerFromAdmin;
+use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -24,6 +25,7 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->alias([
             'admin' => EnsureUserIsAdmin::class,
+            'administrator' => \App\Http\Middleware\EnsureUserIsAdministrator::class,
             'reject-customer-admin' => RejectCustomerFromAdmin::class,
         ]);
 
@@ -37,4 +39,7 @@ return Application::configure(basePath: dirname(__DIR__))
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //
+    })
+    ->withSchedule(function (Schedule $schedule): void {
+        $schedule->command('media:clean-editor-orphans')->weeklyOn(0, '03:00');
     })->create();

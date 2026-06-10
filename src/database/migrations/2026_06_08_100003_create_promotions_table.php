@@ -17,19 +17,13 @@ return new class extends Migration
             $table->unsignedInteger('discount_amount')->default(0);
             $table->boolean('is_active')->default(true);
             $table->timestamps();
-        });
 
-        Schema::table('banners', function (Blueprint $table) {
-            $table->string('image_mobile')->nullable()->after('image');
+            $table->index('is_active', 'promotions_is_active_index');
         });
     }
 
     public function down(): void
     {
-        Schema::table('banners', function (Blueprint $table) {
-            $table->dropColumn('image_mobile');
-        });
-
         Schema::dropIfExists('promotions');
     }
 };

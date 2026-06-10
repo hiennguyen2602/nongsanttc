@@ -3,7 +3,7 @@
 @section('title', 'Đặt hàng thành công — ' . store_setting('name'))
 
 @section('content')
-    <div class="mx-auto max-w-2xl px-4 py-16 text-center sm:px-6">
+    <div class="store-container store-container--compact py-16 text-center">
         <div class="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-green-100 text-green-600">
             <svg class="h-8 w-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
         </div>

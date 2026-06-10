@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Category;
 use App\Models\Product;
+use App\Services\EditorImageService;
 use App\Services\ImageUploadService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -42,7 +43,7 @@ class ProductController extends Controller
     public function store(Request $request, ImageUploadService $uploader): RedirectResponse
     {
         $data = $this->validated($request);
-        $this->ensureHasImage($request);
+        $this->ensureHasImage($request, null);
         $this->validateVariants($request);
 
         [$image, $gallery] = $this->handleImages($request, $uploader, null);
@@ -65,11 +66,13 @@ class ProductController extends Controller
         ]);
     }
 
-    public function update(Request $request, Product $product, ImageUploadService $uploader): RedirectResponse
+    public function update(Request $request, Product $product, ImageUploadService $uploader, EditorImageService $editorImages): RedirectResponse
     {
         $data = $this->validated($request, $product);
-        $this->ensureHasImage($request);
+        $this->ensureHasImage($request, $product);
         $this->validateVariants($request);
+
+        $oldDescription = $product->description;
 
         [$image, $gallery] = $this->handleImages($request, $uploader, $product);
         $data['image'] = $image;
@@ -77,12 +80,15 @@ class ProductController extends Controller
 
         $product->update($data);
         $this->syncVariants($product, $request);
+        $editorImages->deleteRemoved($oldDescription, $data['description'] ?? null, $uploader);
 
         return redirect()->route('admin.products.index')->with('success', 'Cập nhật sản phẩm thành công.');
     }
 
-    public function destroy(Product $product, ImageUploadService $uploader): RedirectResponse
+    public function destroy(Product $product, ImageUploadService $uploader, EditorImageService $editorImages): RedirectResponse
     {
+        $editorImages->deletePaths($editorImages->extractPaths($product->description), $uploader);
+
         foreach (array_filter(array_merge([$product->image], (array) $product->gallery)) as $path) {
             $uploader->delete($path);
         }
@@ -94,10 +100,6 @@ class ProductController extends Controller
 
     private function validated(Request $request, ?Product $product = null): array
     {
-        $maxMb = (float) config('media.max_image_mb', 5);
-        $maxKb = (int) round($maxMb * 1024);
-        $maxLabel = rtrim(rtrim(number_format($maxMb, 1), '0'), '.');
-
         $data = $request->validate([
             'category_id' => ['nullable', 'exists:categories,id'],
             'name' => ['required', 'string', 'max:255'],
@@ -109,13 +111,8 @@ class ProductController extends Controller
             'is_featured' => ['nullable', 'boolean'],
             'is_active' => ['nullable', 'boolean'],
             'images' => ['nullable', 'array'],
-            'images.*' => ['nullable', 'image', 'mimes:jpeg,jpg,png,webp,gif', 'max:' . $maxKb],
-        ], [
-            'images.*.image' => 'File tải lên phải là hình ảnh.',
-            'images.*.mimes' => 'Ảnh phải có định dạng: jpeg, jpg, png, webp, gif.',
-            'images.*.max' => 'Mỗi ảnh không được vượt quá ' . $maxLabel . 'MB.',
-            'images.*.uploaded' => 'Ảnh tải lên thất bại hoặc vượt quá dung lượng cho phép (' . $maxLabel . 'MB).',
-        ]);
+            'images.*' => image_upload_file_rules(['nullable']),
+        ], image_upload_validation_messages('images.*'));
 
         unset($data['images']);
 
@@ -155,18 +152,38 @@ class ProductController extends Controller
     /**
      * Yêu cầu sản phẩm phải có ít nhất một ảnh (ảnh cũ giữ lại hoặc ảnh mới).
      */
-    private function ensureHasImage(Request $request): void
+    private function ensureHasImage(Request $request, ?Product $product): void
     {
         $hasNew = collect((array) $request->file('images', []))->filter()->isNotEmpty();
-        $hasKept = collect((array) $request->input('existing_images', []))
-            ->filter(fn ($path) => filled($path))
-            ->isNotEmpty();
+        $hasKept = count($this->keptProductImages($request, $product)) > 0;
 
         if (! $hasNew && ! $hasKept) {
             throw ValidationException::withMessages([
                 'images' => 'Vui lòng chọn ít nhất một ảnh sản phẩm.',
             ]);
         }
+    }
+
+    /** @return list<string> */
+    private function keptProductImages(Request $request, ?Product $product): array
+    {
+        $submitted = (array) $request->input('existing_images', []);
+
+        if ($product === null) {
+            foreach ($submitted as $path) {
+                if (filled($path)) {
+                    throw ValidationException::withMessages([
+                        'images' => 'Ảnh không hợp lệ.',
+                    ]);
+                }
+            }
+
+            return [];
+        }
+
+        $allowed = array_filter(array_merge([$product->image], (array) $product->gallery));
+
+        return kept_upload_paths($submitted, $allowed, 'uploads/products', 'images');
     }
 
     /**
@@ -176,7 +193,7 @@ class ProductController extends Controller
      */
     private function handleImages(Request $request, ImageUploadService $uploader, ?Product $product): array
     {
-        $kept = array_values(array_filter((array) $request->input('existing_images', [])));
+        $kept = $this->keptProductImages($request, $product);
 
         if ($product) {
             $previous = array_filter(array_merge([$product->image], (array) $product->gallery));
@@ -224,6 +241,7 @@ class ProductController extends Controller
     {
         $variants = $request->input('variants', []);
         $keptIds = [];
+        $existingVariants = $product->variants()->get()->keyBy('id');
 
         foreach ($variants as $variant) {
             if (empty($variant['price'])) {
@@ -238,7 +256,7 @@ class ProductController extends Controller
             ];
 
             $id = $variant['id'] ?? null;
-            $existing = $id ? $product->variants()->whereKey($id)->first() : null;
+            $existing = $id ? $existingVariants->get((int) $id) : null;
 
             if ($existing) {
                 $existing->update($payload);

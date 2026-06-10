@@ -14,6 +14,26 @@ return [
     |
     */
 
-    'max_image_mb' => (float) env('MAX_IMAGE_UPLOAD_MB', 5),
+    'max_image_mb' => (float) env('MAX_IMAGE_UPLOAD_MB', 20),
+
+    /** Định dạng ảnh cho phép (Laravel `mimes` + kiểm nội dung file). */
+    'allowed_image_mimes' => ['jpeg', 'jpg', 'png', 'webp', 'gif'],
+
+    /** Ảnh đại diện bài viết: một file, max rộng (px). */
+    'post_featured_max_width' => 600,
+
+    /** Ảnh chèn trong editor: một file, max rộng (px). */
+    'editor_max_width' => 1200,
+
+    /** Grace period trước khi cron xóa ảnh editor mồ côi (giờ). */
+    'editor_orphan_grace_hours' => (int) env('EDITOR_ORPHAN_GRACE_HOURS', 48),
+
+    /** Banner CTA: giữ nguyên tỷ lệ, chỉ thu nhỏ nếu rộng hơn (px). */
+    'banner_desktop_max_width' => 1200,
+    'banner_mobile_max_width' => 768,
+
+    /** Hero trang chủ: giữ nguyên tỷ lệ, chỉ thu nhỏ nếu rộng hơn (px). */
+    'hero_desktop_max_width' => 1920,
+    'hero_mobile_max_width' => 768,
 
 ];

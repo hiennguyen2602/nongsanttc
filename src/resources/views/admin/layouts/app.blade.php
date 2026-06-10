@@ -5,9 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('title', 'Admin') — {{ config('admin.name') }}</title>
-    @vite(['resources/css/app.css', 'resources/css/admin.css', 'resources/js/app.js'])
+    @include('partials.favicon')
+    @vite(['resources/css/admin.css', 'resources/js/admin.js'])
 </head>
-<body class="admin-body bg-gent-content font-sans text-[#212529] antialiased" x-data="{ sidebarOpen: false }">
+<body class="admin-body bg-gent-content font-sans text-black antialiased" x-data="{ sidebarOpen: false }">
     <div class="flex min-h-screen">
         @include('admin.partials.sidebar')
 

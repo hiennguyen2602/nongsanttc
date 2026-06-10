@@ -37,13 +37,11 @@
                                         <img src="{{ store_media_url($product->image, 'thumbnail') }}" alt="" class="h-12 w-20 max-w-none shrink-0 rounded object-cover ring-1 ring-slate-200">
                                     @endif
                                 </td>
-                                <td class="whitespace-nowrap font-medium"><a href="{{ route('admin.products.show', $product) }}" class="text-[#015096] hover:underline">{{ $product->name }}</a></td>
+                                <td class="whitespace-nowrap font-medium"><a href="{{ route('admin.products.show', $product) }}" class="admin-link hover:underline">{{ $product->name }}</a></td>
                                 <td>{{ $product->category?->name ?? '—' }}</td>
                                 <td>{{ $product->formattedPrice() }}</td>
                                 <td>
-                                    <span class="badge {{ $product->is_active ? 'badge-success' : 'badge-secondary' }}">
-                                        {{ $product->is_active ? 'Hiển thị' : 'Ẩn' }}
-                                    </span>
+                                    @include('admin.partials.status-badge', ['label' => $product->visibilityLabel(), 'class' => $product->visibilityBadgeClass()])
                                 </td>
                                 <td class="table-actions">
                                     <a href="{{ route('admin.products.edit', $product) }}" class="btn btn-link btn-sm">Sửa</a>

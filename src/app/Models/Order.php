@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Order extends Model
@@ -20,6 +21,8 @@ class Order extends Model
 
     protected $fillable = [
         'order_code',
+        'public_token',
+        'customer_id',
         'customer_name',
         'customer_phone',
         'customer_email',
@@ -40,6 +43,11 @@ class Order extends Model
         return [
             'viewed_at' => 'datetime',
         ];
+    }
+
+    public function customer(): BelongsTo
+    {
+        return $this->belongsTo(Customer::class);
     }
 
     public function items(): HasMany
@@ -66,13 +74,7 @@ class Order extends Model
 
     public static function statusLabels(): array
     {
-        return [
-            self::STATUS_PENDING => 'Chờ xử lý',
-            self::STATUS_CONFIRMED => 'Đã xác nhận',
-            self::STATUS_SHIPPING => 'Đang giao',
-            self::STATUS_COMPLETED => 'Hoàn thành',
-            self::STATUS_CANCELLED => 'Đã hủy',
-        ];
+        return config('labels.order_status');
     }
 
     /**

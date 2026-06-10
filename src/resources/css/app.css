@@ -2,8 +2,10 @@
 
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 @source '../../storage/framework/views/*.php';
-@source '../**/*.blade.php';
-@source '../**/*.js';
+@source '../views/store/**/*.blade.php';
+@source '../views/partials/favicon.blade.php';
+@source '../js/store.js';
+@source '../js/store-effects.js';
 
 [x-cloak] {
     display: none !important;
@@ -25,14 +27,6 @@
     --font-sans: 'Segoe UI', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
         'Segoe UI Symbol', 'Noto Color Emoji';
 
-    /* Gentelella-inspired palette (admin) */
-    --color-gent-sidebar: #2a3f54;
-    --color-gent-sidebar-hover: #1a2634;
-    --color-gent-accent: #1abb9c;
-    --color-gent-accent-dark: #169f85;
-    --color-gent-topbar: #ededed;
-    --color-gent-content: #f7f7f7;
-
     /* Nông sản — xanh lá non (tươi, sạch) + vàng lúa (accent) */
     --color-brand: #3d8f5a;
     --color-brand-dark: #2f7348;
@@ -46,6 +40,97 @@
 
 html {
     scroll-behavior: smooth;
+}
+
+/* Mobile/tablet: giống cũ (px-4, sm:px-6, full width). Laptop+ mới giới hạn max-width. */
+.store-container {
+    width: 100%;
+    margin-inline: auto;
+    padding-inline: 1rem;
+    max-width: none;
+}
+
+@media (min-width: 640px) {
+    .store-container {
+        padding-inline: 1.5rem;
+    }
+}
+
+@media (min-width: 1024px) {
+    .store-container {
+        max-width: 72rem;
+    }
+}
+
+@media (min-width: 1536px) {
+    .store-container {
+        max-width: 80rem;
+        padding-inline: 2rem;
+    }
+}
+
+.store-container--article {
+    max-width: none;
+}
+
+@media (min-width: 1024px) {
+    .store-container--article {
+        max-width: 44rem;
+    }
+}
+
+@media (min-width: 1536px) {
+    .store-container--article {
+        max-width: 60rem;
+    }
+}
+
+.store-container--compact {
+    max-width: none;
+}
+
+@media (min-width: 1024px) {
+    .store-container--compact {
+        max-width: 38rem;
+    }
+}
+
+@media (min-width: 1536px) {
+    .store-container--compact {
+        max-width: 44rem;
+    }
+}
+
+.store-container--hero {
+    max-width: none;
+}
+
+@media (min-width: 1024px) {
+    .store-container--hero {
+        max-width: 52rem;
+    }
+}
+
+@media (min-width: 1536px) {
+    .store-container--hero {
+        max-width: 60rem;
+    }
+}
+
+.store-container--cta {
+    max-width: none;
+}
+
+@media (min-width: 1024px) {
+    .store-container--cta {
+        max-width: 44rem;
+    }
+}
+
+@media (min-width: 1536px) {
+    .store-container--cta {
+        max-width: 52rem;
+    }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -183,6 +268,16 @@ html {
     animation: scroll-hint 2s ease-in-out infinite;
 }
 
+/* Hero — full viewport, giữ tỷ lệ ảnh gốc (object-cover) */
+.hero-section__media {
+    overflow: hidden;
+}
+
+.hero-section__image {
+    min-height: 100%;
+    min-width: 100%;
+}
+
 /* Product card — equal height grid */
 .product-grid-equal {
     align-items: stretch;
@@ -194,7 +289,43 @@ html {
 }
 
 .product-card-body {
-    min-height: 5.75rem;
+    min-height: 5.25rem;
+}
+
+/* Homepage trust stats — mobile 2×2; desktop 4 cột (giữ kiểu cũ) */
+.home-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0;
+}
+
+.home-stats-item {
+    padding: 0.875rem 0.5rem;
+    text-align: center;
+}
+
+@media (max-width: 639px) {
+    .home-stats-item:nth-child(odd) {
+        border-right: 1px solid rgb(241 245 249);
+    }
+
+    .home-stats-item:nth-child(-n + 2) {
+        border-bottom: 1px solid rgb(241 245 249);
+    }
+}
+
+@media (min-width: 640px) {
+    .home-stats-grid {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    .home-stats-item {
+        padding: 0 1rem;
+    }
+
+    .home-stats-item + .home-stats-item {
+        border-left: 1px solid rgb(241 245 249);
+    }
 }
 
 /* Product card polish */
@@ -207,6 +338,44 @@ html {
     box-shadow: 0 20px 40px -12px rgb(47 115 72 / 0.25);
 }
 
+/* Post card — hover tách khỏi scroll-reveal để không giật */
+.post-card-hover {
+    transition:
+        transform 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+        box-shadow 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.post-card-hover:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 20px 40px -12px rgb(15 23 42 / 0.14);
+}
+
+/* Product gallery lightbox */
+.product-lightbox-backdrop {
+    background-color: rgb(0 0 0 / 0.88);
+}
+
+.product-lightbox-image {
+    transform-origin: center center;
+}
+
+/* Homepage banner CTA — equal height, image fill */
+.banner-cta-grid {
+    align-items: stretch;
+}
+
+.banner-cta-card {
+    aspect-ratio: 5 / 3;
+    min-height: 14rem;
+}
+
+@media (min-width: 768px) {
+    .banner-cta-card {
+        aspect-ratio: 16 / 10;
+        min-height: 0;
+    }
+}
+
 /* Promo card shine on hover */
 .promo-card {
     transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
@@ -216,4 +385,28 @@ html {
     transform: translateY(-4px);
     box-shadow: 0 12px 28px -8px rgb(47 115 72 / 0.2);
     border-color: var(--color-brand-light);
+}
+
+/* Store form controls */
+.store-form-control {
+    display: block;
+    width: 100%;
+    border: 1px solid #cbd5e1;
+    border-radius: 0.375rem;
+    padding: 0.5rem 0.75rem;
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    background-color: #fff;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.store-form-control:focus {
+    outline: none;
+    border-color: var(--color-brand);
+    box-shadow: 0 0 0 3px rgb(61 143 90 / 0.15);
+}
+
+textarea.store-form-control {
+    min-height: 5rem;
+    resize: vertical;
 }

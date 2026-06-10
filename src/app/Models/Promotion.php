@@ -2,10 +2,13 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\HasActiveVisibility;
 use Illuminate\Database\Eloquent\Model;
 
 class Promotion extends Model
 {
+    use HasActiveVisibility;
+
     protected $fillable = [
         'code',
         'title',

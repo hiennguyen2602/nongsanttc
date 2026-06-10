@@ -22,7 +22,7 @@
             <div class="mb-3">
                 <label class="form-label">Vai trò</label>
                 <select name="type" class="form-select">
-                    @foreach(\App\Models\User::roleLabels() as $val => $label)
+                    @foreach(\App\Models\User::adminRoleLabels() as $val => $label)
                         <option value="{{ $val }}" @selected(old('type', $user->type ?? \App\Models\User::TYPE_STAFF)==$val)>{{ $label }}</option>
                     @endforeach
                 </select>
@@ -30,8 +30,9 @@
             <div class="mb-4">
                 <label class="form-label">Trạng thái</label>
                 <select name="status" class="form-select">
-                    <option value="1" @selected(old('status', $user->status ?? 1)==1)>Hoạt động</option>
-                    <option value="0" @selected(old('status', $user->status ?? 1)==0)>Khóa</option>
+                    @foreach(\App\Models\User::accountStatusLabels() as $val => $label)
+                        <option value="{{ $val }}" @selected(old('status', $user->status ?? 1) == $val)>{{ $label }}</option>
+                    @endforeach
                 </select>
             </div>
             <div class="form-actions">

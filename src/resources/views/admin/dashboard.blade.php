@@ -40,10 +40,6 @@
                 <p class="admin-stat-value" style="color:{{ $statusColors[$key] ?? '' }}">{{ $statusCounts[$key] ?? 0 }}</p>
             </div>
         @endforeach
-        <div class="admin-stat">
-            <p class="admin-stat-label">Đã hủy</p>
-            <p class="admin-stat-value" style="color:{{ $statusColors[\App\Models\Order::STATUS_CANCELLED] }}">{{ $cancelledCount }}</p>
-        </div>
     </div>
 
     <div class="x_panel">
@@ -67,7 +63,7 @@
                         @forelse ($recentOrders as $order)
                             <tr>
                                 <td>
-                                    <a href="{{ route('admin.orders.show', $order) }}" class="inline-flex items-start gap-1 font-medium text-[#015096] hover:underline">
+                                    <a href="{{ route('admin.orders.show', $order) }}" class="inline-flex items-start gap-1 admin-link hover:underline">
                                         <span>{{ $order->order_code }}</span>
                                         @if($order->isNew())
                                             <span class="inline-flex h-5 w-5 -translate-y-1 items-center justify-center rounded-full bg-red-500 text-[7px] font-bold leading-none text-white" title="Đơn hàng mới">New</span>
@@ -76,7 +72,7 @@
                                 </td>
                                 <td>{{ $order->customer_name }}</td>
                                 <td>{{ $order->formattedTotal() }}</td>
-                                <td><span class="badge {{ $order->statusBadgeClass() }}">{{ $order->statusLabel() }}</span></td>
+                                <td>@include('admin.partials.status-badge', ['label' => $order->statusLabel(), 'class' => $order->statusBadgeClass()])</td>
                                 <td>{{ $order->created_at->format('d/m/Y H:i') }}</td>
                             </tr>
                         @empty

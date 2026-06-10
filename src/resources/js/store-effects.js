@@ -61,12 +61,131 @@ document.addEventListener('alpine:init', () => {
             window.scrollTo({ top: 0, behavior: 'smooth' });
         },
     }));
+
+    Alpine.data('cartLineItem', (initialQty = 1) => ({
+        qty: Number(initialQty) || 1,
+
+        submitQty() {
+            this.$refs.qtyForm?.requestSubmit();
+        },
+
+        decrement() {
+            if (this.qty <= 1) {
+                return;
+            }
+            this.qty--;
+            this.submitQty();
+        },
+
+        increment() {
+            this.qty++;
+            this.submitQty();
+        },
+
+        normalizeQty() {
+            const n = parseInt(String(this.qty).replace(/\D/g, ''), 10);
+            this.qty = Number.isNaN(n) || n < 1 ? 1 : n;
+            this.submitQty();
+        },
+    }));
+
+    Alpine.data('checkoutForm', (initial = {}) => ({
+        step: Number(initial.step ?? 1),
+        phoneError: '',
+        name: initial.name ?? '',
+        phone: initial.phone ?? '',
+        email: initial.email ?? '',
+        address: initial.address ?? '',
+        note: initial.note ?? '',
+
+        goReview() {
+            this.phoneError = '';
+            const form = this.$refs.checkoutForm;
+
+            if (! form?.reportValidity()) {
+                return;
+            }
+
+            const digits = this.phone.replace(/\s+/g, '');
+
+            if (! /^0\d{9}$/.test(digits)) {
+                this.phoneError = 'Số điện thoại phải có 10 chữ số (Việt Nam).';
+                form.querySelector('[name="phone"]')?.focus();
+
+                return;
+            }
+
+            this.step = 2;
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        },
+
+        backToEdit() {
+            this.step = 1;
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        },
+    }));
+
+    Alpine.data('floatingContact', () => ({
+        visible: false,
+        productsReady: false,
+        footerInView: false,
+
+        updateVisibility() {
+            const hasProductSection = document.getElementById('san-pham');
+            const ready = hasProductSection ? this.productsReady : true;
+            this.visible = ready && ! this.footerInView;
+        },
+
+        init() {
+            const productSection = document.getElementById('san-pham');
+
+            if (productSection) {
+                const productObserver = new IntersectionObserver(
+                    (entries) => {
+                        entries.forEach((entry) => {
+                            if (entry.isIntersecting) {
+                                this.productsReady = true;
+                                return;
+                            }
+
+                            this.productsReady = entry.boundingClientRect.top < 0;
+                        });
+                        this.updateVisibility();
+                    },
+                    { threshold: 0 },
+                );
+                productObserver.observe(productSection);
+            } else {
+                this.productsReady = true;
+            }
+
+            const footer = document.getElementById('lien-he');
+            if (footer) {
+                const footerObserver = new IntersectionObserver(
+                    (entries) => {
+                        this.footerInView = entries.some((entry) => entry.isIntersecting);
+                        this.updateVisibility();
+                    },
+                    { threshold: 0 },
+                );
+                footerObserver.observe(footer);
+            }
+
+            this.updateVisibility();
+        },
+    }));
 });
 
 function initScrollReveal() {
     if (window.__scrollRevealInit) {
         return;
     }
+
+    const targets = document.querySelectorAll('[data-reveal], [data-reveal-group]');
+    if (! targets.length) {
+        return;
+    }
+
     window.__scrollRevealInit = true;
 
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {

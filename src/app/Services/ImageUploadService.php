@@ -15,7 +15,7 @@ class ImageUploadService
         'large' => 1200,
     ];
 
-    /** Giới hạn chiều rộng ảnh gốc để tránh file quá nặng. */
+    /** Giới hạn chiều rộng ảnh gốc (bộ variants đầy đủ). */
     private const ORIGINAL_MAX_WIDTH = 1600;
 
     /** @var array<string, array{width: int, height: int}> */
@@ -28,16 +28,16 @@ class ImageUploadService
     /**
      * @return array{path: string, url: string, variants: array<string, string>}
      */
-    public function upload(UploadedFile $file, string $folder = 'uploads', ?string $preset = null): array
+    public function upload(UploadedFile $file, string $folder = 'uploads', ?string $preset = null, ?int $singleMaxWidth = null): array
     {
-        $this->validate($file);
+        $imageType = $this->validate($file);
 
         $directory = public_path(trim($folder, '/'));
         if (! is_dir($directory) && ! mkdir($directory, 0755, true) && ! is_dir($directory)) {
             throw new RuntimeException('Không thể tạo thư mục upload.');
         }
 
-        $extension = strtolower($file->getClientOriginalExtension() ?: 'jpg');
+        $extension = $this->extensionForImageType($imageType);
         $basename = Str::uuid()->toString();
         $filename = $basename . '.' . $extension;
         $relativePath = trim($folder, '/') . '/' . $filename;
@@ -50,6 +50,9 @@ class ImageUploadService
         if ($preset && isset(self::PRESETS[$preset])) {
             $this->cropToPreset($absolutePath, self::PRESETS[$preset]);
             $variants['original'] = $relativePath;
+        } elseif ($singleMaxWidth !== null) {
+            $this->resizeImage($absolutePath, $absolutePath, $singleMaxWidth);
+            $variants['original'] = $relativePath;
         } else {
             foreach (self::VARIANTS as $name => $maxWidth) {
                 $variantFilename = $basename . '_' . $name . '.' . $extension;
@@ -58,7 +61,6 @@ class ImageUploadService
                 $variants[$name] = $variantRelative;
             }
 
-            // Nén/thu nhỏ ảnh gốc để tránh file quá nặng.
             $this->resizeImage($absolutePath, $absolutePath, self::ORIGINAL_MAX_WIDTH);
 
             $variants['original'] = $relativePath;
@@ -93,16 +95,52 @@ class ImageUploadService
         }
     }
 
-    private function validate(UploadedFile $file): void
+    /** Kiểm dung lượng + nội dung ảnh thật (getimagesize), không tin extension client. */
+    private function validate(UploadedFile $file): int
     {
-        if (! in_array(strtolower($file->getClientOriginalExtension()), ['jpg', 'jpeg', 'png', 'webp', 'gif'], true)) {
-            throw new RuntimeException('Định dạng ảnh không hợp lệ.');
-        }
-
-        $maxMb = (float) config('media.max_image_mb', 5);
+        $maxMb = (float) config('media.max_image_mb', 20);
         if ($file->getSize() > $maxMb * 1024 * 1024) {
             throw new RuntimeException('Ảnh không được vượt quá ' . rtrim(rtrim(number_format($maxMb, 1), '0'), '.') . 'MB.');
         }
+
+        $path = $file->getRealPath();
+        if ($path === false) {
+            throw new RuntimeException('Không đọc được file tải lên.');
+        }
+
+        $info = @getimagesize($path);
+        if ($info === false) {
+            throw new RuntimeException('File tải lên phải là hình ảnh hợp lệ.');
+        }
+
+        $imageType = (int) $info[2];
+        if (! in_array($imageType, $this->allowedImageTypes(), true)) {
+            throw new RuntimeException('Định dạng ảnh không hợp lệ.');
+        }
+
+        return $imageType;
+    }
+
+    /** @return list<int> */
+    private function allowedImageTypes(): array
+    {
+        return [
+            IMAGETYPE_JPEG,
+            IMAGETYPE_PNG,
+            IMAGETYPE_WEBP,
+            IMAGETYPE_GIF,
+        ];
+    }
+
+    private function extensionForImageType(int $type): string
+    {
+        return match ($type) {
+            IMAGETYPE_JPEG => 'jpg',
+            IMAGETYPE_PNG => 'png',
+            IMAGETYPE_WEBP => 'webp',
+            IMAGETYPE_GIF => 'gif',
+            default => throw new RuntimeException('Định dạng ảnh không được hỗ trợ.'),
+        };
     }
 
     /**

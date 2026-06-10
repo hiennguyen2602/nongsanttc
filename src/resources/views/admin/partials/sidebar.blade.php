@@ -33,6 +33,9 @@
     <nav class="flex-1 overflow-y-auto px-3 py-4">
         <ul class="space-y-1">
             @foreach (config('admin.menu') as $item)
+                @if (! empty($item['admin_only']) && ! auth()->user()->isAdmin())
+                    @continue
+                @endif
                 <li>
                     @if (! empty($item['children']))
                         @php $groupActive = collect($item['children'])->contains(fn ($c) => $menuActive($c['route'] ?? null)); @endphp
@@ -44,6 +47,9 @@
                             </summary>
                             <ul class="mt-1 space-y-0.5 pl-4">
                                 @foreach ($item['children'] as $child)
+                                    @if (! empty($child['admin_only']) && ! auth()->user()->isAdmin())
+                                        @continue
+                                    @endif
                                     @php $childActive = $menuActive($child['route'] ?? null); @endphp
                                     <li>
                                         @if (! empty($child['route']))
@@ -64,6 +70,9 @@
                                 <span class="flex-1">{{ $item['label'] }}</span>
                                 @if ($item['route'] === 'admin.orders.index' && ($newOrdersCount ?? 0) > 0)
                                     <span class="inline-flex h-5 min-w-[1.25rem] items-center justify-center rounded-full bg-red-500 px-1.5 text-xs font-bold text-white">{{ $newOrdersCount }}</span>
+                                @endif
+                                @if ($item['route'] === 'admin.contact-messages.index' && ($newContactMessagesCount ?? 0) > 0)
+                                    <span class="inline-flex h-5 min-w-[1.25rem] items-center justify-center rounded-full bg-red-500 px-1.5 text-xs font-bold text-white">{{ $newContactMessagesCount }}</span>
                                 @endif
                             </a>
                         @endif

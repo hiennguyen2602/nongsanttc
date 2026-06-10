@@ -2,12 +2,15 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\HasActiveVisibility;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Product extends Model
 {
+    use HasActiveVisibility;
+
     protected $fillable = [
         'category_id', 'name', 'slug', 'sku', 'description',
         'price', 'sale_price', 'image', 'gallery', 'is_featured', 'is_active', 'stock',

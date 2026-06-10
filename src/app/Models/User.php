@@ -66,17 +66,39 @@ class User extends Authenticatable
         return (int) $this->status === 1;
     }
 
-    public static function roleLabels(): array
+    public static function adminRoleLabels(): array
     {
         return [
             self::TYPE_ADMIN => 'Quản trị viên',
             self::TYPE_STAFF => 'Nhân viên',
+        ];
+    }
+
+    public static function roleLabels(): array
+    {
+        return self::adminRoleLabels() + [
             self::TYPE_USER => 'Khách hàng',
         ];
     }
 
     public function roleLabel(): string
     {
-        return self::roleLabels()[(int) $this->type] ?? 'Khách hàng';
+        return self::roleLabels()[(int) $this->type] ?? '—';
+    }
+
+    /** @return array{active: string, inactive: string} */
+    public static function accountStatusLabels(): array
+    {
+        return config('labels.account');
+    }
+
+    public function accountStatusLabel(): string
+    {
+        return self::accountStatusLabels()[(int) $this->status] ?? '—';
+    }
+
+    public function accountStatusBadgeClass(): string
+    {
+        return $this->isActive() ? 'badge-success' : 'badge-secondary';
     }
 }

@@ -40,21 +40,13 @@
 
                     <div class="mb-3" x-data="productImages(@js($existingImages))">
                         <label class="form-label">Hình ảnh sản phẩm *</label>
-                        <input type="file" x-ref="fileInput" name="images[]" accept="image/*" multiple @change="addFiles($event)" class="form-control">
-                        <p class="mt-1 text-xs text-slate-500">Có thể chọn nhiều ảnh cùng lúc. Chọn "Ảnh chính" để làm ảnh đại diện hiển thị ở danh sách.</p>
-                        @error('images')<p class="field-error">{{ $message }}</p>@enderror
-                        @foreach ($errors->get('images.*') as $imageErrors)
-                            @foreach ($imageErrors as $imageError)
-                                <p class="field-error">{{ $imageError }}</p>
-                            @endforeach
-                        @endforeach
 
                         <input type="hidden" name="main_selector" :value="mainPayload">
                         <template x-for="item in existing" :key="'hidden-' + item.path">
                             <input type="hidden" name="existing_images[]" :value="item.path">
                         </template>
 
-                        <div class="image-grid" x-show="existing.length || newImages.length" style="display:none">
+                        <div class="image-grid mb-2" x-show="existing.length || newImages.length" style="display:none">
                             <template x-for="item in existing" :key="'e-' + item.path">
                                 <div class="image-card" :class="{ 'is-main': isMainExisting(item.path) }">
                                     <span class="image-main-badge" x-show="isMainExisting(item.path)">Ảnh chính</span>
@@ -80,6 +72,15 @@
                                 </div>
                             </template>
                         </div>
+
+                        <input type="file" x-ref="fileInput" name="images[]" accept="image/*" multiple @change="addFiles($event)" class="form-control">
+                        <p class="mt-1 text-xs text-slate-500">Có thể chọn nhiều ảnh cùng lúc. Chọn "Ảnh chính" để làm ảnh đại diện hiển thị ở danh sách. {{ image_upload_hint() }}</p>
+                        @error('images')<p class="field-error">{{ $message }}</p>@enderror
+                        @foreach ($errors->get('images.*') as $imageErrors)
+                            @foreach ($imageErrors as $imageError)
+                                <p class="field-error">{{ $imageError }}</p>
+                            @endforeach
+                        @endforeach
                     </div>
 
                     <div class="mb-1">

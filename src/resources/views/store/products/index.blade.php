@@ -1,16 +1,16 @@
 @extends('store.layouts.app')
 
-@section('title', 'Sản phẩm — ' . config('store.name'))
+@section('title', 'Sản phẩm — ' . store_setting('name'))
 
 @section('content')
     <div class="bg-brand py-10 text-white">
-        <div class="mx-auto max-w-7xl px-4 sm:px-6">
+        <div class="store-container">
             <h1 class="text-2xl font-bold sm:text-3xl">Sản phẩm</h1>
             <p class="mt-1 text-sm text-white/80">Nông sản sạch — chất lượng từ nông trại</p>
         </div>
     </div>
 
-    <div class="mx-auto max-w-7xl px-4 py-10 sm:px-6">
+    <div class="store-container py-10">
         {{-- Category filter --}}
         <div class="mb-8 flex flex-wrap gap-2">
             <a href="{{ route('products.index') }}"

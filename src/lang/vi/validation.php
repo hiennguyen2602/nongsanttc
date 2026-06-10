@@ -156,6 +156,8 @@ return [
         'phone' => 'số điện thoại',
         'title' => 'tiêu đề',
         'content' => 'nội dung',
+        'subject' => 'chủ đề',
+        'message' => 'nội dung',
         'description' => 'mô tả',
         'price' => 'giá',
         'sale_price' => 'giá khuyến mãi',
