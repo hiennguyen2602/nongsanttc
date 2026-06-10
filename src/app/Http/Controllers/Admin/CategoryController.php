@@ -19,7 +19,9 @@ class CategoryController extends Controller
 
     public function create(): View
     {
-        return view('admin.categories.create');
+        return view('admin.categories.create', [
+            'nextSortOrder' => (Category::query()->max('sort_order') ?? 0) + 1,
+        ]);
     }
 
     public function store(Request $request): RedirectResponse
