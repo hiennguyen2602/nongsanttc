@@ -17,6 +17,9 @@ return new class extends Migration
             $table->text('message');
             $table->timestamp('viewed_at')->nullable();
             $table->timestamps();
+
+            $table->index('viewed_at', 'contact_messages_viewed_at_index');
+            $table->index('created_at', 'contact_messages_created_at_index');
         });
     }
 

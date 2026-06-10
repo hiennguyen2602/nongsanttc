@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Quên mật khẩu — {{ config('admin.name') }}</title>
-    @vite(['resources/css/app.css', 'resources/css/admin.css'])
+    @vite(['resources/css/admin.css'])
 </head>
 <body class="admin-auth font-sans">
     <div class="w-full max-w-md">

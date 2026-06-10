@@ -31,6 +31,10 @@ return new class extends Migration
             $table->boolean('is_active')->default(true);
             $table->unsignedInteger('stock')->default(0);
             $table->timestamps();
+
+            $table->index(['is_active', 'is_featured'], 'products_active_featured_index');
+            $table->index(['is_active', 'category_id'], 'products_active_category_index');
+            $table->index('updated_at', 'products_updated_at_index');
         });
 
         Schema::create('product_variants', function (Blueprint $table) {
@@ -53,6 +57,8 @@ return new class extends Migration
             $table->boolean('is_published')->default(true);
             $table->timestamp('published_at')->nullable();
             $table->timestamps();
+
+            $table->index(['is_published', 'published_at'], 'posts_published_at_index');
         });
 
         Schema::create('banners', function (Blueprint $table) {
@@ -66,6 +72,8 @@ return new class extends Migration
             $table->integer('sort_order')->default(0);
             $table->boolean('is_active')->default(true);
             $table->timestamps();
+
+            $table->index(['is_active', 'position', 'sort_order'], 'banners_active_position_sort_index');
         });
     }
 

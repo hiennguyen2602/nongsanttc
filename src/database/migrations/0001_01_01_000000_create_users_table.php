@@ -21,6 +21,8 @@ return new class extends Migration
             $table->tinyInteger('status')->default(1)->comment('1: Active, 0: Inactive');
             $table->rememberToken();
             $table->timestamps();
+
+            $table->index('type', 'users_type_index');
         });
 
         Schema::create('password_reset_tokens', function (Blueprint $table) {

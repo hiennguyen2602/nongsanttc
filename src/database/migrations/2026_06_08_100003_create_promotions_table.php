@@ -17,6 +17,8 @@ return new class extends Migration
             $table->unsignedInteger('discount_amount')->default(0);
             $table->boolean('is_active')->default(true);
             $table->timestamps();
+
+            $table->index('is_active', 'promotions_is_active_index');
         });
     }
 

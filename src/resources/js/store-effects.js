@@ -180,6 +180,12 @@ function initScrollReveal() {
     if (window.__scrollRevealInit) {
         return;
     }
+
+    const targets = document.querySelectorAll('[data-reveal], [data-reveal-group]');
+    if (! targets.length) {
+        return;
+    }
+
     window.__scrollRevealInit = true;
 
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {

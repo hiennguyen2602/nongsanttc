@@ -5,7 +5,6 @@ namespace App\Services;
 use App\Models\Customer;
 use App\Models\Order;
 use App\Models\OrderItem;
-use App\Models\ProductVariant;
 use App\Services\CustomerService;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
@@ -69,11 +68,6 @@ class OrderService
     {
         foreach ($items as $item) {
             $variantId = $item['variant_id'] ?? null;
-
-            if ($variantId && ! ProductVariant::query()->whereKey($variantId)->exists()) {
-                $variantId = null;
-            }
-
             $unitPrice = (int) $item['unit_price'];
             $quantity = (int) $item['quantity'];
             $lineTotal = $unitPrice * $quantity;

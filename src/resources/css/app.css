@@ -2,8 +2,10 @@
 
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 @source '../../storage/framework/views/*.php';
-@source '../**/*.blade.php';
-@source '../**/*.js';
+@source '../views/store/**/*.blade.php';
+@source '../views/partials/favicon.blade.php';
+@source '../js/store.js';
+@source '../js/store-effects.js';
 
 [x-cloak] {
     display: none !important;
@@ -24,14 +26,6 @@
 @theme {
     --font-sans: 'Segoe UI', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
         'Segoe UI Symbol', 'Noto Color Emoji';
-
-    /* Gentelella-inspired palette (admin) */
-    --color-gent-sidebar: #2a3f54;
-    --color-gent-sidebar-hover: #1a2634;
-    --color-gent-accent: #1abb9c;
-    --color-gent-accent-dark: #169f85;
-    --color-gent-topbar: #ededed;
-    --color-gent-content: #f7f7f7;
 
     /* Nông sản — xanh lá non (tươi, sạch) + vàng lúa (accent) */
     --color-brand: #3d8f5a;

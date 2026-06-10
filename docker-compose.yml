@@ -1,6 +1,6 @@
 # Production / VPS: docker compose up -d --build
 # Local dev: cp docker-compose.override.yml.example docker-compose.override.yml
-# Frontend dev (HMR): docker compose --profile dev up -d
+# Frontend dev (HMR): copy docker-compose.override.yml.example → override, tùy chọn VITE_MODE=dev
 
 services:
   app:

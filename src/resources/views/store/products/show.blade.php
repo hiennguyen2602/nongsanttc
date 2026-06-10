@@ -20,7 +20,7 @@
                 selectedVariant: @js($product->variants->first()?->id),
                 variants: @js($product->variants->map(fn($v) => ['id' => $v->id, 'label' => $v->label(), 'price' => $v->price, 'formatted' => $v->formattedPrice()])),
                 basePrice: {{ $product->displayPrice() }},
-                gallery: @js(collect(array_merge([$product->image], $product->gallery ?? []))->filter()->unique()->map(fn ($img) => ['thumb' => store_media_url($img, 'thumbnail'), 'display' => store_media_url($img, 'medium'), 'full' => store_media_url($img, 'large')])->values()->all()),
+                gallery: @js(store_media_gallery_items($product->image, (array) ($product->gallery ?? []))),
                 activeIndex: 0,
                 lightbox: false,
                 openLightbox() {
@@ -53,7 +53,16 @@
                     <div class="flex h-full transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]" :style="`transform: translateX(-${activeIndex * 100}%)`">
                         <template x-for="(img, i) in gallery" :key="i">
                             <div class="group/main h-full w-full shrink-0 cursor-zoom-in" @click="openLightbox()">
-                                <img :src="img.display" alt="{{ $product->name }}" class="h-full w-full object-cover transition-transform duration-500 ease-out group-hover/main:scale-[1.03]">
+                                <img
+                                    :src="img.display"
+                                    :srcset="img.srcset"
+                                    sizes="(min-width: 1024px) 480px, calc(100vw - 2rem)"
+                                    alt="{{ $product->name }}"
+                                    class="h-full w-full object-cover transition-transform duration-500 ease-out group-hover/main:scale-[1.03]"
+                                    :loading="i === 0 ? 'eager' : 'lazy'"
+                                    :fetchpriority="i === 0 ? 'high' : 'auto'"
+                                    decoding="async"
+                                >
                             </div>
                         </template>
                     </div>
@@ -63,7 +72,15 @@
                 <div class="flex gap-2 overflow-x-auto pb-2">
                     <template x-for="(img, i) in gallery" :key="i">
                         <button type="button" @click="activeIndex = i" class="h-16 w-16 shrink-0 overflow-hidden rounded border-2 transition hover:border-brand" :class="activeIndex === i ? 'border-brand' : 'border-slate-200'">
-                            <img :src="img.thumb" alt="" class="h-full w-full object-cover">
+                            <img
+                                :src="img.thumb"
+                                :srcset="img.srcset"
+                                sizes="64px"
+                                alt=""
+                                class="h-full w-full object-cover"
+                                loading="lazy"
+                                decoding="async"
+                            >
                         </button>
                     </template>
                 </div>
@@ -107,7 +124,9 @@
                             @click.stop
                         >
                             <img
-                                :src="gallery[activeIndex]?.full"
+                                :src="lightbox ? gallery[activeIndex]?.full : null"
+                                :srcset="lightbox ? gallery[activeIndex]?.fullSrcset : null"
+                                sizes="92vw"
                                 :key="activeIndex"
                                 alt="{{ $product->name }}"
                                 x-show="lightbox"
@@ -115,6 +134,8 @@
                                 x-transition:enter-start="opacity-0 scale-95"
                                 x-transition:enter-end="opacity-100 scale-100"
                                 class="max-h-[90vh] max-w-[92vw] object-contain"
+                                loading="lazy"
+                                decoding="async"
                             >
                         </div>
 

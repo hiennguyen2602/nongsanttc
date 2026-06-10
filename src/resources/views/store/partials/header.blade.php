@@ -1,5 +1,19 @@
 @php
     $headerTransparent = request()->routeIs('home', 'about');
+
+    $navLinkClass = function (bool $active) use ($headerTransparent): string {
+        $base = 'border-b px-3 py-2 text-xs font-medium uppercase tracking-widest transition sm:px-4 sm:text-sm ';
+
+        if ($headerTransparent) {
+            return $base . ($active ? 'border-white text-white' : 'border-transparent text-white/85 hover:text-white');
+        }
+
+        return $base . ($active ? 'border-brand-light text-white' : 'border-transparent text-white/75 hover:text-white');
+    };
+
+    $contactNavClass = $headerTransparent
+        ? 'border-b border-transparent px-3 py-2 text-xs font-medium uppercase tracking-widest text-white/85 transition hover:text-white sm:px-4 sm:text-sm'
+        : 'border-b px-3 py-2 text-xs font-medium uppercase tracking-widest transition sm:px-4 sm:text-sm ' . (request()->routeIs('contact') ? 'border-brand-light text-white' : 'border-transparent text-white/90 hover:text-white');
 @endphp
 
 <header
@@ -14,71 +28,60 @@
         onScroll();
         window.addEventListener('scroll', onScroll, { passive: true });
     "
-    class="fixed inset-x-0 top-0 z-50 transition-all duration-300"
-    :class="transparent && !scrolled
-        ? 'bg-transparent shadow-none'
-        : 'bg-brand/95 shadow-md backdrop-blur-sm'"
+    class="site-header fixed inset-x-0 top-0 z-50 text-white transition-all duration-300 {{ $headerTransparent ? 'bg-transparent shadow-none' : 'bg-brand/95 shadow-md backdrop-blur-sm' }}"
+    :class="transparent && !scrolled ? 'bg-transparent shadow-none' : 'bg-brand/95 shadow-md backdrop-blur-sm'"
 >
     <div class="mx-auto max-w-7xl px-4 sm:px-6">
         <div class="flex h-16 items-center justify-between lg:h-20">
-            {{-- Logo — The Venue style --}}
             <a href="{{ route('home') }}" class="flex shrink-0 flex-col leading-tight">
-                <span
-                    class="font-display text-lg font-semibold tracking-wide transition-colors sm:text-xl"
-                    :class="transparent && !scrolled ? 'text-white' : 'text-white'"
-                >
+                <span class="font-display text-lg font-semibold tracking-wide text-white transition-colors sm:text-xl">
                     {{ store_setting('name') }}
                 </span>
-                <span
-                    class="text-[10px] font-medium uppercase tracking-[0.25em] transition-colors sm:text-xs"
-                    :class="transparent && !scrolled ? 'text-white/70' : 'text-white/60'"
-                >
+                <span class="text-[10px] font-medium uppercase tracking-[0.25em] text-white/70 transition-colors sm:text-xs">
                     Nông sản sạch
                 </span>
             </a>
 
-            {{-- Desktop nav --}}
             <nav class="hidden items-center gap-0.5 lg:flex">
                 <a href="{{ route('home') }}"
-                   class="border-b px-3 py-2 text-xs font-medium uppercase tracking-widest transition sm:px-4 sm:text-sm"
+                   class="{{ $navLinkClass(request()->routeIs('home')) }}"
                    :class="transparent && !scrolled
                        ? '{{ request()->routeIs('home') ? 'border-white text-white' : 'border-transparent text-white/85 hover:text-white' }}'
                        : '{{ request()->routeIs('home') ? 'border-brand-light text-white' : 'border-transparent text-white/75 hover:text-white' }}'">
                     Trang chủ
                 </a>
                 <a href="{{ route('about') }}"
-                   class="border-b px-3 py-2 text-xs font-medium uppercase tracking-widest transition sm:px-4 sm:text-sm"
+                   class="{{ $navLinkClass(request()->routeIs('about')) }}"
                    :class="transparent && !scrolled
                        ? '{{ request()->routeIs('about') ? 'border-white text-white' : 'border-transparent text-white/85 hover:text-white' }}'
                        : '{{ request()->routeIs('about') ? 'border-brand-light text-white' : 'border-transparent text-white/75 hover:text-white' }}'">
                     Về chúng tôi
                 </a>
                 <a href="{{ route('products.index') }}"
-                   class="border-b px-3 py-2 text-xs font-medium uppercase tracking-widest transition sm:px-4 sm:text-sm"
+                   class="{{ $navLinkClass(request()->routeIs('products.*')) }}"
                    :class="transparent && !scrolled
                        ? '{{ request()->routeIs('products.*') ? 'border-white text-white' : 'border-transparent text-white/85 hover:text-white' }}'
                        : '{{ request()->routeIs('products.*') ? 'border-brand-light text-white' : 'border-transparent text-white/75 hover:text-white' }}'">
                     Sản phẩm
                 </a>
                 <a href="{{ route('posts.index') }}"
-                   class="border-b px-3 py-2 text-xs font-medium uppercase tracking-widest transition sm:px-4 sm:text-sm"
+                   class="{{ $navLinkClass(request()->routeIs('posts.*')) }}"
                    :class="transparent && !scrolled
                        ? '{{ request()->routeIs('posts.*') ? 'border-white text-white' : 'border-transparent text-white/85 hover:text-white' }}'
                        : '{{ request()->routeIs('posts.*') ? 'border-brand-light text-white' : 'border-transparent text-white/90 hover:text-white' }}'">
                     Tin tức
                 </a>
                 <a href="{{ route('contact') }}"
-                   class="border-b border-transparent px-3 py-2 text-xs font-medium uppercase tracking-widest transition sm:px-4 sm:text-sm"
+                   class="{{ $contactNavClass }}"
                    :class="transparent && !scrolled ? 'text-white/85 hover:text-white' : '{{ request()->routeIs('contact') ? 'border-brand-light text-white' : 'text-white/90 hover:text-white' }}'">
                     Liên hệ
                 </a>
             </nav>
 
-            {{-- Right: hotline + actions --}}
             <div class="flex items-center gap-2 sm:gap-3">
                 <a
                     href="tel:{{ preg_replace('/\s+/', '', store_setting('phone')) }}"
-                    class="hidden items-center border px-3 py-1.5 text-xs transition lg:inline-flex"
+                    class="hidden items-center border px-3 py-1.5 text-xs text-white transition lg:inline-flex {{ $headerTransparent ? 'border-white/60 hover:bg-white/10' : 'border-white/30 hover:border-brand-light' }}"
                     :class="transparent && !scrolled
                         ? 'border-white/60 text-white hover:bg-white/10'
                         : 'border-white/30 text-white hover:border-brand-light'"
@@ -102,12 +105,10 @@
             </div>
         </div>
 
-        {{-- Search --}}
         <div
             x-show="searchOpen"
             x-transition
-            class="border-t pb-4 pt-3"
-            :class="transparent && !scrolled ? 'border-white/10' : 'border-white/10'"
+            class="border-t border-white/10 pb-4 pt-3"
             style="display:none"
         >
             <form action="{{ route('products.index') }}" method="GET" class="mx-auto flex w-full max-w-xl gap-2">
@@ -117,7 +118,6 @@
         </div>
     </div>
 
-    {{-- Mobile menu --}}
     <div
         x-show="mobileOpen"
         x-transition
@@ -137,7 +137,6 @@
     </div>
 </header>
 
-{{-- Spacer: trang không có hero full-screen --}}
 @if (! $headerTransparent)
     <div class="h-16 lg:h-20" aria-hidden="true"></div>
 @endif

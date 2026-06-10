@@ -36,6 +36,11 @@ return new class extends Migration
             $table->string('status')->default('pending');
             $table->timestamp('viewed_at')->nullable();
             $table->timestamps();
+
+            $table->index('status', 'orders_status_index');
+            $table->index('created_at', 'orders_created_at_index');
+            $table->index(['status', 'created_at'], 'orders_status_created_at_index');
+            $table->index('viewed_at', 'orders_viewed_at_index');
         });
 
         Schema::create('order_items', function (Blueprint $table) {

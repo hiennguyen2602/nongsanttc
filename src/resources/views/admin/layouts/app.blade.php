@@ -6,7 +6,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('title', 'Admin') — {{ config('admin.name') }}</title>
     @include('partials.favicon')
-    @vite(['resources/css/app.css', 'resources/css/admin.css', 'resources/js/app.js'])
+    @vite(['resources/css/admin.css', 'resources/js/admin.js'])
 </head>
 <body class="admin-body bg-gent-content font-sans text-black antialiased" x-data="{ sidebarOpen: false }">
     <div class="flex min-h-screen">

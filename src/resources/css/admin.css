@@ -1,3 +1,28 @@
+@import 'tailwindcss';
+
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+@source '../../storage/framework/views/*.php';
+@source '../views/admin/**/*.blade.php';
+@source '../js/admin.js';
+@source '../js/admin/components.js';
+@source '../js/admin-editor.js';
+
+[x-cloak] {
+    display: none !important;
+}
+
+@theme {
+    --font-sans: 'Segoe UI', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
+        'Segoe UI Symbol', 'Noto Color Emoji';
+
+    --color-gent-sidebar: #2a3f54;
+    --color-gent-sidebar-hover: #1a2634;
+    --color-gent-accent: #1abb9c;
+    --color-gent-accent-dark: #169f85;
+    --color-gent-topbar: #ededed;
+    --color-gent-content: #f7f7f7;
+}
+
 /* Admin panel — Gentelella / manager-stock inspired */
 
 :root {

@@ -7,7 +7,9 @@
     <title>@yield('title', config('store.name'))</title>
     <meta name="description" content="@yield('meta_description', config('store.tagline'))">
     @include('partials.favicon')
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    {{-- Chữ header trắng ngay khi paint — trước khi Tailwind/Alpine load --}}
+    <style>.site-header,.site-header a,.site-header button{color:#fff}</style>
+    @vite(['resources/css/app.css', 'resources/js/store.js'])
     @stack('head')
 </head>
 <body class="flex min-h-screen flex-col bg-white font-sans text-slate-800 antialiased">

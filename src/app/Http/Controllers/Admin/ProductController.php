@@ -241,6 +241,7 @@ class ProductController extends Controller
     {
         $variants = $request->input('variants', []);
         $keptIds = [];
+        $existingVariants = $product->variants()->get()->keyBy('id');
 
         foreach ($variants as $variant) {
             if (empty($variant['price'])) {
@@ -255,7 +256,7 @@ class ProductController extends Controller
             ];
 
             $id = $variant['id'] ?? null;
-            $existing = $id ? $product->variants()->whereKey($id)->first() : null;
+            $existing = $id ? $existingVariants->get((int) $id) : null;
 
             if ($existing) {
                 $existing->update($payload);
