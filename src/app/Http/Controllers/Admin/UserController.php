@@ -81,9 +81,9 @@ class UserController extends Controller
         ];
 
         if ($user === null) {
-            $rules['password'] = ['required', 'string', 'min:8', 'confirmed'];
+            $rules['password'] = ['required', 'confirmed', admin_password_rule()];
         } else {
-            $rules['password'] = ['nullable', 'string', 'min:8', 'confirmed'];
+            $rules['password'] = ['nullable', 'confirmed', admin_password_rule()];
         }
 
         $data = $request->validate($rules);

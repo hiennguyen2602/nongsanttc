@@ -14,6 +14,7 @@
             <div class="mb-3">
                 <label class="form-label">Mật khẩu {{ isset($user) ? '(để trống nếu không đổi)' : '*' }}</label>
                 <input type="password" name="password" {{ isset($user) ? '' : 'required' }} autocomplete="new-password" class="form-control">
+                <p class="mt-1 text-xs text-slate-500">{{ admin_password_hint() }}</p>
             </div>
             <div class="mb-3">
                 <label class="form-label">Xác nhận mật khẩu</label>

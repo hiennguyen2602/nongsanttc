@@ -169,6 +169,24 @@ if (! function_exists('store_media_gallery_items')) {
     }
 }
 
+if (! function_exists('admin_password_rule')) {
+    /** Quy tắc mật khẩu admin: ≥8 ký tự, chữ hoa, chữ thường, ký tự đặc biệt. */
+    function admin_password_rule(): \Illuminate\Validation\Rules\Password
+    {
+        return \Illuminate\Validation\Rules\Password::min(8)
+            ->letters()
+            ->mixedCase()
+            ->symbols();
+    }
+}
+
+if (! function_exists('admin_password_hint')) {
+    function admin_password_hint(): string
+    {
+        return 'Tối thiểu 8 ký tự, gồm chữ hoa, chữ thường và ký tự đặc biệt (vd. !@#$).';
+    }
+}
+
 if (! function_exists('store_setting')) {
     function store_setting(string $key, mixed $default = null): mixed
     {
