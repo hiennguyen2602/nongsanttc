@@ -20,8 +20,15 @@ yarn-error.log
 /.vscode
 /.zed
 
-# Temp extraction files
+# Temp extraction / mockup files (dev only)
 docker-compose.override.yml
 docx_media/
 docx_content.txt
 _extract_docx.py
+layout-admin.txt
+*.docx
+/*.PNG
+
+# User uploads — không đưa lên Git (deploy qua server / volume)
+src/public/uploads/**
+!src/public/uploads/.gitkeep
