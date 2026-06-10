@@ -292,9 +292,11 @@
                 <a href="{{ route('products.index') }}" class="rounded-full bg-white px-8 py-3.5 text-sm font-bold uppercase tracking-wide text-brand shadow-lg transition hover:bg-brand-muted">
                     Mua sắm ngay
                 </a>
+                @if (store_setting('phone'))
                 <a href="tel:{{ preg_replace('/\s+/', '', store_setting('phone')) }}" class="rounded-full border-2 border-white/80 px-8 py-3.5 text-sm font-semibold text-white transition hover:bg-white/10">
                     {{ store_setting('phone') }}
                 </a>
+                @endif
             </div>
         </div>
     </section>
