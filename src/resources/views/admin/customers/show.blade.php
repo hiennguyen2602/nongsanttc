@@ -31,7 +31,7 @@
                     <tbody>
                         @forelse ($customer->orders as $order)
                             <tr>
-                                <td><a href="{{ route('admin.orders.show', $order) }}" class="font-medium text-[#015096] hover:underline">{{ $order->order_code }}</a></td>
+                                <td><a href="{{ route('admin.orders.show', $order) }}" class="font-medium admin-link hover:underline">{{ $order->order_code }}</a></td>
                                 <td>{{ $order->formattedTotal() }}</td>
                                 <td><span class="badge {{ $order->statusBadgeClass() }}">{{ $order->statusLabel() }}</span></td>
                                 <td>{{ $order->created_at->format('d/m/Y H:i') }}</td>

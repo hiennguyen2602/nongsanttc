@@ -41,7 +41,7 @@
                             <dt class="w-15 shrink-0 font-semibold text-slate-500">Tên</dt>
                             <dd class="flex-1">
                                 @if($order->customer)
-                                    <a href="{{ route('admin.customers.show', $order->customer) }}" class="text-[#015096] hover:underline">{{ $order->customer_name }}</a>
+                                    <a href="{{ route('admin.customers.show', $order->customer) }}" class="admin-link hover:underline">{{ $order->customer_name }}</a>
                                 @else
                                     {{ $order->customer_name }}
                                 @endif
@@ -51,7 +51,7 @@
                             <dt class="w-15 shrink-0 font-semibold text-slate-500">Số điện thoại</dt>
                             <dd class="flex-1">
                                 @if($order->customer)
-                                    <a href="{{ route('admin.customers.show', $order->customer) }}" class="text-[#015096] hover:underline">{{ $order->customer_phone }}</a>
+                                    <a href="{{ route('admin.customers.show', $order->customer) }}" class="admin-link hover:underline">{{ $order->customer_phone }}</a>
                                 @else
                                     {{ $order->customer_phone }}
                                 @endif

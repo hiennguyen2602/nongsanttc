@@ -46,7 +46,8 @@
                 @include('admin.partials.rich-editor', ['name' => 'content', 'value' => $post->content ?? ''])
             </div>
             <div class="form-check mb-4">
-                <input type="checkbox" name="is_published" value="1" id="is_published" class="form-check-input" @checked(old('is_published', $post->is_published ?? true))>
+                <input type="hidden" name="is_published" value="0">
+                <input type="checkbox" name="is_published" value="1" id="is_published" class="form-check-input" @checked((string) old('is_published', ($post->is_published ?? true) ? '1' : '0') === '1')>
                 <label for="is_published" class="form-check-label">Xuất bản</label>
             </div>
             <div class="form-actions">

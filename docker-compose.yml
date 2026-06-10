@@ -30,6 +30,32 @@ services:
     networks:
       - nongsanttc
 
+  scheduler:
+    build:
+      context: .
+      dockerfile: docker/php/Dockerfile
+    container_name: nongsanttc-scheduler
+    working_dir: /var/www/html
+    volumes:
+      - ./src:/var/www/html
+      - app_vendor:/var/www/html/vendor
+      - app_storage:/var/www/html/storage
+      - app_bootstrap_cache:/var/www/html/bootstrap/cache
+    environment:
+      TZ: Asia/Ho_Chi_Minh
+    restart: unless-stopped
+    depends_on:
+      app:
+        condition: service_healthy
+      db:
+        condition: service_healthy
+    command:
+      - sh
+      - -c
+      - "while true; do php artisan schedule:run; sleep 60; done"
+    networks:
+      - nongsanttc
+
   web:
     image: nginx:1.27-alpine
     container_name: nongsanttc-web

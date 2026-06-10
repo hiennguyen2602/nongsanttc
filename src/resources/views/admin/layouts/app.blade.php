@@ -7,7 +7,7 @@
     <title>@yield('title', 'Admin') — {{ config('admin.name') }}</title>
     @vite(['resources/css/app.css', 'resources/css/admin.css', 'resources/js/app.js'])
 </head>
-<body class="admin-body bg-gent-content font-sans text-[#212529] antialiased" x-data="{ sidebarOpen: false }">
+<body class="admin-body bg-gent-content font-sans text-black antialiased" x-data="{ sidebarOpen: false }">
     <div class="flex min-h-screen">
         @include('admin.partials.sidebar')
 

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Post;
+use App\Services\EditorImageService;
 use App\Services\ImageUploadService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -15,7 +16,7 @@ class PostController extends Controller
     public function index(): View
     {
         return view('admin.posts.index', [
-            'posts' => Post::latest()->paginate(15),
+            'posts' => Post::latest('updated_at')->paginate(15),
         ]);
     }
 
@@ -45,19 +46,26 @@ class PostController extends Controller
         return view('admin.posts.edit', compact('post'));
     }
 
-    public function update(Request $request, Post $post, ImageUploadService $uploader): RedirectResponse
-    {
+    public function update(
+        Request $request,
+        Post $post,
+        ImageUploadService $uploader,
+        EditorImageService $editorImages,
+    ): RedirectResponse {
         $data = $this->validated($request, $post);
         $this->ensureFeaturedImage($request);
+        $oldContent = $post->content;
         $data['image'] = $this->handleFeaturedImage($request, $uploader, $post);
 
         $post->update($data);
+        $editorImages->deleteRemoved($oldContent, $data['content'] ?? null, $uploader);
 
         return redirect()->route('admin.posts.index')->with('success', 'Cập nhật bài viết thành công.');
     }
 
-    public function destroy(Post $post, ImageUploadService $uploader): RedirectResponse
+    public function destroy(Post $post, ImageUploadService $uploader, EditorImageService $editorImages): RedirectResponse
     {
+        $editorImages->deletePaths($editorImages->extractPaths($post->content), $uploader);
         $uploader->delete($post->image);
         $post->delete();
 
@@ -87,7 +95,7 @@ class PostController extends Controller
         unset($data['image']);
 
         $data['slug'] = generate_unique_slug($data['title'], 'posts', $post?->id);
-        $data['is_published'] = $request->boolean('is_published', true);
+        $data['is_published'] = $request->boolean('is_published');
         $data['published_at'] = $data['published_at'] ?? now();
 
         return $data;
@@ -112,7 +120,12 @@ class PostController extends Controller
                 $uploader->delete($post->image);
             }
 
-            return $uploader->upload($request->file('image'), 'uploads/posts/' . date('Y/m'))['path'];
+            return $uploader->upload(
+                $request->file('image'),
+                'uploads/posts/' . date('Y/m'),
+                null,
+                (int) config('media.post_featured_max_width', 600),
+            )['path'];
         }
 
         $kept = (string) $request->input('existing_image');

@@ -18,6 +18,8 @@ class MediaController extends Controller
         $result = $uploader->upload(
             $request->file('file'),
             'uploads/editor/' . date('Y/m'),
+            null,
+            (int) config('media.editor_max_width', 1200),
         );
 
         return response()->json([

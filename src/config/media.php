@@ -16,4 +16,13 @@ return [
 
     'max_image_mb' => (float) env('MAX_IMAGE_UPLOAD_MB', 5),
 
+    /** Ảnh đại diện bài viết: một file, max rộng (px). */
+    'post_featured_max_width' => 600,
+
+    /** Ảnh chèn trong editor: một file, max rộng (px). */
+    'editor_max_width' => 1200,
+
+    /** Grace period trước khi cron xóa ảnh editor mồ côi (giờ). */
+    'editor_orphan_grace_hours' => (int) env('EDITOR_ORPHAN_GRACE_HOURS', 48),
+
 ];

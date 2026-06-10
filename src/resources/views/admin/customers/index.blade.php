@@ -28,8 +28,8 @@
                     <tbody>
                         @forelse ($customers as $customer)
                             <tr>
-                                <td class="whitespace-nowrap font-medium"><a href="{{ route('admin.customers.show', $customer) }}" class="text-[#015096] hover:underline">{{ $customer->name }}</a></td>
-                                <td class="whitespace-nowrap"><a href="{{ route('admin.customers.show', $customer) }}" class="text-[#015096] hover:underline">{{ $customer->phone }}</a></td>
+                                <td class="whitespace-nowrap font-medium"><a href="{{ route('admin.customers.show', $customer) }}" class="admin-link hover:underline">{{ $customer->name }}</a></td>
+                                <td class="whitespace-nowrap"><a href="{{ route('admin.customers.show', $customer) }}" class="admin-link hover:underline">{{ $customer->phone }}</a></td>
                                 <td>{{ $customer->email ?? '—' }}</td>
                                 <td>{{ $customer->orders_count }}</td>
                                 <td class="whitespace-nowrap">{{ $customer->updated_at->format('d/m/Y H:i') }}</td>

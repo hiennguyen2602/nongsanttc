@@ -9,12 +9,12 @@
         </div>
         <div class="x_content">
             <div class="table-responsive">
-                <table class="table table-striped">
+                <table class="table table-striped posts-table">
                     <thead><tr><th>Tiêu đề</th><th>Ngày</th><th>Trạng thái</th><th class="table-actions"></th></tr></thead>
                     <tbody>
                         @foreach ($posts as $post)
                             <tr>
-                                <td class="font-medium"><a href="{{ route('admin.posts.show', $post) }}" class="text-[#015096] hover:underline">{{ $post->title }}</a></td>
+                                <td class="font-medium"><a href="{{ route('admin.posts.show', $post) }}" class="admin-link hover:underline">{{ $post->title }}</a></td>
                                 <td>{{ $post->published_at?->format('d/m/Y') }}</td>
                                 <td><span class="badge {{ $post->is_published ? 'badge-success' : 'badge-secondary' }}">{{ $post->is_published ? 'Đã xuất bản' : 'Nháp' }}</span></td>
                                 <td class="table-actions">

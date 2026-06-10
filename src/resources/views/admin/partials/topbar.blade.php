@@ -11,14 +11,14 @@
     </button>
 
     <div class="hidden sm:block">
-        <h1 class="text-lg font-semibold" style="color:#015096">@yield('page-title', 'Dashboard')</h1>
+        <h1 class="text-lg font-semibold text-black">@yield('page-title', 'Dashboard')</h1>
         @hasSection('breadcrumb')
             <p class="text-xs text-slate-500">@yield('breadcrumb')</p>
         @endif
     </div>
 
     <div class="ml-auto flex items-center gap-2 sm:gap-4">
-        <a href="{{ url('/') }}" target="_blank" class="hidden text-sm text-slate-600 hover:text-gent-accent sm:inline">
+        <a href="{{ url('/') }}" target="_blank" class="admin-link hidden text-sm sm:inline">
             Xem website →
         </a>
 

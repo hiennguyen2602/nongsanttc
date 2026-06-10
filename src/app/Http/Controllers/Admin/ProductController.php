@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Category;
 use App\Models\Product;
+use App\Services\EditorImageService;
 use App\Services\ImageUploadService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -65,11 +66,13 @@ class ProductController extends Controller
         ]);
     }
 
-    public function update(Request $request, Product $product, ImageUploadService $uploader): RedirectResponse
+    public function update(Request $request, Product $product, ImageUploadService $uploader, EditorImageService $editorImages): RedirectResponse
     {
         $data = $this->validated($request, $product);
         $this->ensureHasImage($request);
         $this->validateVariants($request);
+
+        $oldDescription = $product->description;
 
         [$image, $gallery] = $this->handleImages($request, $uploader, $product);
         $data['image'] = $image;
@@ -77,12 +80,15 @@ class ProductController extends Controller
 
         $product->update($data);
         $this->syncVariants($product, $request);
+        $editorImages->deleteRemoved($oldDescription, $data['description'] ?? null, $uploader);
 
         return redirect()->route('admin.products.index')->with('success', 'Cập nhật sản phẩm thành công.');
     }
 
-    public function destroy(Product $product, ImageUploadService $uploader): RedirectResponse
+    public function destroy(Product $product, ImageUploadService $uploader, EditorImageService $editorImages): RedirectResponse
     {
+        $editorImages->deletePaths($editorImages->extractPaths($product->description), $uploader);
+
         foreach (array_filter(array_merge([$product->image], (array) $product->gallery)) as $path) {
             $uploader->delete($path);
         }
