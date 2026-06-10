@@ -20,7 +20,7 @@
     @endphp
     <section
         x-data="heroSection()"
-        class="hero-section relative flex min-h-[75vh] items-center justify-center overflow-hidden lg:min-h-[90vh] {{ $heroDesktopUrl ? '' : 'bg-brand-dark' }}"
+        class="hero-section relative flex min-h-[75vh] items-center justify-center overflow-hidden lg:min-h-[90vh]{{ $heroDesktopUrl ? '' : ' hero-section--placeholder' }}"
     >
         @if ($heroDesktopUrl)
         <div
@@ -40,13 +40,13 @@
                 >
             </picture>
         </div>
+        <div class="absolute inset-0 bg-gradient-to-b from-black/40 via-black/50 to-black/70" aria-hidden="true"></div>
         @endif
-        <div class="absolute inset-0 bg-gradient-to-b from-black/40 via-black/50 to-black/70"></div>
 
         <div class="relative z-10 store-container store-container--hero text-center text-white">
             <p class="hero-animate font-display mb-3 text-lg italic text-harvest sm:text-xl">{{ store_setting('name') }}</p>
             <h1 class="hero-animate hero-animate-delay-1 mb-4 text-3xl font-bold leading-tight sm:text-5xl lg:text-6xl">
-                Trải nghiệm nông sản<br><span class="text-brand-light">sạch & chân thực</span>
+                Trải nghiệm nông sản<br><span class="{{ $heroDesktopUrl ? 'text-brand-light' : 'text-harvest' }}">sạch & chân thực</span>
             </h1>
             <p class="hero-animate hero-animate-delay-2 mx-auto mb-8 max-w-2xl text-sm leading-relaxed text-white/90 sm:text-base">
                 {{ store_setting('tagline') }}
