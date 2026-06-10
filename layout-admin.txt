@@ -1,6 +1,0 @@
-1. Họ dùng bootstrap thì bạn có thể lấy giao diện rồi dùng với tailwind được ko
-https://preview.colorlib.com/theme/gentelella/production/index.html
-
-
-
-
