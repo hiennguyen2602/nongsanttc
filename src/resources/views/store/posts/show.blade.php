@@ -10,14 +10,9 @@
             <a href="{{ route('posts.index') }}" class="hover:text-brand">Tin tức</a>
         </nav>
 
-        <header class="mb-8">
-            <p class="mb-2 text-sm text-slate-400">{{ $post->published_at?->format('d/m/Y') }}</p>
-            <h1 class="text-2xl font-bold text-slate-900 sm:text-3xl">{{ $post->title }}</h1>
-        </header>
+        @include('partials.post-article-header', ['post' => $post])
 
-        <div class="prose prose-slate max-w-none text-slate-700">
-            {!! $post->content !!}
-        </div>
+        @include('partials.rich-content', ['html' => $post->content])
     </article>
 
     @if ($recentPosts->isNotEmpty())
