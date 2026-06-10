@@ -9,10 +9,16 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
+use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Support\Str;
+use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
 
 class AuthController extends Controller
 {
+    private const LOGIN_MAX_ATTEMPTS = 5;
+
+    private const LOGIN_DECAY_SECONDS = 60;
     public function showLogin(): View|RedirectResponse
     {
         $user = Auth::user();
@@ -37,7 +43,11 @@ class AuthController extends Controller
             'password' => ['required'],
         ]);
 
+        $this->ensureLoginIsNotRateLimited($request);
+
         if (! Auth::attempt($credentials, $request->boolean('remember'))) {
+            RateLimiter::hit($this->loginThrottleKey($request), self::LOGIN_DECAY_SECONDS);
+
             return back()
                 ->withInput($request->only('email'))
                 ->withErrors(['email' => 'Email hoặc mật khẩu không đúng.']);
@@ -47,11 +57,14 @@ class AuthController extends Controller
 
         if (! $user->canAccessAdminPanel() || ! $user->isActive()) {
             Auth::logout();
+            RateLimiter::hit($this->loginThrottleKey($request), self::LOGIN_DECAY_SECONDS);
 
             return back()
                 ->withInput($request->only('email'))
                 ->withErrors(['email' => 'Khách hàng không có quyền truy cập trang quản trị.']);
         }
+
+        RateLimiter::clear($this->loginThrottleKey($request));
 
         $request->session()->regenerate();
 
@@ -112,7 +125,7 @@ class AuthController extends Controller
         $request->validate([
             'token' => ['required'],
             'email' => ['required', 'email'],
-            'password' => ['required', 'min:8', 'confirmed'],
+            'password' => ['required', 'confirmed', admin_password_rule()],
         ]);
 
         $user = User::query()->where('email', $request->input('email'))->first();
@@ -142,7 +155,7 @@ class AuthController extends Controller
     {
         $request->validate([
             'current_password' => ['required'],
-            'password' => ['required', 'min:8', 'confirmed'],
+            'password' => ['required', 'confirmed', admin_password_rule()],
         ]);
 
         $user = $request->user();
@@ -154,5 +167,28 @@ class AuthController extends Controller
         $user->update(['password' => $request->input('password')]);
 
         return back()->with('success', 'Đổi mật khẩu thành công.');
+    }
+
+    private function loginThrottleKey(Request $request): string
+    {
+        return Str::transliterate(Str::lower($request->string('email')).'|'.$request->ip());
+    }
+
+    private function ensureLoginIsNotRateLimited(Request $request): void
+    {
+        $key = $this->loginThrottleKey($request);
+
+        if (! RateLimiter::tooManyAttempts($key, self::LOGIN_MAX_ATTEMPTS)) {
+            return;
+        }
+
+        $seconds = RateLimiter::availableIn($key);
+
+        throw ValidationException::withMessages([
+            'email' => __('auth.throttle', [
+                'seconds' => $seconds,
+                'minutes' => (int) ceil($seconds / 60),
+            ]),
+        ]);
     }
 }
