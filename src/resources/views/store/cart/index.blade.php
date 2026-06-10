@@ -61,7 +61,7 @@
                                             $lineTotal = $item['unit_price'] * $item['quantity'];
                                             $productUrl = ! empty($item['slug']) ? route('products.show', $item['slug']) : route('products.index');
                                         @endphp
-                                        <tr x-data="cartLineItem({{ $item['quantity'] }})">
+                                        <tr>
                                             <td class="px-5 py-4">
                                                 <div class="flex items-center gap-4">
                                                     <a href="{{ $productUrl }}" class="block h-[4.5rem] w-[4.5rem] shrink-0 overflow-hidden rounded-lg border border-slate-200 bg-slate-50">
@@ -102,7 +102,7 @@
                                     $lineTotal = $item['unit_price'] * $item['quantity'];
                                     $productUrl = ! empty($item['slug']) ? route('products.show', $item['slug']) : route('products.index');
                                 @endphp
-                                <article class="p-4 sm:p-5" x-data="cartLineItem({{ $item['quantity'] }})">
+                                <article class="p-4 sm:p-5">
                                     <div class="flex gap-3 sm:gap-4">
                                         <a href="{{ $productUrl }}" class="block h-20 w-20 shrink-0 overflow-hidden rounded-lg border border-slate-200 bg-slate-50">
                                             @if ($item['image'])

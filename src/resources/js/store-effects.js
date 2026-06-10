@@ -66,19 +66,27 @@ document.addEventListener('alpine:init', () => {
         qty: Number(initialQty) || 1,
 
         submitQty() {
-            this.$refs.qtyForm?.requestSubmit();
+            this.$nextTick(() => {
+                if (typeof this.$el.requestSubmit === 'function') {
+                    this.$el.requestSubmit();
+                } else {
+                    this.$el.submit();
+                }
+            });
         },
 
         decrement() {
-            if (this.qty <= 1) {
+            const n = parseInt(String(this.qty).replace(/\D/g, ''), 10) || 1;
+            if (n <= 1) {
                 return;
             }
-            this.qty--;
+            this.qty = n - 1;
             this.submitQty();
         },
 
         increment() {
-            this.qty++;
+            const n = parseInt(String(this.qty).replace(/\D/g, ''), 10) || 0;
+            this.qty = n + 1;
             this.submitQty();
         },
 
