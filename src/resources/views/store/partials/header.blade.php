@@ -89,7 +89,7 @@
                 <button type="button" @click="searchOpen = !searchOpen" class="rounded p-2 text-white/90 hover:text-white" aria-label="Tìm kiếm">
                     <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
                 </button>
-                <button type="button" class="relative rounded p-2 text-white/90 hover:text-white" aria-label="Giỏ hàng" onclick="window.location='{{ route('cart.index') }}'">
+                <button type="button" class="relative cursor-pointer rounded p-2 text-white/90 hover:text-white" aria-label="Giỏ hàng" onclick="window.location='{{ route('cart.index') }}'">
                     <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
                     @if ($cartCount > 0)
                         <span class="absolute -right-0.5 -top-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-accent-red text-[10px] font-bold text-white">{{ $cartCount }}</span>

@@ -62,6 +62,69 @@ document.addEventListener('alpine:init', () => {
         },
     }));
 
+    Alpine.data('cartLineItem', (initialQty = 1) => ({
+        qty: Number(initialQty) || 1,
+
+        submitQty() {
+            this.$refs.qtyForm?.requestSubmit();
+        },
+
+        decrement() {
+            if (this.qty <= 1) {
+                return;
+            }
+            this.qty--;
+            this.submitQty();
+        },
+
+        increment() {
+            this.qty++;
+            this.submitQty();
+        },
+
+        normalizeQty() {
+            const n = parseInt(String(this.qty).replace(/\D/g, ''), 10);
+            this.qty = Number.isNaN(n) || n < 1 ? 1 : n;
+            this.submitQty();
+        },
+    }));
+
+    Alpine.data('checkoutForm', (initial = {}) => ({
+        step: Number(initial.step ?? 1),
+        phoneError: '',
+        name: initial.name ?? '',
+        phone: initial.phone ?? '',
+        email: initial.email ?? '',
+        address: initial.address ?? '',
+        note: initial.note ?? '',
+
+        goReview() {
+            this.phoneError = '';
+            const form = this.$refs.checkoutForm;
+
+            if (! form?.reportValidity()) {
+                return;
+            }
+
+            const digits = this.phone.replace(/\s+/g, '');
+
+            if (! /^0\d{9}$/.test(digits)) {
+                this.phoneError = 'Số điện thoại phải có 10 chữ số (Việt Nam).';
+                form.querySelector('[name="phone"]')?.focus();
+
+                return;
+            }
+
+            this.step = 2;
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        },
+
+        backToEdit() {
+            this.step = 1;
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        },
+    }));
+
     Alpine.data('floatingContact', () => ({
         visible: false,
         productsReady: false,

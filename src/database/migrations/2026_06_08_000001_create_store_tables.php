@@ -23,7 +23,6 @@ return new class extends Migration
             $table->string('slug')->unique();
             $table->string('sku')->nullable();
             $table->text('description')->nullable();
-            $table->text('short_description')->nullable();
             $table->unsignedInteger('price');
             $table->unsignedInteger('sale_price')->nullable();
             $table->string('image')->nullable();
@@ -40,7 +39,6 @@ return new class extends Migration
             $table->string('flavor')->nullable();
             $table->string('size')->nullable();
             $table->unsignedInteger('price');
-            $table->string('sku')->nullable();
             $table->unsignedInteger('stock')->default(0);
             $table->timestamps();
         });
@@ -62,6 +60,7 @@ return new class extends Migration
             $table->string('title');
             $table->string('subtitle')->nullable();
             $table->string('image');
+            $table->string('image_mobile')->nullable();
             $table->string('link')->nullable();
             $table->string('position')->default('home_cta');
             $table->integer('sort_order')->default(0);

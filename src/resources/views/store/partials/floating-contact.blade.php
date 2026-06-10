@@ -1,7 +1,9 @@
 @php
     $contactUrl = store_setting('messenger') ?: store_setting('zalo');
+    $hideOnCartCheckout = request()->routeIs('cart.*', 'checkout.*');
 @endphp
 
+@if (! $hideOnCartCheckout)
 <div
     x-data="floatingContact()"
     x-show="visible"
@@ -47,3 +49,4 @@
         @endif
     </div>
 </div>
+@endif

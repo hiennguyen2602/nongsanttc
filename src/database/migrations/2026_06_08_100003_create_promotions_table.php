@@ -18,18 +18,10 @@ return new class extends Migration
             $table->boolean('is_active')->default(true);
             $table->timestamps();
         });
-
-        Schema::table('banners', function (Blueprint $table) {
-            $table->string('image_mobile')->nullable()->after('image');
-        });
     }
 
     public function down(): void
     {
-        Schema::table('banners', function (Blueprint $table) {
-            $table->dropColumn('image_mobile');
-        });
-
         Schema::dropIfExists('promotions');
     }
 };

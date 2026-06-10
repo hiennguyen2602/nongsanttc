@@ -13,7 +13,13 @@ class CartService
 
     public function items(): Collection
     {
-        return collect(session(self::SESSION_KEY, []));
+        return collect(session(self::SESSION_KEY, []))->map(function (array $item) {
+            if (empty($item['slug']) && ! empty($item['product_id'])) {
+                $item['slug'] = Product::query()->whereKey($item['product_id'])->value('slug');
+            }
+
+            return $item;
+        });
     }
 
     public function count(): int
@@ -38,6 +44,7 @@ class CartService
             $cart[$key] = [
                 'key' => $key,
                 'product_id' => $product->id,
+                'slug' => $product->slug,
                 'variant_id' => $variant?->id,
                 'name' => $product->name,
                 'variant_label' => $variant?->label(),

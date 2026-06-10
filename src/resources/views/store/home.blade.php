@@ -3,30 +3,33 @@
 @section('title', config('store.name') . ' — ' . config('store.tagline'))
 
 @push('head')
-    <link rel="preload" as="image" href="{{ store_media_url(config('store.images.hero')) }}">
+    <link rel="preload" as="image" href="{{ store_media_url(store_setting('hero_desktop', config('store.images.hero'))) }}">
 @endpush
 
 @section('content')
     {{-- Hero — parallax + entrance animation --}}
+    @php
+        $heroDesktop = store_setting('hero_desktop', config('store.images.hero'));
+        $heroMobile = store_setting('hero_mobile', $heroDesktop);
+    @endphp
     <section
         x-data="heroSection()"
-        class="relative flex min-h-[75vh] items-center justify-center overflow-hidden lg:min-h-[90vh]"
+        class="hero-section relative flex min-h-[75vh] items-center justify-center overflow-hidden lg:min-h-[90vh]"
     >
         <div
-            class="absolute inset-0 scale-105 will-change-transform"
+            class="hero-section__media absolute inset-0 scale-105 will-change-transform"
             :style="`transform: translateY(${parallax}px) scale(1.05)`"
         >
-            <img
-                src="{{ store_media_url(store_setting('hero_desktop', config('store.images.hero')), 'large') }}"
-                srcset="{{ store_media_url(store_setting('hero_mobile', store_setting('hero_desktop', config('store.images.hero'))), 'large') }} 768w, {{ store_media_url(store_setting('hero_desktop', config('store.images.hero')), 'large') }} 1920w"
-                sizes="100vw"
-                alt="{{ store_setting('name') }}"
-                class="h-full w-full object-cover"
-                fetchpriority="high"
-                decoding="async"
-                width="1920"
-                height="1080"
-            >
+            <picture>
+                <source media="(max-width: 767px)" srcset="{{ store_media_url($heroMobile) }}">
+                <img
+                    src="{{ store_media_url($heroDesktop) }}"
+                    alt="{{ store_setting('name') }}"
+                    class="hero-section__image h-full w-full object-cover object-center"
+                    fetchpriority="high"
+                    decoding="async"
+                >
+            </picture>
         </div>
         <div class="absolute inset-0 bg-gradient-to-b from-black/40 via-black/50 to-black/70"></div>
 

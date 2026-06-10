@@ -24,7 +24,7 @@ class CartController extends Controller
         $data = $request->validate([
             'product_id' => ['required', 'exists:products,id'],
             'variant_id' => ['nullable', 'integer', 'exists:product_variants,id'],
-            'quantity' => ['nullable', 'integer', 'min:1', 'max:99'],
+            'quantity' => ['nullable', 'integer', 'min:1'],
         ]);
 
         $variantId = ! empty($data['variant_id']) ? (int) $data['variant_id'] : null;
@@ -46,7 +46,7 @@ class CartController extends Controller
     {
         $data = $request->validate([
             'key' => ['required', 'string'],
-            'quantity' => ['required', 'integer', 'min:0', 'max:99'],
+            'quantity' => ['required', 'integer', 'min:0'],
         ]);
 
         $cart->update($data['key'], (int) $data['quantity']);

@@ -21,12 +21,18 @@
                                         $existingSettingImage = $item->value
                                             ? ['path' => $item->value, 'url' => store_media_url($item->value, 'medium')]
                                             : null;
+                                        $settingImageHint = match ($item->key) {
+                                            'hero_desktop' => 'Giữ nguyên tỷ lệ ảnh — chỉ thu nhỏ nếu rộng hơn ' . config('media.hero_desktop_max_width', 1920) . 'px. Trên web hiển thị full màn hình (object-cover).',
+                                            'hero_mobile' => 'Giữ nguyên tỷ lệ ảnh — chỉ thu nhỏ nếu rộng hơn ' . config('media.hero_mobile_max_width', 768) . 'px. Dùng cho màn hình điện thoại.',
+                                            default => null,
+                                        };
                                     @endphp
                                     @include('admin.partials.image-upload', [
                                         'name' => $item->key,
                                         'label' => $item->label ?? $item->key,
                                         'existing' => $existingSettingImage,
                                         'existingField' => 'existing_' . $item->key,
+                                        'hint' => $settingImageHint,
                                     ])
                                 @else
                                     <label class="form-label">{{ $item->label ?? $item->key }}</label>

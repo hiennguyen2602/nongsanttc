@@ -8,6 +8,7 @@ use App\Services\ImageUploadService;
 use App\Services\SettingService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\UploadedFile;
 use Illuminate\View\View;
 
 class SettingController extends Controller
@@ -112,9 +113,8 @@ class SettingController extends Controller
 
                 if ($request->hasFile($key)) {
                     $uploader->delete($item->value);
-                    $preset = in_array($key, ['hero_desktop', 'hero_mobile'], true) ? $key : null;
                     $folder = 'uploads/settings/' . date('Y/m');
-                    $result = $uploader->upload($request->file($key), $folder, $preset);
+                    $result = $this->uploadSettingImage($uploader, $request->file($key), $folder, $key);
                     $settings->set($key, $result['path']);
                 } elseif ($request->filled($existingField)) {
                     // Giữ ảnh hiện tại.
@@ -132,5 +132,20 @@ class SettingController extends Controller
         }
 
         return back()->with('success', 'Cập nhật cài đặt thành công.');
+    }
+
+    private function uploadSettingImage(ImageUploadService $uploader, UploadedFile $file, string $folder, string $key): array
+    {
+        $heroMaxWidth = match ($key) {
+            'hero_desktop' => (int) config('media.hero_desktop_max_width', 1920),
+            'hero_mobile' => (int) config('media.hero_mobile_max_width', 768),
+            default => null,
+        };
+
+        if ($heroMaxWidth !== null) {
+            return $uploader->upload($file, $folder, null, $heroMaxWidth);
+        }
+
+        return $uploader->upload($file, $folder);
     }
 }

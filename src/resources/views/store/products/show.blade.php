@@ -32,7 +32,19 @@
                     document.documentElement.classList.remove('overflow-hidden');
                 },
                 next() { if (this.gallery.length) this.activeIndex = (this.activeIndex + 1) % this.gallery.length; },
-                prev() { if (this.gallery.length) this.activeIndex = (this.activeIndex - 1 + this.gallery.length) % this.gallery.length; }
+                prev() { if (this.gallery.length) this.activeIndex = (this.activeIndex - 1 + this.gallery.length) % this.gallery.length; },
+                clampQuantity() {
+                    const n = parseInt(String(this.quantity).replace(/\D/g, ''), 10);
+                    this.quantity = Number.isNaN(n) || n < 1 ? 1 : n;
+                },
+                decrementQuantity() {
+                    const n = parseInt(String(this.quantity).replace(/\D/g, ''), 10) || 1;
+                    this.quantity = Math.max(1, n - 1);
+                },
+                incrementQuantity() {
+                    const n = parseInt(String(this.quantity).replace(/\D/g, ''), 10) || 0;
+                    this.quantity = n + 1;
+                }
             }"
         >
             {{-- Gallery --}}
@@ -157,14 +169,23 @@
                 <div class="mt-6">
                     <label class="mb-2 block text-sm font-medium text-slate-700">Số lượng</label>
                     <div class="inline-flex items-center rounded-lg border border-slate-300">
-                        <button type="button" @click="quantity = Math.max(1, quantity - 1)" class="px-4 py-2 text-lg hover:bg-slate-50">−</button>
-                        <span class="min-w-[3rem] text-center font-medium" x-text="quantity"></span>
-                        <button type="button" @click="quantity++" class="px-4 py-2 text-lg hover:bg-slate-50">+</button>
+                        <button type="button" @click="decrementQuantity()" class="px-4 py-2 text-lg hover:bg-slate-50">−</button>
+                        <input
+                            type="text"
+                            inputmode="numeric"
+                            autocomplete="off"
+                            x-model="quantity"
+                            @blur="clampQuantity()"
+                            @keydown.enter.prevent="$event.target.blur()"
+                            class="qty-input w-24 min-w-[6rem] border-x border-slate-300 px-2 py-2 text-center text-sm font-medium focus:border-brand focus:outline-none focus:ring-1 focus:ring-brand"
+                            aria-label="Số lượng"
+                        >
+                        <button type="button" @click="incrementQuantity()" class="px-4 py-2 text-lg hover:bg-slate-50">+</button>
                     </div>
                 </div>
 
                 <div class="mt-8 flex flex-col gap-3 sm:flex-row">
-                    <form method="POST" action="{{ route('cart.add') }}" class="flex-1">
+                    <form method="POST" action="{{ route('cart.add') }}" class="flex-1" @submit="clampQuantity()">
                         @csrf
                         <input type="hidden" name="product_id" value="{{ $product->id }}">
                         <input type="hidden" name="variant_id" :value="selectedVariant">
@@ -173,7 +194,7 @@
                             Thêm vào giỏ
                         </button>
                     </form>
-                    <form method="POST" action="{{ route('cart.add') }}" class="flex-1">
+                    <form method="POST" action="{{ route('cart.add') }}" class="flex-1" @submit="clampQuantity()">
                         @csrf
                         <input type="hidden" name="product_id" value="{{ $product->id }}">
                         <input type="hidden" name="variant_id" :value="selectedVariant">

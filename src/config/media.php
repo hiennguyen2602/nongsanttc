@@ -29,4 +29,8 @@ return [
     'banner_desktop_max_width' => 1200,
     'banner_mobile_max_width' => 768,
 
+    /** Hero trang chủ: giữ nguyên tỷ lệ, chỉ thu nhỏ nếu rộng hơn (px). */
+    'hero_desktop_max_width' => 1920,
+    'hero_mobile_max_width' => 768,
+
 ];

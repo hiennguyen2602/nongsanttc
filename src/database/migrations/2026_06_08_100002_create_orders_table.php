@@ -8,9 +8,19 @@ return new class extends Migration
 {
     public function up(): void
     {
+        Schema::create('customers', function (Blueprint $table) {
+            $table->id();
+            $table->string('name');
+            $table->string('phone', 20)->unique();
+            $table->string('email')->nullable();
+            $table->text('address')->nullable();
+            $table->timestamps();
+        });
+
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
             $table->string('order_code')->unique();
+            $table->foreignId('customer_id')->nullable()->constrained()->nullOnDelete();
             $table->string('customer_name');
             $table->string('customer_phone');
             $table->string('customer_email')->nullable();
@@ -23,6 +33,7 @@ return new class extends Migration
             $table->string('promo_code')->nullable();
             $table->string('payment_method')->default('cod');
             $table->string('status')->default('pending');
+            $table->timestamp('viewed_at')->nullable();
             $table->timestamps();
         });
 
@@ -44,5 +55,6 @@ return new class extends Migration
     {
         Schema::dropIfExists('order_items');
         Schema::dropIfExists('orders');
+        Schema::dropIfExists('customers');
     }
 };

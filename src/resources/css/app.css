@@ -183,6 +183,16 @@ html {
     animation: scroll-hint 2s ease-in-out infinite;
 }
 
+/* Hero — full viewport, giữ tỷ lệ ảnh gốc (object-cover) */
+.hero-section__media {
+    overflow: hidden;
+}
+
+.hero-section__image {
+    min-height: 100%;
+    min-width: 100%;
+}
+
 /* Product card — equal height grid */
 .product-grid-equal {
     align-items: stretch;
