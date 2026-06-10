@@ -16,7 +16,8 @@ mkdir -p storage/framework/sessions
 mkdir -p storage/framework/views
 mkdir -p storage/logs
 mkdir -p bootstrap/cache
-chown -R www-data:www-data storage bootstrap/cache || true
+mkdir -p public/uploads/settings public/uploads/editor public/uploads/products
+chown -R www-data:www-data storage bootstrap/cache public/uploads || true
 
 if [ ! -d vendor ] || [ -z "$(ls -A vendor 2>/dev/null)" ]; then
   composer install --no-interaction --prefer-dist
