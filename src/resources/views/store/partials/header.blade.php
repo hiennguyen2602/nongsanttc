@@ -1,5 +1,7 @@
 @php
-    $headerTransparent = request()->routeIs('home', 'about');
+    $heroDesktopUrl = request()->routeIs('home') ? store_media_url(store_setting('hero_desktop')) : null;
+    // Chỉ home + có ảnh hero mới header trong suốt lúc đầu; about và home không ảnh luôn nền brand
+    $headerTransparent = request()->routeIs('home') && $heroDesktopUrl;
 
     $navLinkClass = function (bool $active) use ($headerTransparent): string {
         $base = 'border-b px-3 py-2 text-xs font-medium uppercase tracking-widest transition sm:px-4 sm:text-sm ';
@@ -28,8 +30,10 @@
         onScroll();
         window.addEventListener('scroll', onScroll, { passive: true });
     "
-    class="site-header fixed inset-x-0 top-0 z-50 text-white transition-all duration-300 {{ $headerTransparent ? 'bg-transparent shadow-none' : 'bg-brand/95 shadow-md backdrop-blur-sm' }}"
-    :class="transparent && !scrolled ? 'bg-transparent shadow-none' : 'bg-brand/95 shadow-md backdrop-blur-sm'"
+    class="site-header fixed inset-x-0 top-0 z-50 text-white transition-all duration-300{{ $headerTransparent ? '' : ' bg-brand/95 shadow-md backdrop-blur-sm' }}"
+    @if ($headerTransparent)
+    :class="scrolled ? 'bg-brand/95 shadow-md backdrop-blur-sm' : 'bg-transparent shadow-none'"
+    @endif
 >
     <div class="store-container">
         <div class="flex h-16 items-center justify-between lg:h-20">

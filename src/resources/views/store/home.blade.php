@@ -69,24 +69,24 @@
         </a>
     </section>
 
-    {{-- Trust stats — stagger reveal + counter --}}
+    {{-- Trust stats — desktop: 4 cột có vạch; mobile: lưới 2×2 gọn --}}
     <section id="noi-dung" class="scroll-section relative z-10 -mt-1 border-b border-brand/10 bg-white shadow-[0_-20px_40px_-20px_rgba(47,115,72,0.15)]">
-        <div class="store-container grid grid-cols-2 divide-x divide-slate-100 py-8 sm:grid-cols-4 sm:py-10" data-reveal-group>
-            <div x-data="statCounter(500, '+')" data-reveal="fade-up" class="px-4 text-center">
-                <p class="text-2xl font-bold text-brand sm:text-3xl" x-text="current + suffix">0</p>
-                <p class="mt-1 text-xs text-slate-500 sm:text-sm">Khách hàng tin dùng</p>
+        <div class="store-container home-stats-grid py-6 sm:py-10" data-reveal-group>
+            <div x-data="statCounter(500, '+')" data-reveal="fade-up" class="home-stats-item">
+                <p class="text-[1.75rem] font-bold leading-tight text-brand sm:text-3xl" x-text="current + suffix">0</p>
+                <p class="mt-1 text-xs leading-snug text-slate-500 sm:text-sm">Khách hàng tin dùng</p>
             </div>
-            <div x-data="statCounter(120, '+')" data-reveal="fade-up" class="px-4 text-center">
-                <p class="text-2xl font-bold text-brand sm:text-3xl" x-text="current + suffix">0</p>
-                <p class="mt-1 text-xs text-slate-500 sm:text-sm">Sản phẩm nông sản</p>
+            <div x-data="statCounter(120, '+')" data-reveal="fade-up" class="home-stats-item">
+                <p class="text-[1.75rem] font-bold leading-tight text-brand sm:text-3xl" x-text="current + suffix">0</p>
+                <p class="mt-1 text-xs leading-snug text-slate-500 sm:text-sm">Sản phẩm nông sản</p>
             </div>
-            <div x-data="statCounter(50, '+')" data-reveal="fade-up" class="px-4 text-center">
-                <p class="text-2xl font-bold text-brand sm:text-3xl" x-text="current + suffix">0</p>
-                <p class="mt-1 text-xs text-slate-500 sm:text-sm">Hộ nông dân liên kết</p>
+            <div x-data="statCounter(50, '+')" data-reveal="fade-up" class="home-stats-item">
+                <p class="text-[1.75rem] font-bold leading-tight text-brand sm:text-3xl" x-text="current + suffix">0</p>
+                <p class="mt-1 text-xs leading-snug text-slate-500 sm:text-sm">Hộ nông dân liên kết</p>
             </div>
-            <div x-data="statCounter(15, '')" data-reveal="fade-up" class="px-4 text-center">
-                <p class="text-2xl font-bold text-brand sm:text-3xl"><span x-text="current">0</span> năm</p>
-                <p class="mt-1 text-xs text-slate-500 sm:text-sm">Kinh nghiệm phân phối</p>
+            <div x-data="statCounter(15, ' năm')" data-reveal="fade-up" class="home-stats-item">
+                <p class="text-[1.75rem] font-bold leading-tight text-brand sm:text-3xl" x-text="current + suffix">0</p>
+                <p class="mt-1 text-xs leading-snug text-slate-500 sm:text-sm">Kinh nghiệm sản xuất</p>
             </div>
         </div>
     </section>

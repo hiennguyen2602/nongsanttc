@@ -23,12 +23,12 @@
             </div>
         </div>
 
-        <div class="product-card-body flex flex-1 flex-col p-4">
-            <h3 class="mb-2 line-clamp-2 min-h-[2.5rem] text-sm font-medium leading-snug text-slate-800 transition group-hover:text-brand">
+        <div class="product-card-body flex flex-col p-4">
+            <h3 class="mb-1 line-clamp-2 min-h-[2.35rem] text-sm font-medium leading-snug text-slate-800 transition group-hover:text-brand">
                 {{ $product->name }}
             </h3>
 
-            <div class="mt-auto flex items-end justify-between gap-2 pt-1">
+            <div class="flex items-end justify-between gap-2">
                 <div class="min-w-0">
                     <span @class([
                         'block min-h-4 text-xs leading-4',
@@ -43,7 +43,7 @@
                     </span>
                     <p class="text-base font-bold leading-tight text-slate-900">{{ $product->formattedPrice() }}</p>
                 </div>
-                <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-brand text-white shadow-md transition group-hover:scale-110 group-hover:bg-brand-dark">
+                <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-brand text-white shadow-md transition group-hover:scale-110 group-hover:bg-brand-dark">
                     <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
                 </span>
             </div>
