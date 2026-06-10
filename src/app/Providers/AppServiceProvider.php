@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Models\Category;
 use App\Models\ContactMessage;
 use App\Models\Order;
 use App\Services\CartService;
@@ -28,6 +29,13 @@ class AppServiceProvider extends ServiceProvider
 
         View::composer(['store.*', 'store.layouts.*', 'store.partials.*'], function ($view) {
             $view->with('cartCount', app(CartService::class)->count());
+        });
+
+        View::composer('store.partials.footer', function ($view) {
+            $view->with(
+                'footerCategories',
+                Category::query()->orderBy('sort_order')->get(['name', 'slug'])
+            );
         });
 
         View::composer('admin.partials.sidebar', function ($view) {
