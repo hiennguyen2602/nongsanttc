@@ -11,6 +11,7 @@ use App\Services\OrderService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
+use RuntimeException;
 
 class CheckoutController extends Controller
 {
@@ -20,17 +21,25 @@ class CheckoutController extends Controller
             return redirect()->route('cart.index')->withErrors(['cart' => 'Giỏ hàng trống.']);
         }
 
+        try {
+            $items = $cart->resolveItems();
+        } catch (RuntimeException $e) {
+            return redirect()->route('cart.index')->withErrors(['cart' => $e->getMessage()]);
+        }
+
         $promoCode = $request->session()->get('promo_code');
         $promo = $promoCode
             ? Promotion::query()->where('code', $promoCode)->where('is_active', true)->first()
             : null;
 
+        $subtotal = $cart->subtotal($items);
+
         return view('store.checkout.index', [
-            'items' => $cart->items(),
-            'subtotal' => $cart->subtotal(),
-            'shippingFee' => $cart->shippingFee(),
-            'discount' => $cart->discount($promoCode),
-            'total' => $cart->total($promoCode),
+            'items' => $items,
+            'subtotal' => $subtotal,
+            'shippingFee' => $cart->shippingFee($subtotal),
+            'discount' => $cart->discount($promoCode, $subtotal),
+            'total' => $cart->total($promoCode, $items),
             'promoCode' => $promoCode,
             'promo' => $promo,
         ]);
@@ -47,7 +56,14 @@ class CheckoutController extends Controller
             return back()->withErrors(['promo_code' => 'Mã khuyến mãi không hợp lệ.']);
         }
 
-        if ($cart->subtotal() < $promo->min_order) {
+        try {
+            $items = $cart->resolveItems();
+            $subtotal = $cart->subtotal($items);
+        } catch (RuntimeException $e) {
+            return redirect()->route('cart.index')->withErrors(['cart' => $e->getMessage()]);
+        }
+
+        if ($subtotal < $promo->min_order) {
             return back()->withErrors(['promo_code' => 'Đơn hàng chưa đủ điều kiện áp dụng mã.']);
         }
 
@@ -78,14 +94,26 @@ class CheckoutController extends Controller
 
         $promoCode = $request->session()->get('promo_code');
 
-        $order = $orders->createFromCart($customer, $promoCode);
-        $request->session()->forget('promo_code');
+        try {
+            $order = $orders->createFromCart($customer, $promoCode);
+        } catch (RuntimeException $e) {
+            return redirect()->route('cart.index')->withErrors(['cart' => $e->getMessage()]);
+        }
 
-        return redirect()->route('checkout.success', $order)->with('success', 'Đặt hàng thành công.');
+        $request->session()->forget('promo_code');
+        $request->session()->put('checkout_success_token', $order->public_token);
+
+        return redirect()->route('checkout.success', ['token' => $order->public_token])
+            ->with('success', 'Đặt hàng thành công.');
     }
 
-    public function success(Order $order): View
+    public function success(Request $request, string $token): View|RedirectResponse
     {
+        if ($request->session()->pull('checkout_success_token') !== $token) {
+            abort(403, 'Bạn không có quyền xem đơn hàng này.');
+        }
+
+        $order = Order::query()->where('public_token', $token)->firstOrFail();
         $order->load('items');
 
         return view('store.checkout.success', compact('order'));

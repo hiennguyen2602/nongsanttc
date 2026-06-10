@@ -74,23 +74,14 @@ class PostController extends Controller
 
     private function validated(Request $request, ?Post $post = null): array
     {
-        $maxMb = (float) config('media.max_image_mb', 5);
-        $maxKb = (int) round($maxMb * 1024);
-        $maxLabel = rtrim(rtrim(number_format($maxMb, 1), '0'), '.');
-
         $data = $request->validate([
             'title' => ['required', 'string', 'max:255'],
             'excerpt' => ['nullable', 'string', 'max:2000'],
             'content' => ['nullable', 'string'],
             'is_published' => ['nullable', 'boolean'],
             'published_at' => ['nullable', 'date'],
-            'image' => ['nullable', 'image', 'mimes:jpeg,jpg,png,webp,gif', 'max:' . $maxKb],
-        ], [
-            'image.image' => 'File tải lên phải là hình ảnh.',
-            'image.mimes' => 'Ảnh phải có định dạng: jpeg, jpg, png, webp, gif.',
-            'image.max' => 'Ảnh không được vượt quá ' . $maxLabel . 'MB.',
-            'image.uploaded' => 'Ảnh tải lên thất bại hoặc vượt quá dung lượng cho phép (' . $maxLabel . 'MB).',
-        ]);
+            'image' => image_upload_file_rules(['nullable']),
+        ], image_upload_validation_messages('image'));
 
         unset($data['image']);
 
@@ -128,12 +119,23 @@ class PostController extends Controller
             )['path'];
         }
 
-        $kept = (string) $request->input('existing_image');
+        if ($post === null) {
+            throw ValidationException::withMessages([
+                'image' => 'Vui lòng chọn ảnh đại diện.',
+            ]);
+        }
 
-        if ($post?->image && $kept !== $post->image) {
+        $kept = resolve_kept_upload_path(
+            $request->input('existing_image'),
+            $post->image,
+            'uploads/posts',
+            'image',
+        );
+
+        if ($kept === null && filled($post->image)) {
             $uploader->delete($post->image);
         }
 
-        return $kept;
+        return $kept ?? '';
     }
 }

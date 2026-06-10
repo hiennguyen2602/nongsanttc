@@ -7,6 +7,7 @@ use App\Services\CartService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
+use RuntimeException;
 
 class CartController extends Controller
 {
@@ -21,19 +22,27 @@ class CartController extends Controller
 
     public function add(Request $request, CartService $cart): RedirectResponse
     {
+        $maxQty = CartService::MAX_QUANTITY;
+
         $data = $request->validate([
             'product_id' => ['required', 'exists:products,id'],
             'variant_id' => ['nullable', 'integer', 'exists:product_variants,id'],
-            'quantity' => ['nullable', 'integer', 'min:1'],
+            'quantity' => ['nullable', 'integer', 'min:1', 'max:' . $maxQty],
+        ], [
+            'quantity.max' => 'Số lượng vượt quá giới hạn cho phép.',
         ]);
 
         $variantId = ! empty($data['variant_id']) ? (int) $data['variant_id'] : null;
 
-        $cart->add(
-            (int) $data['product_id'],
-            (int) ($data['quantity'] ?? 1),
-            $variantId,
-        );
+        try {
+            $cart->add(
+                (int) $data['product_id'],
+                (int) ($data['quantity'] ?? 1),
+                $variantId,
+            );
+        } catch (RuntimeException $e) {
+            return back()->withErrors(['quantity' => $e->getMessage()])->withInput();
+        }
 
         if ($request->boolean('buy_now')) {
             return redirect()->route('checkout.index');
@@ -44,12 +53,20 @@ class CartController extends Controller
 
     public function update(Request $request, CartService $cart): RedirectResponse
     {
+        $maxQty = CartService::MAX_QUANTITY;
+
         $data = $request->validate([
             'key' => ['required', 'string'],
-            'quantity' => ['required', 'integer', 'min:0'],
+            'quantity' => ['required', 'integer', 'min:0', 'max:' . $maxQty],
+        ], [
+            'quantity.max' => 'Số lượng vượt quá giới hạn cho phép.',
         ]);
 
-        $cart->update($data['key'], (int) $data['quantity']);
+        try {
+            $cart->update($data['key'], (int) $data['quantity']);
+        } catch (RuntimeException $e) {
+            return back()->withErrors(['quantity' => $e->getMessage()]);
+        }
 
         return back()->with('success', 'Cập nhật giỏ hàng thành công.');
     }

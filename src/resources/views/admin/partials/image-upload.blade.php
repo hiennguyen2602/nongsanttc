@@ -46,6 +46,8 @@
 
     @if ($hint)
         <p class="mt-1 text-xs text-slate-500">{{ $hint }}</p>
+    @else
+        <p class="mt-1 text-xs text-slate-500">{{ image_upload_hint() }}</p>
     @endif
 
     @if ($existingField)

@@ -14,7 +14,10 @@ return [
     |
     */
 
-    'max_image_mb' => (float) env('MAX_IMAGE_UPLOAD_MB', 5),
+    'max_image_mb' => (float) env('MAX_IMAGE_UPLOAD_MB', 20),
+
+    /** Định dạng ảnh cho phép (Laravel `mimes` + kiểm nội dung file). */
+    'allowed_image_mimes' => ['jpeg', 'jpg', 'png', 'webp', 'gif'],
 
     /** Ảnh đại diện bài viết: một file, max rộng (px). */
     'post_featured_max_width' => 600,

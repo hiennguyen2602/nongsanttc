@@ -25,6 +25,7 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->alias([
             'admin' => EnsureUserIsAdmin::class,
+            'administrator' => \App\Http\Middleware\EnsureUserIsAdministrator::class,
             'reject-customer-admin' => RejectCustomerFromAdmin::class,
         ]);
 

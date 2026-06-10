@@ -22,8 +22,8 @@
                                             ? ['path' => $item->value, 'url' => store_media_url($item->value, 'medium')]
                                             : null;
                                         $settingImageHint = match ($item->key) {
-                                            'hero_desktop' => 'Giữ nguyên tỷ lệ ảnh — chỉ thu nhỏ nếu rộng hơn ' . config('media.hero_desktop_max_width', 1920) . 'px. Trên web hiển thị full màn hình (object-cover).',
-                                            'hero_mobile' => 'Giữ nguyên tỷ lệ ảnh — chỉ thu nhỏ nếu rộng hơn ' . config('media.hero_mobile_max_width', 768) . 'px. Dùng cho màn hình điện thoại.',
+                                            'hero_desktop' => 'Giữ nguyên tỷ lệ ảnh — chỉ thu nhỏ nếu rộng hơn ' . config('media.hero_desktop_max_width', 1920) . 'px. Trên web hiển thị full màn hình (object-cover). ' . image_upload_hint(),
+                                            'hero_mobile' => 'Giữ nguyên tỷ lệ ảnh — chỉ thu nhỏ nếu rộng hơn ' . config('media.hero_mobile_max_width', 768) . 'px. Dùng cho màn hình điện thoại. ' . image_upload_hint(),
                                             default => null,
                                         };
                                     @endphp
@@ -42,6 +42,10 @@
                                     @else
                                         <input type="text" name="{{ $item->key }}" value="{{ old($item->key, $item->value) }}" class="form-control">
                                     @endif
+
+                                    @error($item->key)
+                                        <p class="field-error">{{ $message }}</p>
+                                    @enderror
                                 @endif
                             </div>
                         @endforeach

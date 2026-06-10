@@ -39,7 +39,11 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::resource('posts', PostController::class);
     Route::resource('banners', BannerController::class)->except(['show']);
     Route::resource('promotions', PromotionController::class)->except(['show']);
-    Route::resource('users', UserController::class)->except(['show']);
+
+    // Chỉ Admin — xem docs/store-logic.md mục 5
+    Route::middleware('administrator')->group(function () {
+        Route::resource('users', UserController::class)->except(['show']);
+    });
 
     Route::get('orders', [OrderController::class, 'index'])->name('orders.index');
     Route::get('orders/{order}', [OrderController::class, 'show'])->name('orders.show');

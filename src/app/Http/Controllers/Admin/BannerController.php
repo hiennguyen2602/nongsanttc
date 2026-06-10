@@ -97,10 +97,6 @@ class BannerController extends Controller
 
     private function validated(Request $request): array
     {
-        $maxMb = (float) config('media.max_image_mb', 5);
-        $maxKb = (int) round($maxMb * 1024);
-        $maxLabel = rtrim(rtrim(number_format($maxMb, 1), '0'), '.');
-
         $data = $request->validate([
             'title' => ['required', 'string', 'max:255'],
             'subtitle' => ['nullable', 'string', 'max:255'],
@@ -108,17 +104,15 @@ class BannerController extends Controller
             'position' => ['required', 'string', 'in:home_cta'],
             'sort_order' => ['nullable', 'integer', 'min:0'],
             'is_active' => ['nullable', 'boolean'],
-            'image' => ['nullable', 'image', 'mimes:jpeg,jpg,png,webp,gif', 'max:' . $maxKb],
-            'image_mobile' => ['nullable', 'image', 'mimes:jpeg,jpg,png,webp,gif', 'max:' . $maxKb],
-        ], [
-            'image.image' => 'File tải lên phải là hình ảnh.',
-            'image.mimes' => 'Ảnh desktop phải có định dạng: jpeg, jpg, png, webp, gif.',
-            'image.max' => 'Ảnh desktop không được vượt quá ' . $maxLabel . 'MB.',
-            'image_mobile.image' => 'File tải lên phải là hình ảnh.',
-            'image_mobile.mimes' => 'Ảnh mobile phải có định dạng: jpeg, jpg, png, webp, gif.',
-            'image_mobile.max' => 'Ảnh mobile không được vượt quá ' . $maxLabel . 'MB.',
-            'position.in' => 'Vị trí banner không hợp lệ.',
-        ]);
+            'image' => image_upload_file_rules(['nullable']),
+            'image_mobile' => image_upload_file_rules(['nullable']),
+        ], array_merge(
+            image_upload_validation_messages('image'),
+            image_upload_validation_messages('image_mobile'),
+            [
+                'position.in' => 'Vị trí banner không hợp lệ.',
+            ],
+        ));
 
         unset($data['image'], $data['image_mobile']);
 
@@ -170,13 +164,14 @@ class BannerController extends Controller
             )['path'];
         }
 
-        $kept = (string) $request->input($existingField);
+        $kept = resolve_kept_upload_path(
+            $request->input($existingField),
+            $current,
+            'uploads/banners',
+            $field,
+        );
 
-        if ($kept !== '') {
-            if ($current && $kept !== $current) {
-                $uploader->delete($current);
-            }
-
+        if ($kept !== null) {
             return $kept;
         }
 

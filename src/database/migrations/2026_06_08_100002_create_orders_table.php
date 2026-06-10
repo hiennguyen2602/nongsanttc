@@ -20,6 +20,7 @@ return new class extends Migration
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
             $table->string('order_code')->unique();
+            $table->char('public_token', 32)->unique();
             $table->foreignId('customer_id')->nullable()->constrained()->nullOnDelete();
             $table->string('customer_name');
             $table->string('customer_phone');

@@ -3,6 +3,7 @@
 use App\Services\SettingService;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
+use Illuminate\Validation\ValidationException;
 
 if (! function_exists('generate_unique_slug')) {
     /**
@@ -90,5 +91,181 @@ if (! function_exists('format_money')) {
     function format_money(int $amount): string
     {
         return number_format($amount, 0, ',', '.') . 'đ';
+    }
+}
+
+if (! function_exists('image_upload_max_mb')) {
+    function image_upload_max_mb(): float
+    {
+        return (float) config('media.max_image_mb', 20);
+    }
+}
+
+if (! function_exists('image_upload_max_kb')) {
+    function image_upload_max_kb(): int
+    {
+        return (int) (image_upload_max_mb() * 1024);
+    }
+}
+
+if (! function_exists('image_upload_max_label')) {
+    function image_upload_max_label(): string
+    {
+        return rtrim(rtrim(number_format(image_upload_max_mb(), 1), '0'), '.');
+    }
+}
+
+if (! function_exists('image_upload_hint')) {
+    function image_upload_hint(): string
+    {
+        return 'Dung lượng tối đa ' . image_upload_max_label() . 'MB. Định dạng: JPG, PNG, WebP, GIF.';
+    }
+}
+
+if (! function_exists('image_upload_mimes')) {
+    function image_upload_mimes(): string
+    {
+        return implode(',', config('media.allowed_image_mimes', ['jpeg', 'jpg', 'png', 'webp', 'gif']));
+    }
+}
+
+if (! function_exists('image_upload_file_rules')) {
+    /** @param  list<string>  $extra  vd. ['nullable'] hoặc ['required'] */
+    function image_upload_file_rules(array $extra = ['nullable']): array
+    {
+        return array_merge($extra, [
+            'image',
+            'mimes:' . image_upload_mimes(),
+            'max:' . image_upload_max_kb(),
+        ]);
+    }
+}
+
+if (! function_exists('image_upload_validation_messages')) {
+    /** @return array<string, string> */
+    function image_upload_validation_messages(string $prefix = '*'): array
+    {
+        $maxLabel = image_upload_max_label();
+        $formats = implode(', ', config('media.allowed_image_mimes', ['jpeg', 'jpg', 'png', 'webp', 'gif']));
+
+        return [
+            "{$prefix}.image" => 'File tải lên phải là hình ảnh.',
+            "{$prefix}.mimes" => 'Ảnh phải có định dạng: ' . $formats . '.',
+            "{$prefix}.max" => 'Ảnh không được vượt quá ' . $maxLabel . 'MB.',
+            "{$prefix}.uploaded" => 'Ảnh tải lên thất bại hoặc vượt quá dung lượng cho phép (' . $maxLabel . 'MB).',
+        ];
+    }
+}
+
+if (! function_exists('normalize_upload_path')) {
+    function normalize_upload_path(string $path): string
+    {
+        return str_replace('\\', '/', trim($path, '/'));
+    }
+}
+
+if (! function_exists('is_valid_upload_path')) {
+    /** Kiểm path upload an toàn (không .., đúng thư mục uploads/, đuôi ảnh). */
+    function is_valid_upload_path(string $path, ?string $prefix = null): bool
+    {
+        $path = normalize_upload_path($path);
+
+        if ($path === '' || str_contains($path, '..')) {
+            return false;
+        }
+
+        if (! preg_match('#^uploads/[a-zA-Z0-9_\-/]+\.(jpe?g|png|webp|gif)$#i', $path)) {
+            return false;
+        }
+
+        if ($prefix !== null) {
+            $prefix = rtrim(normalize_upload_path($prefix), '/');
+            if (! str_starts_with($path, $prefix . '/')) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+}
+
+if (! function_exists('kept_upload_paths')) {
+    /**
+     * Lọc danh sách path client gửi — chỉ giữ path thuộc whitelist entity hiện tại.
+     *
+     * @param  list<mixed>  $submitted
+     * @param  list<string|null>  $allowed
+     * @return list<string>
+     */
+    function kept_upload_paths(array $submitted, array $allowed, string $prefix, string $errorField = 'images'): array
+    {
+        $allowedMap = [];
+        foreach (array_filter($allowed) as $path) {
+            $allowedMap[normalize_upload_path($path)] = true;
+        }
+
+        $kept = [];
+
+        foreach ($submitted as $path) {
+            if (! is_string($path) || ! filled($path)) {
+                continue;
+            }
+
+            $normalized = normalize_upload_path($path);
+
+            if (! is_valid_upload_path($normalized, $prefix)) {
+                throw ValidationException::withMessages([
+                    $errorField => 'Đường dẫn ảnh không hợp lệ.',
+                ]);
+            }
+
+            if (! isset($allowedMap[$normalized])) {
+                throw ValidationException::withMessages([
+                    $errorField => 'Ảnh giữ lại không thuộc bản ghi này.',
+                ]);
+            }
+
+            $kept[] = $normalized;
+        }
+
+        return array_values(array_unique($kept));
+    }
+}
+
+if (! function_exists('resolve_kept_upload_path')) {
+    /**
+     * Xác nhận ảnh đại diện giữ lại — path phải khớp DB, không tin client tùy ý.
+     *
+     * @return string|null  path giữ lại, hoặc null nếu client không gửi existing
+     */
+    function resolve_kept_upload_path(?string $submitted, ?string $current, string $prefix, string $errorField = 'image'): ?string
+    {
+        if (! filled($submitted)) {
+            return null;
+        }
+
+        $submittedNormalized = normalize_upload_path($submitted);
+
+        if (! is_valid_upload_path($submittedNormalized, $prefix)) {
+            throw ValidationException::withMessages([
+                $errorField => 'Đường dẫn ảnh không hợp lệ.',
+            ]);
+        }
+
+        if (! filled($current)) {
+            throw ValidationException::withMessages([
+                $errorField => 'Ảnh giữ lại không hợp lệ.',
+            ]);
+        }
+
+        $currentNormalized = normalize_upload_path($current);
+
+        if ($submittedNormalized !== $currentNormalized) {
+            throw ValidationException::withMessages([
+                $errorField => 'Ảnh giữ lại không khớp với ảnh hiện tại.',
+            ]);
+        }
+
+        return $currentNormalized;
     }
 }

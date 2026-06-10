@@ -4,12 +4,15 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Setting;
+use App\Rules\ValidGoogleMapsEmbed;
 use App\Services\ImageUploadService;
 use App\Services\SettingService;
+use App\Support\GoogleMapsEmbedSanitizer;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
 use Illuminate\View\View;
+use RuntimeException;
 
 class SettingController extends Controller
 {
@@ -75,6 +78,16 @@ class SettingController extends Controller
         'about_small' => 1,
     ];
 
+    /** @var list<string> */
+    private const URL_KEYS = [
+        'google_maps_url',
+        'zalo',
+        'facebook',
+        'messenger',
+        'youtube',
+        'tiktok',
+    ];
+
     public function edit(SettingService $settings): View
     {
         $groups = Setting::query()->orderBy('group')->orderBy('id')->get()->groupBy('group');
@@ -104,6 +117,44 @@ class SettingController extends Controller
     public function update(Request $request, SettingService $settings, ImageUploadService $uploader): RedirectResponse
     {
         $items = Setting::query()->get();
+        $rules = [];
+        $messages = $this->validationMessages();
+
+        foreach ($items as $item) {
+            $key = $item->key;
+
+            if ($item->type === 'image') {
+                $rules[$key] = $this->imageRules();
+                continue;
+            }
+
+            if ($key === 'google_maps_embed') {
+                $rules[$key] = ['nullable', 'string', 'max:10000', new ValidGoogleMapsEmbed];
+                continue;
+            }
+
+            if (in_array($key, self::URL_KEYS, true)) {
+                $rules[$key] = ['nullable', 'string', 'max:500', 'url'];
+                continue;
+            }
+
+            if ($key === 'email') {
+                $rules[$key] = ['nullable', 'email', 'max:255'];
+                continue;
+            }
+
+            if ($key === 'phone') {
+                $rules[$key] = ['nullable', 'string', 'max:20'];
+                continue;
+            }
+
+            $rules[$key] = match ($item->type) {
+                'textarea' => ['nullable', 'string', 'max:5000'],
+                default => ['nullable', 'string', 'max:255'],
+            };
+        }
+
+        $validated = $request->validate($rules, $messages);
 
         foreach ($items as $item) {
             $key = $item->key;
@@ -111,27 +162,63 @@ class SettingController extends Controller
             if ($item->type === 'image') {
                 $existingField = 'existing_' . $key;
 
-                if ($request->hasFile($key)) {
-                    $uploader->delete($item->value);
-                    $folder = 'uploads/settings/' . date('Y/m');
-                    $result = $this->uploadSettingImage($uploader, $request->file($key), $folder, $key);
-                    $settings->set($key, $result['path']);
-                } elseif ($request->filled($existingField)) {
-                    // Giữ ảnh hiện tại.
-                } elseif ($item->value) {
-                    $uploader->delete($item->value);
-                    $settings->set($key, '');
+                try {
+                    if ($request->hasFile($key)) {
+                        $uploader->delete($item->value);
+                        $folder = 'uploads/settings/' . date('Y/m');
+                        $result = $this->uploadSettingImage($uploader, $request->file($key), $folder, $key);
+                        $settings->set($key, $result['path']);
+                    } elseif ($request->filled($existingField)) {
+                        resolve_kept_upload_path(
+                            $request->input($existingField),
+                            $item->value,
+                            'uploads/settings',
+                            $key,
+                        );
+                    } elseif ($item->value) {
+                        $uploader->delete($item->value);
+                        $settings->set($key, '');
+                    }
+                } catch (RuntimeException $e) {
+                    return back()->withErrors([$key => $e->getMessage()])->withInput();
                 }
 
                 continue;
             }
 
-            if ($request->has($key)) {
-                $settings->set($key, $request->input($key));
+            if (! array_key_exists($key, $validated)) {
+                continue;
             }
+
+            $value = $validated[$key];
+
+            if ($key === 'google_maps_embed') {
+                $value = GoogleMapsEmbedSanitizer::sanitize($value);
+            }
+
+            $settings->set($key, $value ?? '');
         }
 
         return back()->with('success', 'Cập nhật cài đặt thành công.');
+    }
+
+    /** @return list<string> */
+    private function imageRules(): array
+    {
+        return image_upload_file_rules(['nullable']);
+    }
+
+    /** @return array<string, string> */
+    private function validationMessages(): array
+    {
+        return array_merge(
+            image_upload_validation_messages('*'),
+            [
+                '*.url' => 'URL không hợp lệ.',
+                '*.email' => 'Email không hợp lệ.',
+                '*.max' => 'Giá trị vượt quá giới hạn cho phép.',
+            ],
+        );
     }
 
     private function uploadSettingImage(ImageUploadService $uploader, UploadedFile $file, string $folder, string $key): array

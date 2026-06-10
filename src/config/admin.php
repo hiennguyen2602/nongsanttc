@@ -46,6 +46,7 @@ return [
             'label' => 'Quản trị',
             'route' => 'admin.users.index',
             'icon' => 'users',
+            'admin_only' => true,
         ],
         [
             'label' => 'Banner',

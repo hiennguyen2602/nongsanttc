@@ -11,16 +11,20 @@ class MediaController extends Controller
 {
     public function upload(Request $request, ImageUploadService $uploader): JsonResponse
     {
-        $request->validate([
-            'file' => ['required', 'image', 'max:5120'],
-        ]);
+        try {
+            $request->validate([
+                'file' => image_upload_file_rules(['required']),
+            ], image_upload_validation_messages('file'));
 
-        $result = $uploader->upload(
-            $request->file('file'),
-            'uploads/editor/' . date('Y/m'),
-            null,
-            (int) config('media.editor_max_width', 1200),
-        );
+            $result = $uploader->upload(
+                $request->file('file'),
+                'uploads/editor/' . date('Y/m'),
+                null,
+                (int) config('media.editor_max_width', 1200),
+            );
+        } catch (\RuntimeException $e) {
+            return response()->json(['message' => $e->getMessage()], 422);
+        }
 
         return response()->json([
             'url' => $result['url'],

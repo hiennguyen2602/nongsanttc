@@ -17,21 +17,17 @@ class DashboardController extends Controller
         $period = $request->input('period', 'recent');
         [$fromDate, $toDate] = $this->resolveDateRange($period, $request);
 
-        $ranged = function () use ($fromDate, $toDate) {
-            $query = Order::query();
+        $query = Order::query();
 
-            if ($fromDate) {
-                $query->where('created_at', '>=', $fromDate);
-            }
+        if ($fromDate) {
+            $query->where('created_at', '>=', $fromDate);
+        }
 
-            if ($toDate) {
-                $query->where('created_at', '<=', $toDate);
-            }
+        if ($toDate) {
+            $query->where('created_at', '<=', $toDate);
+        }
 
-            return $query;
-        };
-
-        $statusCounts = $ranged()
+        $statusCounts = (clone $query)
             ->selectRaw('status, COUNT(*) as aggregate')
             ->groupBy('status')
             ->pluck('aggregate', 'status');
@@ -39,11 +35,11 @@ class DashboardController extends Controller
         $statusLabels = Order::statusLabels();
 
         return view('admin.dashboard', [
-            'totalOrders' => $ranged()->count(),
+            'totalOrders' => (int) $statusCounts->sum(),
             'statusLabels' => $statusLabels,
             'statusCounts' => $statusCounts,
             'statusColors' => Order::statusColors(),
-            'recentOrders' => $ranged()->latest()->limit(8)->get(),
+            'recentOrders' => (clone $query)->latest()->limit(8)->get(),
             'periods' => $this->datePeriods(),
             'period' => $period,
             'fromInput' => $fromDate?->format('Y-m-d'),

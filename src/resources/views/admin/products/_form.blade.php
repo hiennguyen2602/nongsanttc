@@ -74,7 +74,7 @@
                         </div>
 
                         <input type="file" x-ref="fileInput" name="images[]" accept="image/*" multiple @change="addFiles($event)" class="form-control">
-                        <p class="mt-1 text-xs text-slate-500">Có thể chọn nhiều ảnh cùng lúc. Chọn "Ảnh chính" để làm ảnh đại diện hiển thị ở danh sách.</p>
+                        <p class="mt-1 text-xs text-slate-500">Có thể chọn nhiều ảnh cùng lúc. Chọn "Ảnh chính" để làm ảnh đại diện hiển thị ở danh sách. {{ image_upload_hint() }}</p>
                         @error('images')<p class="field-error">{{ $message }}</p>@enderror
                         @foreach ($errors->get('images.*') as $imageErrors)
                             @foreach ($imageErrors as $imageError)
