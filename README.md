@@ -1,6 +1,6 @@
 # Nông Sản TTC
 
-## Khởi chạy nhanh (giống manager-stock)
+## Khởi chạy nhanh
 
 ```bash
 cp src/.env.example.docker src/.env   # lần đầu
@@ -34,7 +34,7 @@ docker compose up -d
 # Đợi vite build xong (~30–40s lần đầu sau up) rồi mở http://localhost:8080
 ```
 
-**Muốn HMR tức thì (như manager-stock, nhưng lần đầu có thể chậm):** trong `docker-compose.override.yml` thêm `VITE_MODE: dev` vào service `vite`, rồi `docker compose up -d --force-recreate vite`.
+**Muốn HMR tức thì:** trong `docker-compose.override.yml` thêm `VITE_MODE: dev` vào service `vite`, rồi `docker compose up -d --force-recreate vite`.
 
 ## Dev frontend
 
