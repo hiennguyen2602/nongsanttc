@@ -48,7 +48,7 @@
                             </dd>
                         </div>
                         <div class="flex gap-2">
-                            <dt class="w-15 shrink-0 font-semibold text-slate-500">Số điện thoại</dt>
+                            <dt class="w-15 shrink-0 font-semibold text-slate-500">Phone</dt>
                             <dd class="flex-1">
                                 @if($order->customer)
                                     <a href="{{ route('admin.customers.show', $order->customer) }}" class="admin-link hover:underline">{{ $order->customer_phone }}</a>
