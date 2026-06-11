@@ -190,25 +190,30 @@
                     <span class="mb-2 inline-block rounded-full bg-brand/10 px-3 py-1 text-xs font-bold uppercase tracking-wider text-brand">Khám phá</span>
                     <h2 class="mt-3 text-2xl font-bold text-slate-900 sm:text-3xl">Ưu đãi &amp; chương trình</h2>
                 </div>
-                <div class="banner-cta-grid grid grid-cols-1 gap-5 md:grid-cols-2 md:gap-6" data-reveal-group>
+                <div class="banner-cta-grid grid grid-cols-1 gap-5 md:grid-cols-2 md:gap-6">
                     @foreach ($banners as $banner)
                         <a
                             href="{{ $banner->link ?? '#' }}"
-                            data-reveal="fade-up"
                             class="banner-cta-card group relative block overflow-hidden rounded-2xl bg-slate-200 shadow-md ring-1 ring-black/5"
                         >
-                            <picture class="absolute inset-0">
-                                <source media="(max-width: 767px)" srcset="{{ store_media_url($banner->image_mobile ?: $banner->image) }}">
+                            <picture class="banner-cta-card__media">
+                                @php
+                                    $bannerMobile = store_media_url($banner->image_mobile ?: $banner->image);
+                                    $bannerDesktop = store_media_url($banner->image);
+                                @endphp
+                                @if ($bannerMobile && $bannerMobile !== $bannerDesktop)
+                                    <source media="(max-width: 1023px)" srcset="{{ $bannerMobile }}">
+                                @endif
                                 <img
-                                    src="{{ store_media_url($banner->image) }}"
+                                    src="{{ $bannerDesktop }}"
                                     alt="{{ $banner->title }}"
                                     class="h-full w-full object-cover transition duration-700 ease-out group-hover:scale-105"
                                     loading="lazy"
                                     decoding="async"
                                 >
                             </picture>
-                            <div class="absolute inset-0 bg-gradient-to-t from-brand-dark/95 via-brand-dark/45 to-brand-dark/10 transition duration-500 group-hover:from-brand-dark"></div>
-                            <div class="absolute inset-x-0 bottom-0 p-6 sm:p-8">
+                            <div class="pointer-events-none absolute inset-0 bg-gradient-to-t from-brand-dark/95 via-brand-dark/45 to-brand-dark/10 transition duration-500 group-hover:from-brand-dark" aria-hidden="true"></div>
+                            <div class="pointer-events-none absolute inset-x-0 bottom-0 p-6 sm:p-8">
                                 <h3 class="text-xl font-bold text-white transition group-hover:translate-x-0.5 sm:text-2xl">{{ $banner->title }}</h3>
                                 @if ($banner->subtitle)
                                     <p class="mt-2 max-w-md text-sm leading-relaxed text-white/90">{{ $banner->subtitle }}</p>

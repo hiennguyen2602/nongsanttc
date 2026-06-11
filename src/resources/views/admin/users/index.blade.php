@@ -12,20 +12,20 @@
                 <table class="table table-striped">
                     <thead>
                         <tr>
-                            <th>Tên</th>
-                            <th>Email</th>
-                            <th>Vai trò</th>
-                            <th>Trạng thái</th>
+                            <th class="cell-text">Tên</th>
+                            <th class="cell-text">Email</th>
+                            <th class="cell-nowrap">Vai trò</th>
+                            <th class="cell-status">Trạng thái</th>
                             <th class="table-actions"></th>
                         </tr>
                     </thead>
                     <tbody>
                         @foreach($users as $user)
                             <tr>
-                                <td>{{ $user->name }}</td>
-                                <td>{{ $user->email }}</td>
-                                <td>{{ $user->roleLabel() }}</td>
-                                <td>@include('admin.partials.status-badge', ['label' => $user->accountStatusLabel(), 'class' => $user->accountStatusBadgeClass()])</td>
+                                <td class="cell-text">{{ $user->name }}</td>
+                                <td class="cell-text">{{ $user->email }}</td>
+                                <td class="cell-nowrap">{{ $user->roleLabel() }}</td>
+                                <td class="cell-status">@include('admin.partials.status-badge', ['label' => $user->accountStatusLabel(), 'class' => $user->accountStatusBadgeClass()])</td>
                                 <td class="table-actions">
                                     <a href="{{ route('admin.users.edit', $user) }}" class="btn btn-link btn-sm">Sửa</a>
                                     @if($user->id !== auth()->id())

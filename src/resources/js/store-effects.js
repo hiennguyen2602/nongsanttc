@@ -330,8 +330,29 @@ function initScrollReveal() {
                 observer.unobserve(el);
             });
         },
-        { threshold: 0.12, rootMargin: '0px 0px -50px 0px' },
+        { threshold: 0.08, rootMargin: '0px 0px 0px 0px' },
     );
+
+    const revealIfInViewport = (el) => {
+        const rect = el.getBoundingClientRect();
+        if (rect.bottom <= 0 || rect.top >= window.innerHeight) {
+            return;
+        }
+
+        if (el.matches('[data-reveal-group]')) {
+            el.classList.add('is-revealed');
+            el.querySelectorAll('[data-reveal]').forEach((child, i) => {
+                if (! child.dataset.revealDelay) {
+                    child.dataset.revealDelay = String(i * 90);
+                }
+                revealOne(child);
+            });
+            return;
+        }
+
+        revealOne(el);
+        revealNested(el);
+    };
 
     document.querySelectorAll('[data-reveal]').forEach((el) => {
         if (el.closest('[data-reveal-group]')) {
@@ -345,6 +366,16 @@ function initScrollReveal() {
 
     document.querySelectorAll('[data-reveal-group]').forEach((el) => {
         observer.observe(el);
+    });
+
+    requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+            document.querySelectorAll('[data-reveal-group], [data-reveal]').forEach((el) => {
+                if (! el.classList.contains('is-revealed')) {
+                    revealIfInViewport(el);
+                }
+            });
+        });
     });
 }
 

@@ -21,26 +21,26 @@
                 <table class="table table-striped">
                     <thead>
                         <tr>
-                            <th>Ảnh</th>
-                            <th>Tên</th>
-                            <th>Danh mục</th>
-                            <th>Giá</th>
-                            <th>Trạng thái</th>
+                            <th class="cell-image">Ảnh</th>
+                            <th class="cell-text-wide">Tên</th>
+                            <th class="cell-text">Danh mục</th>
+                            <th class="cell-price">Giá</th>
+                            <th class="cell-status">Trạng thái</th>
                             <th class="table-actions"></th>
                         </tr>
                     </thead>
                     <tbody>
                         @foreach ($products as $product)
                             <tr>
-                                <td>
+                                <td class="cell-image">
                                     @if ($product->image)
                                         <img src="{{ store_media_url($product->image, 'thumbnail') }}" alt="" class="h-12 w-20 max-w-none shrink-0 rounded object-cover ring-1 ring-slate-200">
                                     @endif
                                 </td>
-                                <td class="whitespace-nowrap font-medium"><a href="{{ route('admin.products.show', $product) }}" class="admin-link hover:underline">{{ $product->name }}</a></td>
-                                <td>{{ $product->category?->name ?? '—' }}</td>
-                                <td>{{ $product->formattedPrice() }}</td>
-                                <td>
+                                <td class="cell-text-wide font-medium"><a href="{{ route('admin.products.show', $product) }}" class="admin-link hover:underline">{{ $product->name }}</a></td>
+                                <td class="cell-text">{{ $product->category?->name ?? '—' }}</td>
+                                <td class="cell-price">{{ $product->formattedPrice() }}</td>
+                                <td class="cell-status">
                                     @include('admin.partials.status-badge', ['label' => $product->visibilityLabel(), 'class' => $product->visibilityBadgeClass()])
                                 </td>
                                 <td class="table-actions">

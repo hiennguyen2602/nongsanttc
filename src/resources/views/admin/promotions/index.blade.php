@@ -10,14 +10,14 @@
         <div class="x_content">
             <div class="table-responsive">
                 <table class="table table-striped">
-                    <thead><tr><th>Mã</th><th>Tiêu đề</th><th>ĐH tối thiểu</th><th>Giảm</th><th class="table-actions"></th></tr></thead>
+                    <thead><tr><th class="cell-code">Mã</th><th class="cell-text-wide">Tiêu đề</th><th class="cell-price">ĐH tối thiểu</th><th class="cell-price">Giảm</th><th class="table-actions"></th></tr></thead>
                     <tbody>
                         @foreach($promotions as $promo)
                             <tr>
-                                <td class="font-mono font-medium">{{ $promo->code }}</td>
-                                <td>{{ $promo->title }}</td>
-                                <td>{{ format_money($promo->min_order) }}</td>
-                                <td>{{ format_money($promo->discount_amount) }}</td>
+                                <td class="cell-code font-mono font-medium">{{ $promo->code }}</td>
+                                <td class="cell-text-wide">{{ $promo->title }}</td>
+                                <td class="cell-price">{{ format_money($promo->min_order) }}</td>
+                                <td class="cell-price">{{ format_money($promo->discount_amount) }}</td>
                                 <td class="table-actions">
                                     <a href="{{ route('admin.promotions.edit', $promo) }}" class="btn btn-link btn-sm">Sửa</a>
                                     <form method="POST" action="{{ route('admin.promotions.destroy', $promo) }}" class="inline" onsubmit="return confirm('Xóa?')">@csrf @method('DELETE')<button type="submit" class="btn btn-link btn-link-danger btn-sm">Xóa</button></form>

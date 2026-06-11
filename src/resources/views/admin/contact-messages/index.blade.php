@@ -12,17 +12,17 @@
                 <table class="table table-striped">
                     <thead>
                         <tr>
-                            <th>Người gửi</th>
-                            <th>Liên hệ</th>
-                            <th>Chủ đề</th>
-                            <th>Nội dung</th>
-                            <th>Thời gian</th>
+                            <th class="cell-text">Người gửi</th>
+                            <th class="cell-text">Liên hệ</th>
+                            <th class="cell-text">Chủ đề</th>
+                            <th class="cell-text-wide">Nội dung</th>
+                            <th class="cell-date">Thời gian</th>
                         </tr>
                     </thead>
                     <tbody>
                         @forelse ($messages as $item)
                             <tr>
-                                <td>
+                                <td class="cell-text">
                                     <a href="{{ route('admin.contact-messages.show', $item) }}" class="admin-link font-medium hover:underline">
                                         {{ $item->name }}
                                     </a>
@@ -30,15 +30,19 @@
                                         <span class="ml-1 badge badge-warning">Mới</span>
                                     @endif
                                 </td>
-                                <td class="text-sm">
+                                <td class="cell-text text-sm">
                                     <div>{{ $item->phone }}</div>
                                     @if ($item->email)
                                         <div class="text-slate-500">{{ $item->email }}</div>
                                     @endif
                                 </td>
-                                <td>{{ $item->subject ?: '—' }}</td>
-                                <td class="max-w-xs truncate text-sm text-slate-600">{{ Str::limit($item->message, 60) }}</td>
-                                <td class="whitespace-nowrap text-sm">{{ $item->created_at->format('d/m/Y H:i') }}</td>
+                                <td class="cell-text">{{ $item->subject ?: '—' }}</td>
+                                <td class="cell-text-wide text-sm text-slate-600">
+                                    <a href="{{ route('admin.contact-messages.show', $item) }}" class="admin-link hover:underline">
+                                        {{ Str::limit($item->message, 100) }}
+                                    </a>
+                                </td>
+                                <td class="cell-date text-sm">{{ $item->created_at->format('d/m/Y H:i') }}</td>
                             </tr>
                         @empty
                             <tr>

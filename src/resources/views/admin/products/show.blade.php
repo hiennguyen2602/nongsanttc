@@ -97,14 +97,14 @@
                     <h3 class="panel-title mb-2">Biến thể</h3>
                     <div class="table-responsive">
                         <table class="table table-striped">
-                            <thead><tr><th>Hương vị</th><th>Kích cỡ</th><th>Giá</th><th>Tồn kho</th></tr></thead>
+                            <thead><tr><th class="cell-text">Hương vị</th><th class="cell-text">Kích cỡ</th><th class="cell-price">Giá</th><th class="cell-num">Tồn kho</th></tr></thead>
                             <tbody>
                                 @foreach ($product->variants as $variant)
                                     <tr>
-                                        <td>{{ $variant->flavor ?? '—' }}</td>
-                                        <td>{{ $variant->size ?? '—' }}</td>
-                                        <td>{{ number_format($variant->price, 0, ',', '.') }}đ</td>
-                                        <td>{{ number_format($variant->stock, 0, ',', '.') }}</td>
+                                        <td class="cell-text">{{ $variant->flavor ?? '—' }}</td>
+                                        <td class="cell-text">{{ $variant->size ?? '—' }}</td>
+                                        <td class="cell-price">{{ number_format($variant->price, 0, ',', '.') }}đ</td>
+                                        <td class="cell-num">{{ number_format($variant->stock, 0, ',', '.') }}</td>
                                     </tr>
                                 @endforeach
                             </tbody>

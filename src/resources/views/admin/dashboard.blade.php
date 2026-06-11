@@ -52,17 +52,17 @@
                 <table class="table table-striped">
                     <thead>
                         <tr>
-                            <th>Mã đơn</th>
-                            <th>Khách hàng</th>
-                            <th>Số tiền</th>
-                            <th>Trạng thái</th>
-                            <th>Ngày</th>
+                            <th class="cell-code">Mã đơn</th>
+                            <th class="cell-text">Khách hàng</th>
+                            <th class="cell-price">Số tiền</th>
+                            <th class="cell-status">Trạng thái</th>
+                            <th class="cell-date">Ngày</th>
                         </tr>
                     </thead>
                     <tbody>
                         @forelse ($recentOrders as $order)
                             <tr>
-                                <td>
+                                <td class="cell-code">
                                     <a href="{{ route('admin.orders.show', $order) }}" class="inline-flex items-start gap-1 admin-link hover:underline">
                                         <span>{{ $order->order_code }}</span>
                                         @if($order->isNew())
@@ -70,10 +70,10 @@
                                         @endif
                                     </a>
                                 </td>
-                                <td>{{ $order->customer_name }}</td>
-                                <td>{{ $order->formattedTotal() }}</td>
-                                <td>@include('admin.partials.status-badge', ['label' => $order->statusLabel(), 'class' => $order->statusBadgeClass()])</td>
-                                <td>{{ $order->created_at->format('d/m/Y H:i') }}</td>
+                                <td class="cell-text">{{ $order->customer_name }}</td>
+                                <td class="cell-price">{{ $order->formattedTotal() }}</td>
+                                <td class="cell-status">@include('admin.partials.status-badge', ['label' => $order->statusLabel(), 'class' => $order->statusBadgeClass()])</td>
+                                <td class="cell-date">{{ $order->created_at->format('d/m/Y H:i') }}</td>
                             </tr>
                         @empty
                             <tr>
