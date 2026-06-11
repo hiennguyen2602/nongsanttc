@@ -256,6 +256,48 @@
                                 this.copied = true;
                                 setTimeout(() => this.copied = false, 2000);
                             });
+                        },
+                        openFacebookShare(event) {
+                            const shareUrl = @js($productShareUrl);
+                            const productName = @js($product->name);
+                            const encoded = encodeURIComponent(shareUrl);
+                            const webShareUrl = 'https://www.facebook.com/sharer/sharer.php?u=' + encoded;
+                            const facewebHref = encodeURIComponent(webShareUrl);
+                            const ua = navigator.userAgent;
+                            const isMobile = /iPhone|iPad|iPod|Android/i.test(ua);
+
+                            if (! isMobile) {
+                                return;
+                            }
+
+                            event.preventDefault();
+
+                            let appOpened = false;
+                            const onHide = () => { appOpened = true; };
+                            document.addEventListener('visibilitychange', onHide, { once: true });
+
+                            if (/Android/i.test(ua)) {
+                                window.location.href = 'intent://facewebmodal/f?href=' + facewebHref
+                                    + '#Intent;scheme=fb;package=com.facebook.katana;S.browser_fallback_url=' + encodeURIComponent(webShareUrl) + ';end';
+                            } else {
+                                window.location.href = 'fb://facewebmodal/f?href=' + facewebHref;
+                            }
+
+                            setTimeout(() => {
+                                document.removeEventListener('visibilitychange', onHide);
+                                if (appOpened) {
+                                    return;
+                                }
+
+                                if (navigator.share) {
+                                    navigator.share({ title: productName, url: shareUrl }).catch(() => {
+                                        window.location.href = webShareUrl;
+                                    });
+                                    return;
+                                }
+
+                                window.location.href = webShareUrl;
+                            }, 1500);
                         }
                     }"
                 >
@@ -266,6 +308,7 @@
                             href="https://www.facebook.com/sharer/sharer.php?u={{ urlencode($productShareUrl) }}"
                             target="_blank"
                             rel="noopener noreferrer"
+                            @click="openFacebookShare($event)"
                             class="flex h-9 w-9 shrink-0 cursor-pointer items-center justify-center rounded-full bg-[#1877F2] text-white transition hover:bg-[#166fe5]"
                             aria-label="Chia sẻ lên Facebook"
                         >
