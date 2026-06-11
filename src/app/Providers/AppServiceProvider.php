@@ -25,6 +25,15 @@ class AppServiceProvider extends ServiceProvider
     {
         if ($this->app->environment('production')) {
             URL::forceScheme('https');
+
+            $domain = config('session.domain');
+            if ($domain === null || $domain === '' || $domain === 'null') {
+                config(['session.domain' => null]);
+            }
+
+            if (! config('session.secure')) {
+                config(['session.secure' => true]);
+            }
         }
 
         View::composer(['store.*', 'store.layouts.*', 'store.partials.*'], function ($view) {

@@ -198,7 +198,7 @@
                         @endphp
                         <a
                             href="{{ $banner->link ?? '#' }}"
-                            class="banner-cta-card group relative block overflow-hidden rounded-2xl bg-slate-200 shadow-md ring-1 ring-black/5"
+                            class="banner-cta-card group relative overflow-hidden rounded-2xl bg-slate-200 shadow-md ring-1 ring-black/5"
                         >
                             <img
                                 src="{{ $bannerDesktop }}"

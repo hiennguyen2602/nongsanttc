@@ -316,6 +316,11 @@ html {
     min-height: 11rem;
 }
 
+/* Cao hơn utility .block trong bundle production */
+a.banner-cta-card {
+    display: grid;
+}
+
 .banner-cta-card__img,
 .banner-cta-card__overlay,
 .banner-cta-card__body {

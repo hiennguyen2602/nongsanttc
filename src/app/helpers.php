@@ -382,3 +382,28 @@ if (! function_exists('resolve_kept_upload_path')) {
         return $currentNormalized;
     }
 }
+
+if (! function_exists('env_nullable_string')) {
+    /** Coi chuỗi rỗng hoặc "null" trong .env thành null thật (tránh cookie Domain=null). */
+    function env_nullable_string(mixed $value): ?string
+    {
+        if ($value === null || $value === '') {
+            return null;
+        }
+
+        $value = (string) $value;
+
+        return strtolower($value) === 'null' ? null : $value;
+    }
+}
+
+if (! function_exists('env_bool_default')) {
+    function env_bool_default(mixed $value, bool $default): bool
+    {
+        if ($value === null || $value === '') {
+            return $default;
+        }
+
+        return filter_var($value, FILTER_VALIDATE_BOOLEAN);
+    }
+}
