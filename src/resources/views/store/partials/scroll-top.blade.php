@@ -7,7 +7,7 @@
     x-transition:leave="transition ease-in duration-200"
     x-transition:leave-start="opacity-100"
     x-transition:leave-end="opacity-0"
-    class="fixed bottom-24 left-4 z-40 sm:bottom-8"
+    class="fixed bottom-8 left-4 z-40 sm:bottom-8"
     style="display: none;"
 >
     <button
