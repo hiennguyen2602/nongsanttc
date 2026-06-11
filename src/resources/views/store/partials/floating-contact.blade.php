@@ -35,11 +35,9 @@
     @endif
     @if (store_setting('messenger'))
     <a href="{{ store_setting('messenger') }}" target="_blank" rel="noopener"
-       class="pointer-events-auto flex h-11 w-11 items-center justify-center rounded-full bg-[#0084FF] text-white shadow-lg transition hover:scale-105"
+       class="pointer-events-auto flex h-11 w-11 items-center justify-center overflow-hidden rounded-full shadow-lg transition hover:scale-105"
        title="Messenger">
-        <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-            <path d="M12 0C5.373 0 0 4.975 0 11.111c0 3.497 1.745 6.616 4.472 8.652V24l4.086-2.242c1.09.3 2.246.464 3.442.464 6.627 0 12-4.974 12-11.111C24 4.975 18.627 0 12 0zm1.191 14.963l-3.055-3.26-5.963 3.26L10.732 8.8l3.13 3.26 5.89-3.26-3.561 6.163z"/>
-        </svg>
+        @include('store.partials.icons.messenger')
     </a>
     @endif
     <div class="pointer-events-auto flex max-w-[calc(100vw-2rem)] items-center gap-2 sm:max-w-none">

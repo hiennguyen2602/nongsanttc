@@ -75,7 +75,7 @@
             href="{{ store_setting('messenger') }}"
             target="_blank"
             rel="noopener noreferrer"
-            class="flex h-9 w-9 shrink-0 cursor-pointer items-center justify-center rounded-full bg-[#0084FF] text-white transition hover:bg-[#0073e6]"
+            class="flex h-9 w-9 shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-full transition hover:opacity-90"
             aria-label="Chia sẻ qua Messenger"
         >
             @include('store.partials.icons.messenger')
