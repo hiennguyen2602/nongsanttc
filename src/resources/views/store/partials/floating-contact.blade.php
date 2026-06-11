@@ -16,10 +16,22 @@
     class="pointer-events-none fixed bottom-4 right-4 z-40 flex flex-col items-end gap-2 sm:bottom-8 sm:right-6"
     style="display: none;"
 >
+    @if (store_setting('phone'))
+    <a href="tel:{{ preg_replace('/\s+/', '', store_setting('phone')) }}"
+       class="pointer-events-auto flex h-11 w-11 items-center justify-center rounded-full bg-green-600 text-white shadow-lg transition hover:scale-105 hover:bg-green-700"
+       title="Gọi {{ store_setting('phone') }}"
+       aria-label="Gọi {{ store_setting('phone') }}">
+        <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/>
+        </svg>
+    </a>
+    @endif
     @if (store_setting('zalo'))
     <a href="{{ store_setting('zalo') }}" target="_blank" rel="noopener"
-       class="pointer-events-auto flex h-11 w-11 items-center justify-center rounded-full bg-blue-500 text-xs font-bold text-white shadow-lg transition hover:scale-105"
-       title="Zalo">Zalo</a>
+       class="pointer-events-auto flex h-11 w-11 items-center justify-center overflow-hidden rounded-full shadow-lg transition hover:scale-105"
+       title="Zalo">
+        @include('store.partials.icons.zalo')
+    </a>
     @endif
     @if (store_setting('messenger'))
     <a href="{{ store_setting('messenger') }}" target="_blank" rel="noopener"
