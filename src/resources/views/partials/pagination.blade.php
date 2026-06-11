@@ -20,11 +20,11 @@
             $showRightEllipsis = $end < $last;
         }
     @endphp
-    <nav aria-label="Phân trang" class="pagination-window-nav d-flex justify-content-end w-100">
-        <ul class="pagination pagination-sm mb-0 flex-wrap justify-content-end">
+    <nav aria-label="Phân trang" class="pagination-window-nav flex w-full justify-end">
+        <ul class="pagination flex list-none flex-nowrap justify-end p-0">
             <li class="page-item {{ $paginator->onFirstPage() ? 'disabled' : '' }}">
                 @if ($paginator->onFirstPage())
-                    <span class="page-link user-select-none" aria-hidden="true" tabindex="-1">«</span>
+                    <span class="page-link select-none" aria-hidden="true" tabindex="-1">«</span>
                 @else
                     <a class="page-link" href="{{ $paginator->url(1) }}" aria-label="Trang đầu">«</a>
                 @endif
@@ -32,7 +32,7 @@
 
             @if ($showLeftEllipsis)
                 <li class="page-item disabled">
-                    <span class="page-link border-0 bg-transparent px-1 px-sm-2 user-select-none" aria-hidden="true">…</span>
+                    <span class="page-link page-link--ellipsis select-none" aria-hidden="true">…</span>
                 </li>
             @endif
 
@@ -50,13 +50,13 @@
 
             @if ($showRightEllipsis)
                 <li class="page-item disabled">
-                    <span class="page-link border-0 bg-transparent px-1 px-sm-2 user-select-none" aria-hidden="true">…</span>
+                    <span class="page-link page-link--ellipsis select-none" aria-hidden="true">…</span>
                 </li>
             @endif
 
             <li class="page-item {{ $cur >= $last ? 'disabled' : '' }}">
                 @if ($cur >= $last)
-                    <span class="page-link user-select-none" aria-hidden="true" tabindex="-1">»</span>
+                    <span class="page-link select-none" aria-hidden="true" tabindex="-1">»</span>
                 @else
                     <a class="page-link" href="{{ $paginator->url($last) }}" aria-label="Trang cuối">»</a>
                 @endif

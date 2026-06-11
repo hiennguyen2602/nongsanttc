@@ -148,6 +148,7 @@
 
 .admin-body .x_content {
     padding-top: 0.25rem;
+    min-width: 0;
 }
 
 /* ─── Forms ─── */
