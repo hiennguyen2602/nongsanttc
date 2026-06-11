@@ -24,13 +24,7 @@ return Application::configure(basePath: dirname(__DIR__))
         },
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        $middleware->trustProxies(
-            at: '*',
-            headers: Request::HEADER_X_FORWARDED_FOR
-                | Request::HEADER_X_FORWARDED_HOST
-                | Request::HEADER_X_FORWARDED_PORT
-                | Request::HEADER_X_FORWARDED_PROTO,
-        );
+        $middleware->trustProxies(at: '*');
 
         $middleware->alias([
             'admin' => EnsureUserIsAdmin::class,
@@ -61,6 +55,18 @@ return Application::configure(basePath: dirname(__DIR__))
                     ->route('admin.login')
                     ->withErrors(['email' => 'Phiên đăng nhập hết hạn. Vui lòng tải lại trang và thử lại.']);
             }
+
+            if ($request->is('lien-he')) {
+                return redirect()
+                    ->route('contact')
+                    ->withInput($request->except('_token'))
+                    ->withErrors(['name' => 'Phiên hết hạn. Vui lòng tải lại trang và gửi lại tin nhắn.']);
+            }
+
+            return redirect()
+                ->back()
+                ->withInput($request->except('_token'))
+                ->withErrors(['_token' => 'Phiên hết hạn. Vui lòng tải lại trang và thử lại.']);
         });
     })
     ->withSchedule(function (Schedule $schedule): void {
