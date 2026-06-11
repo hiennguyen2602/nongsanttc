@@ -68,6 +68,52 @@
     flex: 1 1 auto;
 }
 
+@media (min-width: 1024px) {
+    .admin-body .admin-page-frame--order-show {
+        width: 100%;
+        max-width: 75rem;
+        margin-left: auto;
+        margin-right: auto;
+    }
+}
+
+.admin-body .order-show-layout {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+}
+
+.admin-body .order-show-layout .order-show-block {
+    margin-bottom: 0;
+    min-width: 0;
+}
+
+@media (min-width: 1024px) {
+    .admin-body .order-show-layout {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        grid-template-areas:
+            'info customer'
+            'items payment';
+        align-items: start;
+    }
+
+    .admin-body .order-show-block--info {
+        grid-area: info;
+    }
+
+    .admin-body .order-show-block--customer {
+        grid-area: customer;
+    }
+
+    .admin-body .order-show-block--items {
+        grid-area: items;
+    }
+
+    .admin-body .order-show-block--payment {
+        grid-area: payment;
+    }
+}
+
 /* ─── Panel (x_panel) ─── */
 .admin-body .x_panel {
     background: #fff;
