@@ -105,6 +105,12 @@ Quy mô **vài chục–vài trăm truy cập/ngày**: `CACHE_STORE=database` (h
 | `CACHE_STORE` | `database` hoặc `file` |
 | `QUEUE_CONNECTION` | `database` (đủ nếu queue nhẹ) |
 
+### Script `dc-prod` (VPS)
+
+File `dc-prod` có quyền thực thi (`755`) trong git — sau `git pull` chạy trực tiếp `./dc-prod ...`. Nếu vẫn `Permission denied`: `chmod +x dc-prod`.
+
+**Không** chạy `npm install` trực tiếp trên VPS (dễ sửa `package-lock.json` và chặn `git pull`). Build frontend qua `./dc-prod vite-build`.
+
 ### Checklist deploy
 
 ```bash

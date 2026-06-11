@@ -304,7 +304,7 @@ html {
     transform-origin: center center;
 }
 
-/* Homepage banner CTA — equal height, image fill (Safari/iPad: cần min-height, không dùng toàn absolute) */
+/* Homepage banner CTA — Safari/iPad: grid + min-height cố định, không absolute full-bleed */
 .banner-cta-grid {
     align-items: stretch;
 }
@@ -316,42 +316,57 @@ html {
     min-height: 11rem;
 }
 
-.banner-cta-card__media {
+.banner-cta-card__img,
+.banner-cta-card__overlay,
+.banner-cta-card__body {
     grid-area: 1 / 1;
-    display: block;
-    height: 100%;
-    width: 100%;
-    min-height: inherit;
 }
 
-.banner-cta-card__media img {
+.banner-cta-card__img {
     display: block;
-    height: 100%;
     width: 100%;
+    height: 100%;
+    min-height: 11rem;
     object-fit: cover;
     object-position: center;
 }
 
-.banner-cta-card > .absolute {
-    grid-area: 1 / 1;
+.banner-cta-card__overlay {
+    align-self: stretch;
+    justify-self: stretch;
+}
+
+.banner-cta-card__body {
+    align-self: end;
+    justify-self: stretch;
 }
 
 @media (min-width: 640px) {
-    .banner-cta-card {
+    .banner-cta-card,
+    .banner-cta-card__img {
         min-height: 12.5rem;
     }
 }
 
 @media (min-width: 768px) {
-    .banner-cta-card {
+    .banner-cta-card,
+    .banner-cta-card__img {
         min-height: 13.5rem;
     }
 }
 
 @media (min-width: 1024px) {
-    .banner-cta-card {
+    .banner-cta-card,
+    .banner-cta-card__img {
         min-height: 15rem;
     }
+}
+
+/* Không áp scroll-reveal lên banner (tránh invisible trên iPad) */
+.banner-cta-section [data-reveal] {
+    opacity: 1 !important;
+    transform: none !important;
+    filter: none !important;
 }
 
 /* Promo card shine on hover */
