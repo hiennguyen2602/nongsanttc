@@ -2,6 +2,11 @@
 
 @section('title', 'Khách hàng')
 @section('page-title', 'Khách hàng')
+@section('breadcrumbs')
+    @include('admin.partials.breadcrumb', ['items' => admin_breadcrumb([
+        ['label' => 'Khách hàng'],
+    ])])
+@endsection
 
 @section('content')
     <div class="x_panel">

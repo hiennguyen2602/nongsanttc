@@ -1,6 +1,11 @@
 @extends('admin.layouts.app')
 @section('title', 'Người dùng')
 @section('page-title', 'Người dùng')
+@section('breadcrumbs')
+    @include('admin.partials.breadcrumb', ['items' => admin_breadcrumb([
+        ['label' => 'Người dùng'],
+    ])])
+@endsection
 @section('content')
     <div class="x_panel">
         <div class="x_title">

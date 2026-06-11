@@ -413,3 +413,17 @@ if (! function_exists('resolve_kept_upload_path')) {
         return $currentNormalized;
     }
 }
+
+if (! function_exists('admin_breadcrumb')) {
+    /**
+     * @param  array<int, array{label: string, url?: string}>  $items
+     * @return array<int, array{label: string, url?: string}>
+     */
+    function admin_breadcrumb(array $items): array
+    {
+        return array_merge(
+            [['label' => 'Dashboard', 'url' => route('admin.dashboard')]],
+            $items
+        );
+    }
+}

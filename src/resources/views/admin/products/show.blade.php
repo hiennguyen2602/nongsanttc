@@ -2,6 +2,12 @@
 
 @section('title', $product->name)
 @section('page-title', 'Chi tiết sản phẩm')
+@section('breadcrumbs')
+    @include('admin.partials.breadcrumb', ['items' => admin_breadcrumb([
+        ['label' => 'Danh sách sản phẩm', 'url' => route('admin.products.index')],
+        ['label' => 'Chi tiết sản phẩm'],
+    ])])
+@endsection
 
 @php
     $galleryImages = collect(array_merge([$product->image], $product->gallery ?? []))

@@ -2,7 +2,12 @@
 
 @section('title', $message->name . ' — Tin liên hệ')
 @section('page-title', 'Chi tiết tin liên hệ')
-@section('breadcrumb', 'Liên hệ / Chi tiết')
+@section('breadcrumbs')
+    @include('admin.partials.breadcrumb', ['items' => admin_breadcrumb([
+        ['label' => 'Tin nhắn liên hệ', 'url' => route('admin.contact-messages.index')],
+        ['label' => 'Chi tiết tin liên hệ'],
+    ])])
+@endsection
 
 @section('content')
     <div class="x_panel">

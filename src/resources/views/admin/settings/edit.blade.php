@@ -1,6 +1,11 @@
 @extends('admin.layouts.app')
 @section('title', 'Cài đặt')
 @section('page-title', 'Cài đặt website')
+@section('breadcrumbs')
+    @include('admin.partials.breadcrumb', ['items' => admin_breadcrumb([
+        ['label' => 'Cài đặt'],
+    ])])
+@endsection
 @section('content')
     <form method="POST" action="{{ route('admin.settings.update') }}" enctype="multipart/form-data">
         @csrf
