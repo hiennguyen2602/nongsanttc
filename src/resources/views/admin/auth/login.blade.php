@@ -2,12 +2,12 @@
 <html lang="vi">
 <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
     <title>Đăng nhập Admin — {{ config('admin.name') }}</title>
     @vite(['resources/css/admin.css'])
 </head>
 <body class="admin-auth font-sans">
-    <div class="w-full max-w-md">
+    <div class="admin-auth__shell">
         <div class="mb-8 text-center">
             <div class="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-gent-accent text-lg font-bold text-white">TTC</div>
             <h1 class="text-xl font-semibold text-white">{{ config('admin.name') }}</h1>

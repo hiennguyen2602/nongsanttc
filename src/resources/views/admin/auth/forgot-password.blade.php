@@ -2,12 +2,12 @@
 <html lang="vi">
 <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
     <title>Quên mật khẩu — {{ config('admin.name') }}</title>
     @vite(['resources/css/admin.css'])
 </head>
 <body class="admin-auth font-sans">
-    <div class="w-full max-w-md">
+    <div class="admin-auth__shell">
         <div class="login-card">
             <h1 class="mb-4 text-lg font-semibold text-slate-800">Quên mật khẩu</h1>
             @if (session('status'))<div class="alert alert-success">{{ session('status') }}</div>@endif
