@@ -20,8 +20,6 @@ class AuthController extends Controller
 
     private const LOGIN_DECAY_SECONDS = 60;
 
-    /** Cookie "Ghi nhớ" — 30 ngày (phút). */
-    private const REMEMBER_DURATION_MINUTES = 60 * 24 * 30;
     public function showLogin(): View|RedirectResponse
     {
         $user = Auth::user();
@@ -51,7 +49,8 @@ class AuthController extends Controller
         $remember = $request->boolean('remember');
 
         if ($remember) {
-            Auth::guard()->setRememberDuration(self::REMEMBER_DURATION_MINUTES);
+            $rememberMinutes = (int) config('admin.remember_duration_days', 30) * 24 * 60;
+            Auth::guard()->setRememberDuration($rememberMinutes);
         }
 
         if (! Auth::attempt($credentials, $remember)) {

@@ -40,7 +40,7 @@
                 </div>
 
                 <label class="mb-4 flex items-center gap-2 text-sm text-slate-600">
-                    <input type="checkbox" name="remember" class="form-check-input">
+                    <input type="checkbox" name="remember" value="1" class="form-check-input" @checked(old('remember'))>
                     Ghi nhớ đăng nhập
                 </label>
 
