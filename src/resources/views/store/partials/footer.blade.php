@@ -57,14 +57,18 @@
                 </form>
                 <div class="mt-4 flex flex-wrap gap-2">
                     @if (store_setting('facebook'))
-                    <a href="{{ store_setting('facebook') }}" target="_blank" rel="noopener" class="flex h-9 w-9 items-center justify-center rounded-full bg-white text-slate-600 shadow-sm ring-1 ring-slate-200 hover:text-brand">
-                        <svg class="h-4 w-4" fill="currentColor" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
-                    </a>
+                    @include('store.partials.social-icon-link', [
+                        'platform' => 'facebook',
+                        'href' => store_setting('facebook'),
+                        'label' => 'Facebook',
+                    ])
                     @endif
                     @if (store_setting('zalo'))
-                    <a href="{{ store_setting('zalo') }}" target="_blank" rel="noopener" class="flex h-9 w-9 items-center justify-center rounded-full bg-white text-slate-600 shadow-sm ring-1 ring-slate-200 hover:text-brand">
-                        <span class="text-xs font-bold">Zalo</span>
-                    </a>
+                    @include('store.partials.social-icon-link', [
+                        'platform' => 'zalo',
+                        'href' => store_setting('zalo'),
+                        'label' => 'Zalo',
+                    ])
                     @endif
                     @if (store_setting('youtube'))
                     <a href="{{ store_setting('youtube') }}" target="_blank" rel="noopener" class="flex h-9 w-9 items-center justify-center rounded-full bg-white text-slate-600 shadow-sm ring-1 ring-slate-200 hover:text-brand" aria-label="Youtube">YT</a>
