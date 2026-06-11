@@ -9,11 +9,11 @@
                 <div class="x_content">
                     <div class="table-responsive">
                         <table class="table table-striped">
-                            <thead><tr><th>Tên</th><th>SL</th><th>Đơn giá</th><th class="text-end">Thành tiền</th></tr></thead>
+                            <thead><tr><th class="cell-text-wide">Tên</th><th class="cell-num">SL</th><th class="cell-price">Đơn giá</th><th class="cell-price text-end">Thành tiền</th></tr></thead>
                             <tbody>
                                 @foreach($order->items as $item)
                                     <tr>
-                                        <td>
+                                        <td class="cell-text-wide">
                                             @if($item->product)
                                                 <a href="{{ route('admin.products.show', $item->product) }}" class="hover:underline">{{ $item->product_name }}</a>
                                             @else
@@ -21,9 +21,9 @@
                                             @endif
                                             @if($item->variant_label)<span class="text-xs text-red-600">({{ $item->variant_label }})</span>@endif
                                         </td>
-                                        <td>{{ $item->quantity }}</td>
-                                        <td>{{ format_money($item->unit_price) }}</td>
-                                        <td class="text-end">{{ format_money($item->line_total) }}</td>
+                                        <td class="cell-num">{{ $item->quantity }}</td>
+                                        <td class="cell-price">{{ format_money($item->unit_price) }}</td>
+                                        <td class="cell-price text-end">{{ format_money($item->line_total) }}</td>
                                     </tr>
                                 @endforeach
                             </tbody>

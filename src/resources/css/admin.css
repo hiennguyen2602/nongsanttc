@@ -368,10 +368,97 @@
     margin-left: 0.5rem;
 }
 
-@media (max-width: 640px) {
-    .admin-body .posts-table th:nth-child(2),
-    .admin-body .posts-table td:nth-child(2) {
-        min-width: 200px;
+/* Cột chữ dài: cho xuống dòng + min-width để không bị ép quá hẹp trên mobile */
+.admin-body .table .cell-text {
+    white-space: normal;
+    word-break: break-word;
+    overflow-wrap: anywhere;
+    line-height: 1.45;
+    min-width: 9.5rem;
+}
+
+.admin-body .table .cell-text-wide {
+    min-width: 11rem;
+}
+
+/* Cột ngắn: giữ một dòng */
+.admin-body .table .cell-nowrap,
+.admin-body .table .cell-date,
+.admin-body .table .cell-price,
+.admin-body .table .cell-code,
+.admin-body .table .cell-phone,
+.admin-body .table .cell-num,
+.admin-body .table .cell-status,
+.admin-body .table .cell-image {
+    white-space: nowrap;
+}
+
+.admin-body .table .cell-image {
+    width: 1%;
+    vertical-align: middle;
+}
+
+.admin-body .table .cell-date {
+    min-width: 5.25rem;
+}
+
+.admin-body .table .cell-price {
+    min-width: 4.5rem;
+}
+
+.admin-body .table .cell-code {
+    min-width: 5.5rem;
+    font-variant-numeric: tabular-nums;
+}
+
+.admin-body .table .cell-phone {
+    min-width: 6.25rem;
+}
+
+.admin-body .table .cell-num {
+    min-width: 2.75rem;
+    text-align: center;
+}
+
+.admin-body .table .cell-status {
+    min-width: 4.75rem;
+}
+
+@media (max-width: 767px) {
+    .admin-body .table {
+        font-size: 0.8125rem;
+    }
+
+    .admin-body .table thead th,
+    .admin-body .table tbody td {
+        padding: 0.5rem 0.625rem;
+    }
+
+    .admin-body .table .cell-text {
+        min-width: 11rem;
+    }
+
+    .admin-body .table .cell-text-wide {
+        min-width: 13rem;
+    }
+
+    .admin-body .table .cell-image {
+        min-width: 5.75rem;
+        padding-right: 0.625rem;
+    }
+
+    .admin-body .table .cell-image img {
+        display: block;
+        width: 5rem;
+        height: 3rem;
+        max-width: none;
+        object-fit: cover;
+        object-position: center;
+    }
+
+    .admin-body .table-responsive {
+        margin-inline: -0.25rem;
+        padding-inline: 0.25rem;
     }
 }
 

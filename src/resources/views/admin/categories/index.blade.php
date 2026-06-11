@@ -10,12 +10,12 @@
         <div class="x_content">
             <div class="table-responsive">
                 <table class="table table-striped">
-                    <thead><tr><th>Tên</th><th>Thứ tự</th><th class="table-actions"></th></tr></thead>
+                    <thead><tr><th class="cell-text">Tên</th><th class="cell-num">Thứ tự</th><th class="table-actions"></th></tr></thead>
                     <tbody>
                         @foreach ($categories as $category)
                             <tr>
-                                <td>{{ $category->name }}</td>
-                                <td>{{ $category->sort_order }}</td>
+                                <td class="cell-text">{{ $category->name }}</td>
+                                <td class="cell-num">{{ $category->sort_order }}</td>
                                 <td class="table-actions">
                                     <a href="{{ route('admin.categories.edit', $category) }}" class="btn btn-link btn-sm">Sửa</a>
                                     <form method="POST" action="{{ route('admin.categories.destroy', $category) }}" class="inline" onsubmit="return confirm('Xóa?')">@csrf @method('DELETE')<button type="submit" class="btn btn-link btn-link-danger btn-sm">Xóa</button></form>

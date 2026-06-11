@@ -34,11 +34,11 @@
 
             <div class="table-responsive">
                 <table class="table table-striped">
-                    <thead><tr><th>Mã</th><th>Sản phẩm</th><th>Khách</th><th>Tổng</th><th>Trạng thái</th><th>Ngày</th></tr></thead>
+                    <thead><tr><th class="cell-code">Mã</th><th class="cell-text-wide">Sản phẩm</th><th class="cell-text">Khách</th><th class="cell-price">Tổng</th><th class="cell-status">Trạng thái</th><th class="cell-date">Ngày</th></tr></thead>
                     <tbody>
                         @foreach($orders as $order)
                             <tr>
-                                <td>
+                                <td class="cell-code">
                                     <a href="{{ route('admin.orders.show', $order) }}" class="inline-flex items-start gap-1 admin-link hover:underline">
                                         <span>{{ $order->order_code }}</span>
                                         @if($order->isNew())
@@ -46,19 +46,19 @@
                                         @endif
                                     </a>
                                 </td>
-                                <td>
+                                <td class="cell-text-wide">
                                     @foreach($order->items as $item)
-                                        <div class="whitespace-nowrap text-sm text-slate-700">
+                                        <div class="text-sm text-slate-700">
                                             {{ $item->product_name }}
                                             <span class="text-xs text-slate-400">× {{ $item->quantity }}</span>
                                         </div>
                                     @endforeach
                                     @if($order->items->isEmpty())<span class="text-slate-400">—</span>@endif
                                 </td>
-                                <td class="whitespace-nowrap">{{ $order->customer_name }}<br><span class="text-xs text-slate-500">{{ $order->customer_phone }}</span></td>
-                                <td>{{ $order->formattedTotal() }}</td>
-                                <td>@include('admin.partials.status-badge', ['label' => $order->statusLabel(), 'class' => $order->statusBadgeClass()])</td>
-                                <td>{{ $order->created_at->format('d/m/Y H:i') }}</td>
+                                <td class="cell-text">{{ $order->customer_name }}<br><span class="text-xs text-slate-500">{{ $order->customer_phone }}</span></td>
+                                <td class="cell-price">{{ $order->formattedTotal() }}</td>
+                                <td class="cell-status">@include('admin.partials.status-badge', ['label' => $order->statusLabel(), 'class' => $order->statusBadgeClass()])</td>
+                                <td class="cell-date">{{ $order->created_at->format('d/m/Y H:i') }}</td>
                             </tr>
                         @endforeach
                     </tbody>

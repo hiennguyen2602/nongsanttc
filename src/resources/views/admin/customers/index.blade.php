@@ -18,21 +18,21 @@
                 <table class="table table-striped">
                     <thead>
                         <tr>
-                            <th>Tên</th>
-                            <th>Số điện thoại</th>
-                            <th>Email</th>
-                            <th>Đơn hàng</th>
-                            <th>Cập nhật</th>
+                            <th class="cell-text">Tên</th>
+                            <th class="cell-phone">Số điện thoại</th>
+                            <th class="cell-text">Email</th>
+                            <th class="cell-num">Đơn hàng</th>
+                            <th class="cell-date">Cập nhật</th>
                         </tr>
                     </thead>
                     <tbody>
                         @forelse ($customers as $customer)
                             <tr>
-                                <td class="whitespace-nowrap font-medium"><a href="{{ route('admin.customers.show', $customer) }}" class="admin-link hover:underline">{{ $customer->name }}</a></td>
-                                <td class="whitespace-nowrap"><a href="{{ route('admin.customers.show', $customer) }}" class="admin-link hover:underline">{{ $customer->phone }}</a></td>
-                                <td>{{ $customer->email ?? '—' }}</td>
-                                <td>{{ $customer->orders_count }}</td>
-                                <td class="whitespace-nowrap">{{ $customer->updated_at->format('d/m/Y H:i') }}</td>
+                                <td class="cell-text font-medium"><a href="{{ route('admin.customers.show', $customer) }}" class="admin-link hover:underline">{{ $customer->name }}</a></td>
+                                <td class="cell-phone"><a href="{{ route('admin.customers.show', $customer) }}" class="admin-link hover:underline">{{ $customer->phone }}</a></td>
+                                <td class="cell-text">{{ $customer->email ?? '—' }}</td>
+                                <td class="cell-num">{{ $customer->orders_count }}</td>
+                                <td class="cell-date">{{ $customer->updated_at->format('d/m/Y H:i') }}</td>
                             </tr>
                         @empty
                             <tr><td colspan="5" class="text-center text-slate-500">Chưa có khách hàng.</td></tr>

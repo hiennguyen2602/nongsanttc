@@ -22,19 +22,19 @@
                 <table class="table table-striped">
                     <thead>
                         <tr>
-                            <th>Mã</th>
-                            <th>Tổng</th>
-                            <th>Trạng thái</th>
-                            <th>Ngày</th>
+                            <th class="cell-code">Mã</th>
+                            <th class="cell-price">Tổng</th>
+                            <th class="cell-status">Trạng thái</th>
+                            <th class="cell-date">Ngày</th>
                         </tr>
                     </thead>
                     <tbody>
                         @forelse ($customer->orders as $order)
                             <tr>
-                                <td><a href="{{ route('admin.orders.show', $order) }}" class="font-medium admin-link hover:underline">{{ $order->order_code }}</a></td>
-                                <td>{{ $order->formattedTotal() }}</td>
-                                <td>@include('admin.partials.status-badge', ['label' => $order->statusLabel(), 'class' => $order->statusBadgeClass()])</td>
-                                <td>{{ $order->created_at->format('d/m/Y H:i') }}</td>
+                                <td class="cell-code"><a href="{{ route('admin.orders.show', $order) }}" class="font-medium admin-link hover:underline">{{ $order->order_code }}</a></td>
+                                <td class="cell-price">{{ $order->formattedTotal() }}</td>
+                                <td class="cell-status">@include('admin.partials.status-badge', ['label' => $order->statusLabel(), 'class' => $order->statusBadgeClass()])</td>
+                                <td class="cell-date">{{ $order->created_at->format('d/m/Y H:i') }}</td>
                             </tr>
                         @empty
                             <tr><td colspan="4" class="text-center text-slate-500">Chưa có đơn hàng.</td></tr>
