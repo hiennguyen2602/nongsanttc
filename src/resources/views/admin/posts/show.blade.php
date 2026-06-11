@@ -1,7 +1,6 @@
 @extends('admin.layouts.app')
 
-@section('title', $post->title)
-@section('page-title', 'Chi tiết bài viết')
+@section('title', 'Chi tiết bài viết')
 @section('breadcrumbs')
     @include('admin.partials.breadcrumb', ['items' => admin_breadcrumb([
         ['label' => 'Bài viết', 'url' => route('admin.posts.index')],
@@ -11,7 +10,8 @@
 
 @section('content')
     <div class="x_panel admin-post-panel">
-        <div class="x_title x_title--actions-only">
+        <div class="x_title">
+            <h2>Chi tiết bài viết</h2>
             <div class="form-actions" style="margin:0">
                 @if ($post->is_published)
                     <a href="{{ route('posts.show', $post->slug) }}" target="_blank" rel="noopener" class="btn btn-secondary btn-sm">Xem trên web</a>

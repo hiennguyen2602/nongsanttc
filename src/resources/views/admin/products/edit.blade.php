@@ -4,7 +4,7 @@
 @section('breadcrumbs')
     @include('admin.partials.breadcrumb', ['items' => admin_breadcrumb([
         ['label' => 'Danh sách sản phẩm', 'url' => route('admin.products.index')],
-        ['label' => 'Chi tiết sản phẩm', 'url' => route('admin.products.show', $product)],
+        ['label' => 'Thông tin sản phẩm', 'url' => route('admin.products.show', $product)],
         ['label' => 'Sửa sản phẩm'],
     ])])
 @endsection

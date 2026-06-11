@@ -1,11 +1,10 @@
 @extends('admin.layouts.app')
 
-@section('title', $product->name)
-@section('page-title', 'Chi tiết sản phẩm')
+@section('title', 'Thông tin sản phẩm')
 @section('breadcrumbs')
     @include('admin.partials.breadcrumb', ['items' => admin_breadcrumb([
         ['label' => 'Danh sách sản phẩm', 'url' => route('admin.products.index')],
-        ['label' => 'Chi tiết sản phẩm'],
+        ['label' => 'Thông tin sản phẩm'],
     ])])
 @endsection
 
@@ -25,7 +24,7 @@
 @section('content')
     <div class="x_panel">
         <div class="x_title">
-            <h2>{{ $product->name }}</h2>
+            <h2>Thông tin sản phẩm</h2>
             <div class="form-actions" style="margin:0">
                 <a href="{{ route('admin.products.edit', $product) }}" class="btn btn-primary btn-sm">Sửa</a>
                 <a href="{{ route('admin.products.index') }}" class="btn btn-secondary btn-sm">Quay lại</a>
@@ -69,6 +68,7 @@
                 <div class="product-detail-side min-w-0 flex flex-1 flex-col gap-6">
                     <div class="product-detail-info">
                         <dl class="product-detail-list">
+                            <div><dt>Tên sản phẩm</dt><dd>{{ $product->name }}</dd></div>
                             <div><dt>Mã sản phẩm</dt><dd>{{ $product->sku ?? '—' }}</dd></div>
                             <div><dt>Danh mục</dt><dd>{{ $product->category?->name ?? '—' }}</dd></div>
                             <div>

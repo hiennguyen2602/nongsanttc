@@ -1,7 +1,6 @@
 @extends('admin.layouts.app')
 
-@section('title', $customer->name)
-@section('page-title', 'Chi tiết khách hàng')
+@section('title', 'Chi tiết khách hàng')
 @section('breadcrumbs')
     @include('admin.partials.breadcrumb', ['items' => admin_breadcrumb([
         ['label' => 'Khách hàng', 'url' => route('admin.customers.index')],
@@ -12,11 +11,12 @@
 @section('content')
     <div class="x_panel">
         <div class="x_title">
-            <h2>{{ $customer->name }}</h2>
+            <h2>Chi tiết khách hàng</h2>
             <a href="{{ route('admin.customers.index') }}" class="btn btn-secondary btn-sm">Quay lại</a>
         </div>
         <div class="x_content">
             <dl class="product-detail-list mb-8">
+                <div><dt>Tên</dt><dd>{{ $customer->name }}</dd></div>
                 <div><dt>Số điện thoại</dt><dd>{{ $customer->phone }}</dd></div>
                 <div><dt>Email</dt><dd>{{ $customer->email ?? '—' }}</dd></div>
                 <div><dt>Địa chỉ</dt><dd>{{ $customer->address ?? '—' }}</dd></div>
