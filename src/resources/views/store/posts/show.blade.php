@@ -1,6 +1,55 @@
 @extends('store.layouts.app')
 
+@php
+    $postShareUrl = route('posts.show', $post->slug, absolute: true);
+    $postOgImage = store_media_url($post->image, 'large');
+    $postDescription = seo_meta_description($post->excerpt ?: $post->content);
+@endphp
+
 @section('title', $post->title . ' — ' . store_setting('name'))
+@section('meta_description', $postDescription)
+@section('canonical', $postShareUrl)
+@section('og_type', 'article')
+@section('og_title', $post->title)
+@section('og_description', $postDescription)
+@section('og_url', $postShareUrl)
+@if ($postOgImage)
+    @section('og_image', $postOgImage)
+@endif
+
+@push('json-ld')
+    @include('partials.seo.json-ld', ['data' => [
+        '@context' => 'https://schema.org',
+        '@type' => 'BreadcrumbList',
+        'itemListElement' => [
+            ['@type' => 'ListItem', 'position' => 1, 'name' => 'Trang chủ', 'item' => route('home', absolute: true)],
+            ['@type' => 'ListItem', 'position' => 2, 'name' => 'Tin tức', 'item' => route('posts.index', absolute: true)],
+            ['@type' => 'ListItem', 'position' => 3, 'name' => $post->title, 'item' => $postShareUrl],
+        ],
+    ]])
+    @php
+        $articleSchema = [
+            '@context' => 'https://schema.org',
+            '@type' => 'Article',
+            'headline' => $post->title,
+            'description' => $postDescription,
+            'url' => $postShareUrl,
+            'image' => $postOgImage,
+            'datePublished' => $post->published_at?->toAtomString(),
+            'dateModified' => $post->updated_at->toAtomString(),
+            'author' => ['@type' => 'Organization', 'name' => store_setting('name')],
+            'publisher' => [
+                '@type' => 'Organization',
+                'name' => store_setting('name'),
+                'logo' => store_media_url(store_setting('hero_desktop'), 'large') ? [
+                    '@type' => 'ImageObject',
+                    'url' => store_media_url(store_setting('hero_desktop'), 'large'),
+                ] : null,
+            ],
+        ];
+    @endphp
+    @include('partials.seo.json-ld', ['data' => array_filter($articleSchema, fn ($value) => $value !== null && $value !== '')])
+@endpush
 
 @section('content')
     <article class="store-container store-container--article py-10">
@@ -15,7 +64,7 @@
         @include('partials.rich-content', ['html' => $post->content])
 
         @include('store.partials.share-buttons', [
-            'shareUrl' => route('posts.show', $post->slug, absolute: true),
+            'shareUrl' => $postShareUrl,
             'shareTitle' => $post->title,
             'wrapperClass' => 'mt-8 border-t border-slate-200 pt-8',
         ])

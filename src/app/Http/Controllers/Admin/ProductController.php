@@ -53,7 +53,7 @@ class ProductController extends Controller
         $product = Product::query()->create($data);
         $this->syncVariants($product, $request);
 
-        return redirect()->route('admin.products.index')->with('success', 'Thêm sản phẩm thành công.');
+        return redirect()->route('admin.products.show', $product)->with('success', 'Thêm sản phẩm thành công.');
     }
 
     public function edit(Product $product): View
@@ -82,7 +82,7 @@ class ProductController extends Controller
         $this->syncVariants($product, $request);
         $editorImages->deleteRemoved($oldDescription, $data['description'] ?? null, $uploader);
 
-        return redirect()->route('admin.products.index')->with('success', 'Cập nhật sản phẩm thành công.');
+        return redirect()->route('admin.products.show', $product)->with('success', 'Cập nhật sản phẩm thành công.');
     }
 
     public function destroy(Product $product, ImageUploadService $uploader, EditorImageService $editorImages): RedirectResponse

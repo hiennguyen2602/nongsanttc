@@ -1,6 +1,7 @@
 @extends('store.layouts.app')
 
 @section('title', 'Đặt hàng thành công — ' . store_setting('name'))
+@section('robots', 'noindex,nofollow')
 
 @section('content')
     <div class="store-container store-container--compact py-16 text-center">

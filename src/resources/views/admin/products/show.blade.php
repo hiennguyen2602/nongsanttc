@@ -26,15 +26,21 @@
             </div>
         </div>
         <div class="x_content">
-            <div class="grid grid-cols-1 gap-8 lg:grid-cols-2" x-data="productGallery(@js($galleryImages))">
-                {{-- Gallery --}}
-                <div>
+            <div class="product-detail-layout flex flex-col gap-8 lg:flex-row lg:items-start" x-data="productGallery(@js($galleryImages))">
+                {{-- Trái: ảnh --}}
+                <div class="product-gallery-viewport w-full shrink-0">
                     @if (count($galleryImages))
                         <div class="relative aspect-square w-full overflow-hidden rounded-xl border border-slate-200 bg-slate-50">
-                            <div class="flex h-full transition-transform duration-300 ease-out" :style="`transform: translateX(-${active * 100}%)`">
+                            <div
+                                class="product-gallery-swipe flex h-full transition-transform duration-300 ease-out"
+                                :style="galleryTrackStyle()"
+                                @pointerdown="onGalleryPointerDown($event)"
+                                @pointerup="onGalleryPointerUp($event)"
+                                @pointercancel="onGalleryPointerCancel($event)"
+                            >
                                 <template x-for="(img, i) in images" :key="i">
-                                    <div class="h-full w-full shrink-0 cursor-zoom-in" @click="open(i)">
-                                        <img :src="img.display" alt="{{ $product->name }}" class="h-full w-full object-contain">
+                                    <div class="h-full shrink-0 cursor-zoom-in" :style="gallerySlideStyle()" @click="open(i)" @dragstart.prevent>
+                                        <img :src="img.display" alt="{{ $product->name }}" class="product-gallery-slide-img h-full w-full object-cover" draggable="false">
                                     </div>
                                 </template>
                             </div>
@@ -53,65 +59,108 @@
                     @endif
                 </div>
 
-                {{-- Thông tin --}}
-                <div>
-                    <dl class="product-detail-list">
-                        <div><dt>Mã sản phẩm</dt><dd>{{ $product->sku ?? '—' }}</dd></div>
-                        <div><dt>Danh mục</dt><dd>{{ $product->category?->name ?? '—' }}</dd></div>
-                        <div>
-                            <dt>Giá</dt>
-                            <dd>
-                                @if ($product->sale_price !== null && $product->price !== null && $product->sale_price < $product->price)
-                                    <span class="text-lg font-bold text-rose-600">{{ number_format($product->sale_price, 0, ',', '.') }}đ</span>
-                                    <span class="ml-2 text-sm text-slate-400 line-through">{{ number_format($product->price, 0, ',', '.') }}đ</span>
-                                @else
-                                    <span class="text-lg font-bold text-slate-800">{{ $product->formattedPrice() }}</span>
-                                @endif
-                            </dd>
-                        </div>
-                        <div><dt>Tồn kho</dt><dd>{{ $product->formattedStock() }}</dd></div>
-                        <div>
-                            <dt>Trạng thái</dt>
-                            <dd>
-                                @include('admin.partials.status-badge', ['label' => $product->visibilityLabel(), 'class' => $product->visibilityBadgeClass()])
-                                @if ($product->is_featured)<span class="badge badge-warning">Nổi bật</span>@endif
-                            </dd>
-                        </div>
-                    </dl>
+                {{-- Phải: thông tin + biến thể --}}
+                <div class="product-detail-side min-w-0 flex flex-1 flex-col gap-6">
+                    <div class="product-detail-info">
+                        <dl class="product-detail-list">
+                            <div><dt>Mã sản phẩm</dt><dd>{{ $product->sku ?? '—' }}</dd></div>
+                            <div><dt>Danh mục</dt><dd>{{ $product->category?->name ?? '—' }}</dd></div>
+                            <div>
+                                <dt>Giá</dt>
+                                <dd>
+                                    @if ($product->sale_price !== null && $product->price !== null && $product->sale_price < $product->price)
+                                        <span class="text-lg font-bold text-rose-600">{{ number_format($product->sale_price, 0, ',', '.') }}đ</span>
+                                        <span class="ml-2 text-sm text-slate-400 line-through">{{ number_format($product->price, 0, ',', '.') }}đ</span>
+                                    @else
+                                        <span class="text-lg font-bold text-slate-800">{{ $product->formattedPrice() }}</span>
+                                    @endif
+                                </dd>
+                            </div>
+                            <div><dt>Tồn kho</dt><dd>{{ $product->formattedStock() }}</dd></div>
+                            <div>
+                                <dt>Trạng thái</dt>
+                                <dd>
+                                    @include('admin.partials.status-badge', ['label' => $product->visibilityLabel(), 'class' => $product->visibilityBadgeClass()])
+                                    @if ($product->is_featured)<span class="badge badge-warning">Nổi bật</span>@endif
+                                </dd>
+                            </div>
+                        </dl>
+                    </div>
 
+                    @if ($product->variants->isNotEmpty())
+                        <div class="product-detail-variants min-w-0">
+                            <h3 class="panel-title mb-2">Biến thể</h3>
+                            <div class="table-responsive">
+                                <table class="table table-striped">
+                                    <thead><tr><th class="cell-text">Hương vị</th><th class="cell-text">Kích cỡ</th><th class="cell-price">Giá</th><th class="cell-num">Tồn kho</th></tr></thead>
+                                    <tbody>
+                                        @foreach ($product->variants as $variant)
+                                            <tr>
+                                                <td class="cell-text">{{ $variant->flavor ?? '—' }}</td>
+                                                <td class="cell-text">{{ $variant->size ?? '—' }}</td>
+                                                <td class="cell-price">{{ $variant->formattedPrice() }}</td>
+                                                <td class="cell-num">{{ $variant->formattedStock() }}</td>
+                                            </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    @endif
                 </div>
 
                 {{-- Lightbox --}}
                 <template x-teleport="body">
-                    <div x-show="lightbox" x-cloak x-transition.opacity @keydown.escape.window="close()" class="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 p-4" @click.self="close()">
-                        <button type="button" @click="close()" class="absolute right-4 top-4 flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-2xl text-white hover:bg-white/20">&times;</button>
-                        <button type="button" @click="prev()" x-show="images.length > 1" class="absolute left-4 top-1/2 flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full bg-white/10 text-3xl text-white hover:bg-white/20">&lsaquo;</button>
-                        <img :src="current.full" alt="" x-show="lightbox" x-transition:enter="transition duration-300 ease-out" x-transition:enter-start="opacity-0 scale-90" x-transition:enter-end="opacity-100 scale-100" class="max-h-[90vh] max-w-[92vw] object-contain">
-                        <button type="button" @click="next()" x-show="images.length > 1" class="absolute right-4 top-1/2 flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full bg-white/10 text-3xl text-white hover:bg-white/20">&rsaquo;</button>
+                    <div
+                        x-show="lightbox"
+                        x-cloak
+                        @keydown.escape.window="close()"
+                        @keydown.arrow-left.window="lightbox && prev()"
+                        @keydown.arrow-right.window="lightbox && next()"
+                        class="fixed inset-0 z-[100]"
+                        role="dialog"
+                        aria-modal="true"
+                    >
+                        <div
+                            class="product-lightbox-backdrop absolute inset-0"
+                            x-show="lightbox"
+                            x-transition.opacity
+                            @click="close()"
+                        ></div>
+
+                        <div class="relative flex h-full items-center justify-center p-4 sm:p-8" @click.self="close()">
+                            <button type="button" @click="close()" class="absolute right-4 top-4 z-10 flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-2xl text-white hover:bg-white/20">&times;</button>
+                            <button type="button" @click.stop="prev()" x-show="images.length > 1" class="absolute left-2 top-1/2 z-10 flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full bg-white/10 text-3xl text-white hover:bg-white/20 sm:left-4">&lsaquo;</button>
+
+                            <div
+                                class="product-lightbox-swipe relative z-[1] max-h-[90vh] w-full max-w-[92vw] overflow-hidden"
+                                @pointerdown="onGalleryPointerDown($event)"
+                                @pointerup="onGalleryPointerUp($event)"
+                                @pointercancel="onGalleryPointerCancel($event)"
+                            >
+                                <div
+                                    x-show="lightbox"
+                                    class="flex h-full max-h-[90vh] transition-transform duration-300 ease-out"
+                                    :style="galleryTrackStyle()"
+                                >
+                                    <template x-for="(img, i) in images" :key="'lb-' + i">
+                                        <div class="flex h-full max-h-[90vh] shrink-0 items-center justify-center" :style="gallerySlideStyle()" @dragstart.prevent>
+                                            <img
+                                                :src="img.full"
+                                                alt="{{ $product->name }}"
+                                                class="product-gallery-slide-img max-h-[90vh] max-w-full object-contain"
+                                                draggable="false"
+                                            >
+                                        </div>
+                                    </template>
+                                </div>
+                            </div>
+
+                            <button type="button" @click.stop="next()" x-show="images.length > 1" class="absolute right-2 top-1/2 z-10 flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full bg-white/10 text-3xl text-white hover:bg-white/20 sm:right-4">&rsaquo;</button>
+                        </div>
                     </div>
                 </template>
             </div>
-
-            @if ($product->variants->isNotEmpty())
-                <div class="mt-8">
-                    <h3 class="panel-title mb-2">Biến thể</h3>
-                    <div class="table-responsive">
-                        <table class="table table-striped">
-                            <thead><tr><th class="cell-text">Hương vị</th><th class="cell-text">Kích cỡ</th><th class="cell-price">Giá</th><th class="cell-num">Tồn kho</th></tr></thead>
-                            <tbody>
-                                @foreach ($product->variants as $variant)
-                                    <tr>
-                                        <td class="cell-text">{{ $variant->flavor ?? '—' }}</td>
-                                        <td class="cell-text">{{ $variant->size ?? '—' }}</td>
-                                        <td class="cell-price">{{ $variant->formattedPrice() }}</td>
-                                        <td class="cell-num">{{ $variant->formattedStock() }}</td>
-                                    </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            @endif
 
             @if ($product->description)
                 <div class="mt-8 border-t border-slate-200 pt-6">

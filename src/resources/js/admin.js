@@ -1,4 +1,5 @@
 import './bootstrap';
+import '../scss/pagination.scss';
 import './admin/components';
 import Alpine from 'alpinejs';
 import { bootAdminEnhancements } from './admin/enhancements';

@@ -295,9 +295,26 @@ html {
     box-shadow: 0 20px 40px -12px rgb(15 23 42 / 0.14);
 }
 
-/* Product gallery — vuốt ngang trên mobile, vẫn cuộn dọc trang */
-.product-gallery-main {
+/* Product gallery — vuốt/kéo ngang; vẫn cuộn dọc trang ở gallery chính */
+.product-gallery-main,
+.product-gallery-swipe {
     touch-action: pan-y;
+}
+
+.product-gallery-swipe {
+    cursor: grab;
+    user-select: none;
+    touch-action: pan-y pinch-zoom;
+}
+
+.product-gallery-swipe:active {
+    cursor: grabbing;
+}
+
+.product-gallery-slide-img {
+    pointer-events: none;
+    -webkit-user-drag: none;
+    user-select: none;
 }
 
 /* Product gallery lightbox */
@@ -307,6 +324,16 @@ html {
 
 .product-lightbox-image {
     transform-origin: center center;
+}
+
+.product-lightbox-swipe {
+    touch-action: pan-x pinch-zoom;
+    cursor: grab;
+    user-select: none;
+}
+
+.product-lightbox-swipe:active {
+    cursor: grabbing;
 }
 
 /* Homepage banner CTA — Safari/iPad: grid + min-height cố định, không absolute full-bleed */

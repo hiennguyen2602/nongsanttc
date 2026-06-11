@@ -1,6 +1,8 @@
 @extends('store.layouts.app')
 
 @section('title', 'Tin tức — ' . store_setting('name'))
+@section('meta_description', 'Tin tức, kiến thức nông sản và cập nhật mới nhất từ ' . store_setting('name') . '.')
+@section('canonical', route('posts.index', absolute: true))
 
 @section('content')
     <div class="bg-brand py-10 text-white">

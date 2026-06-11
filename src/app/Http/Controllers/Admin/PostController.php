@@ -31,9 +31,9 @@ class PostController extends Controller
         $this->ensureFeaturedImage($request);
         $data['image'] = $this->handleFeaturedImage($request, $uploader, null);
 
-        Post::query()->create($data);
+        $post = Post::query()->create($data);
 
-        return redirect()->route('admin.posts.index')->with('success', 'Thêm bài viết thành công.');
+        return redirect()->route('admin.posts.show', $post)->with('success', 'Thêm bài viết thành công.');
     }
 
     public function show(Post $post): View
@@ -60,7 +60,7 @@ class PostController extends Controller
         $post->update($data);
         $editorImages->deleteRemoved($oldContent, $data['content'] ?? null, $uploader);
 
-        return redirect()->route('admin.posts.index')->with('success', 'Cập nhật bài viết thành công.');
+        return redirect()->route('admin.posts.show', $post)->with('success', 'Cập nhật bài viết thành công.');
     }
 
     public function destroy(Post $post, ImageUploadService $uploader, EditorImageService $editorImages): RedirectResponse

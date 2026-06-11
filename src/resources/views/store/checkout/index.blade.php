@@ -1,6 +1,7 @@
 @extends('store.layouts.app')
 
 @section('title', 'Đặt hàng — ' . store_setting('name'))
+@section('robots', 'noindex,nofollow')
 
 @section('content')
     <div class="store-container py-8 lg:py-12">
