@@ -2,6 +2,12 @@
 
 return [
     'name' => 'Nông Sản TTC',
+
+    /*
+    | Không tick "Ghi nhớ": session SESSION_LIFETIME (mặc định 7 ngày).
+    | Tick "Ghi nhớ": cookie remember — remember_duration_days (30 ngày).
+    */
+    'remember_duration_days' => 30,
     'menu' => [
         [
             'label' => 'Dashboard',
