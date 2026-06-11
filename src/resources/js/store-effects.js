@@ -268,19 +268,6 @@ document.addEventListener('alpine:init', () => {
         },
     }));
 
-    Alpine.data('productShare', (shareUrl) => ({
-        shareUrl,
-        copied: false,
-
-        copyUrl() {
-            navigator.clipboard.writeText(this.shareUrl).then(() => {
-                this.copied = true;
-                setTimeout(() => {
-                    this.copied = false;
-                }, 2000);
-            });
-        },
-    }));
 });
 
 function initScrollReveal() {

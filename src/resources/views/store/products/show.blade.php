@@ -2,22 +2,13 @@
 
 @php
     $productShareUrl = route('products.show', $product->slug, absolute: true);
-    $productOgImage = store_media_url($product->image, 'large')
-        ?: store_media_url(store_setting('hero_desktop'), 'large');
-    $productOgImageSecure = $productOgImage
-        ? preg_replace('/^http:/', 'https:', $productOgImage)
-        : null;
-    $productMetaDescription = \Illuminate\Support\Str::limit(
-        strip_tags($product->description ?: store_setting('tagline')),
-        200,
-    );
+    $productOgImage = store_media_url($product->image, 'large');
 @endphp
 
 @section('title', $product->name . ' — ' . store_setting('name'))
-@section('meta_description', $productMetaDescription)
+@section('meta_description', \Illuminate\Support\Str::limit(strip_tags($product->description ?: store_setting('tagline')), 200))
 
 @push('head')
-    <link rel="canonical" href="{{ $productShareUrl }}">
     <meta property="og:type" content="product">
     <meta property="og:site_name" content="{{ store_setting('name') }}">
     <meta property="og:title" content="{{ $product->name }}">
@@ -25,8 +16,7 @@
     <meta property="og:url" content="{{ $productShareUrl }}">
     @if ($productOgImage)
         <meta property="og:image" content="{{ $productOgImage }}">
-        <meta property="og:image:secure_url" content="{{ $productOgImageSecure }}">
-        <meta property="og:image:width" content="{{ store_media_variant_width('large') }}">
+        <meta property="og:image:secure_url" content="{{ preg_replace('/^http:/', 'https:', $productOgImage) }}">
     @endif
     <meta property="og:price:amount" content="{{ $product->displayPrice() }}">
     <meta property="og:price:currency" content="VND">
@@ -259,7 +249,15 @@
 
                 <div
                     class="mt-6 flex items-center gap-3"
-                    x-data="productShare(@js($productShareUrl))"
+                    x-data="{
+                        copied: false,
+                        copyUrl() {
+                            navigator.clipboard.writeText(@js($productShareUrl)).then(() => {
+                                this.copied = true;
+                                setTimeout(() => this.copied = false, 2000);
+                            });
+                        }
+                    }"
                 >
                     <span class="shrink-0 text-sm font-semibold text-slate-700">Chia sẻ:</span>
                     <div class="flex items-center gap-2">
