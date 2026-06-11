@@ -1295,3 +1295,74 @@ body.admin-auth {
 .product-lightbox-swipe:active {
     cursor: grabbing;
 }
+
+.admin-body .order-show-items-table {
+    width: 100%;
+}
+
+.admin-body .order-show-items-table thead th.th-product-name {
+    text-align: left;
+    white-space: normal;
+}
+
+.admin-body .order-show-items-table tbody td.cell-product-name {
+    text-align: left;
+    white-space: normal;
+    word-break: break-word;
+    overflow-wrap: anywhere;
+    line-height: 1.45;
+    vertical-align: top;
+}
+
+.admin-body .order-show-items-table tbody td.cell-product-name a {
+    white-space: normal;
+    word-break: break-word;
+    overflow-wrap: anywhere;
+}
+
+.admin-body .order-show-items-table tbody td.cell-product-name .text-red-600 {
+    color: #dc2626;
+    white-space: nowrap;
+}
+
+.admin-body .order-show-items-table thead th.th-qty,
+.admin-body .order-show-items-table tbody td.cell-qty {
+    width: 1%;
+    text-align: center;
+    white-space: nowrap;
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+}
+
+.admin-body .order-show-items-table thead th.th-price,
+.admin-body .order-show-items-table tbody td.cell-unit-price,
+.admin-body .order-show-items-table tbody td.cell-line-total {
+    width: 1%;
+    text-align: right;
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
+    padding-left: 0.5rem;
+    padding-right: 0.75rem;
+}
+
+.admin-body .order-status-inline-fields {
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--admin-border);
+}
+
+.admin-body .order-status-inline-fields .form-select {
+    flex: 1 1 0;
+    width: auto;
+    min-width: 0;
+    max-width: none;
+}
+
+.admin-body .order-status-inline-fields .btn {
+    flex: 0 0 auto;
+    width: auto;
+}
