@@ -156,7 +156,7 @@ return [
     |
     */
 
-    'domain' => env('SESSION_DOMAIN'),
+    'domain' => env_nullable_string(env('SESSION_DOMAIN')),
 
     /*
     |--------------------------------------------------------------------------
@@ -169,7 +169,7 @@ return [
     |
     */
 
-    'secure' => env('SESSION_SECURE_COOKIE'),
+    'secure' => env_bool_default(env('SESSION_SECURE_COOKIE'), env('APP_ENV') === 'production'),
 
     /*
     |--------------------------------------------------------------------------

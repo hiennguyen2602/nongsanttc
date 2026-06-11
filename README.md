@@ -102,6 +102,8 @@ Quy mô **vài chục–vài trăm truy cập/ngày**: `CACHE_STORE=database` (h
 | `APP_URL` | `https://domain-cua-ban` |
 | `LOG_LEVEL` | `warning` hoặc `error` |
 | `SESSION_DRIVER` | `database` (khuyên dùng) hoặc `file` |
+| `SESSION_SECURE_COOKIE` | `true` (HTTPS) — tự bật khi `APP_ENV=production` |
+| `SESSION_DOMAIN` | **Bỏ dòng này** hoặc để trống — không ghi `null` |
 | `CACHE_STORE` | `database` hoặc `file` |
 | `QUEUE_CONNECTION` | `database` (đủ nếu queue nhẹ) |
 
