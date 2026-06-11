@@ -295,6 +295,11 @@ html {
     box-shadow: 0 20px 40px -12px rgb(15 23 42 / 0.14);
 }
 
+/* Product gallery — vuốt ngang trên mobile, vẫn cuộn dọc trang */
+.product-gallery-main {
+    touch-action: pan-y;
+}
+
 /* Product gallery lightbox */
 .product-lightbox-backdrop {
     background-color: rgb(0 0 0 / 0.88);
