@@ -23,12 +23,12 @@
                         @forelse ($messages as $item)
                             <tr>
                                 <td class="cell-text">
-                                    <a href="{{ route('admin.contact-messages.show', $item) }}" class="admin-link font-medium hover:underline">
-                                        {{ $item->name }}
+                                    <a href="{{ route('admin.contact-messages.show', $item) }}" class="inline-flex items-center gap-1.5 admin-link font-medium hover:underline">
+                                        <span>{{ $item->name }}</span>
+                                        @if ($item->isNew())
+                                            <span class="shrink-0 badge badge-warning">Mới</span>
+                                        @endif
                                     </a>
-                                    @if ($item->isNew())
-                                        <span class="ml-1 badge badge-warning">Mới</span>
-                                    @endif
                                 </td>
                                 <td class="cell-text text-sm">
                                     <div>{{ $item->phone }}</div>
