@@ -3,10 +3,13 @@
 namespace App\Http\Controllers\Store;
 
 use App\Http\Controllers\Controller;
+use App\Mail\NewContactMail;
 use App\Models\ContactMessage;
 use App\Models\Customer;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\View\View;
 
 class ContactController extends Controller
@@ -32,7 +35,21 @@ class ContactController extends Controller
 
         $validated['phone'] = Customer::normalizePhone($validated['phone']);
 
-        ContactMessage::query()->create($validated);
+        $message = ContactMessage::query()->create($validated);
+
+        $storeEmail = store_setting('email');
+
+        if (filled($storeEmail)) {
+            try {
+                Mail::to($storeEmail)->queue(new NewContactMail($message));
+            } catch (\Throwable $e) {
+                Log::error('Failed to queue contact notification.', [
+                    'contact_message_id' => $message->id,
+                    'email' => $storeEmail,
+                    'error' => $e->getMessage(),
+                ]);
+            }
+        }
 
         return back()->with('success', 'Cảm ơn bạn! Chúng tôi đã nhận tin nhắn và sẽ phản hồi sớm nhất.');
     }

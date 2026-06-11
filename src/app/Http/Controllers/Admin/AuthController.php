@@ -19,6 +19,9 @@ class AuthController extends Controller
     private const LOGIN_MAX_ATTEMPTS = 5;
 
     private const LOGIN_DECAY_SECONDS = 60;
+
+    /** Cookie "Ghi nhớ" — 30 ngày (phút). */
+    private const REMEMBER_DURATION_MINUTES = 60 * 24 * 30;
     public function showLogin(): View|RedirectResponse
     {
         $user = Auth::user();
@@ -45,7 +48,13 @@ class AuthController extends Controller
 
         $this->ensureLoginIsNotRateLimited($request);
 
-        if (! Auth::attempt($credentials, $request->boolean('remember'))) {
+        $remember = $request->boolean('remember');
+
+        if ($remember) {
+            Auth::guard()->setRememberDuration(self::REMEMBER_DURATION_MINUTES);
+        }
+
+        if (! Auth::attempt($credentials, $remember)) {
             RateLimiter::hit($this->loginThrottleKey($request), self::LOGIN_DECAY_SECONDS);
 
             return back()

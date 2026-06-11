@@ -101,7 +101,6 @@ class ProductController extends Controller
     private function validated(Request $request, ?Product $product = null): array
     {
         $request->merge([
-            'price' => blank($request->input('price')) ? null : $request->input('price'),
             'sale_price' => blank($request->input('sale_price')) ? null : $request->input('sale_price'),
             'stock' => blank($request->input('stock')) ? null : $request->input('stock'),
         ]);
@@ -111,7 +110,7 @@ class ProductController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'sku' => ['nullable', 'string', 'max:100'],
             'description' => ['nullable', 'string'],
-            'price' => ['nullable', 'integer', 'min:0'],
+            'price' => ['required', 'integer', 'min:1'],
             'sale_price' => ['nullable', 'integer', 'min:0'],
             'stock' => ['nullable', 'integer', 'min:0'],
             'is_featured' => ['nullable', 'boolean'],

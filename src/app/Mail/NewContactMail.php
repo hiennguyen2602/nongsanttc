@@ -2,7 +2,7 @@
 
 namespace App\Mail;
 
-use App\Models\Order;
+use App\Models\ContactMessage;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Contracts\Queue\ShouldQueueAfterCommit;
@@ -11,25 +11,29 @@ use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
-class NewOrderMail extends Mailable implements ShouldQueue, ShouldQueueAfterCommit
+class NewContactMail extends Mailable implements ShouldQueue, ShouldQueueAfterCommit
 {
     use Queueable, SerializesModels;
 
-    public function __construct(public Order $order) {}
+    public function __construct(public ContactMessage $message) {}
 
     public function envelope(): Envelope
     {
+        $subject = filled($this->message->subject)
+            ? $this->message->subject
+            : 'Tin nhắn liên hệ mới';
+
         return new Envelope(
-            subject: 'Đơn hàng mới ' . $this->order->order_code . ' - ' . config('app.name'),
+            subject: $subject . ' - ' . config('app.name'),
         );
     }
 
     public function content(): Content
     {
         return new Content(
-            markdown: 'mail.orders.new',
+            markdown: 'mail.contact.new',
             with: [
-                'orderUrl' => route('admin.orders.show', $this->order, absolute: true),
+                'messageUrl' => route('admin.contact-messages.show', $this->message, absolute: true),
             ],
         );
     }

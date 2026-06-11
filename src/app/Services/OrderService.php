@@ -63,11 +63,12 @@ class OrderService
 
             $this->cart->clear();
 
-            $order->load('items');
-            $this->notifyStoreOfNewOrder($order);
-
-            return $order;
+            return $order->load('items');
         });
+
+        $this->notifyStoreOfNewOrder($order);
+
+        return $order;
     }
 
     private function createOrderItems(Order $order, Collection $items): void
@@ -100,9 +101,9 @@ class OrderService
         }
 
         try {
-            Mail::to($email)->send(new NewOrderMail($order));
+            Mail::to($email)->queue(new NewOrderMail($order));
         } catch (\Throwable $e) {
-            Log::error('Failed to send new order notification.', [
+            Log::error('Failed to queue new order notification.', [
                 'order_id' => $order->id,
                 'email' => $email,
                 'error' => $e->getMessage(),

@@ -106,6 +106,9 @@ Quy mô **vài chục–vài trăm truy cập/ngày**: `CACHE_STORE=database` (h
 | `SESSION_DOMAIN` | **Bỏ dòng này** hoặc để trống — không ghi `null` |
 | `CACHE_STORE` | `database` hoặc `file` |
 | `QUEUE_CONNECTION` | `database` (đủ nếu queue nhẹ) |
+| `SESSION_LIFETIME` | `10080` (7 ngày; tick **Ghi nhớ** = 30 ngày) |
+
+Worker queue: `docker-compose.prod.yml` tự bật service `queue`. Local dev: `docker compose --profile workers up -d queue` hoặc `php artisan queue:work`.
 
 ### Script `dc-prod` (VPS)
 

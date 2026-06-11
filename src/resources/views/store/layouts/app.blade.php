@@ -9,7 +9,7 @@
     @include('partials.favicon')
     {{-- Chữ header trắng trước khi Tailwind/Alpine load — không set background ở đây (sẽ chặn bg-brand) --}}
     <style>.site-header,.site-header a,.site-header button{color:#fff}</style>
-    @vite(['resources/css/app.css', 'resources/js/store.js'])
+    @vite(['resources/css/app.css', 'resources/scss/pagination.scss', 'resources/js/store.js'])
     @stack('head')
 </head>
 <body class="flex min-h-screen flex-col bg-white font-sans text-slate-800 antialiased">

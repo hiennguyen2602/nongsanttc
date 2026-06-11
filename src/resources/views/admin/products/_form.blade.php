@@ -130,8 +130,8 @@
                     </div>
 
                     <div class="mb-3">
-                        <label class="form-label">Giá gốc</label>
-                        <input type="text" inputmode="numeric" name="price" value="{{ old('price', $product->price ?? '') }}" class="form-control input-number">
+                        <label class="form-label">Giá gốc *</label>
+                        <input type="text" inputmode="numeric" name="price" value="{{ old('price', $product->price ?? '') }}" required min="1" class="form-control input-number">
                     </div>
 
                     <div class="mb-3">
