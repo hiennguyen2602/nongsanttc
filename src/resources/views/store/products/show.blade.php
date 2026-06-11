@@ -3,25 +3,59 @@
 @php
     $productShareUrl = route('products.show', $product->slug, absolute: true);
     $productOgImage = store_media_url($product->image, 'large');
+    $productDescription = seo_meta_description($product->description);
 @endphp
 
 @section('title', $product->name . ' — ' . store_setting('name'))
-@section('meta_description', \Illuminate\Support\Str::limit(strip_tags($product->description ?: store_setting('tagline')), 200))
+@section('meta_description', $productDescription)
+@section('canonical', $productShareUrl)
+@section('og_type', 'product')
+@section('og_title', $product->name)
+@section('og_description', $productDescription)
+@section('og_url', $productShareUrl)
+@if ($productOgImage)
+    @section('og_image', $productOgImage)
+@endif
 
 @push('head')
-    <meta property="og:type" content="product">
-    <meta property="og:site_name" content="{{ store_setting('name') }}">
-    <meta property="og:title" content="{{ $product->name }}">
-    <meta property="og:description" content="">
-    <meta property="og:url" content="{{ $productShareUrl }}">
-    @if ($productOgImage)
-        <meta property="og:image" content="{{ $productOgImage }}">
-        <meta property="og:image:secure_url" content="{{ preg_replace('/^http:/', 'https:', $productOgImage) }}">
-    @endif
     @if ($product->displayPrice() !== null)
         <meta property="og:price:amount" content="{{ $product->displayPrice() }}">
         <meta property="og:price:currency" content="VND">
     @endif
+@endpush
+
+@push('json-ld')
+    @include('partials.seo.json-ld', ['data' => [
+        '@context' => 'https://schema.org',
+        '@type' => 'BreadcrumbList',
+        'itemListElement' => [
+            ['@type' => 'ListItem', 'position' => 1, 'name' => 'Trang chủ', 'item' => route('home', absolute: true)],
+            ['@type' => 'ListItem', 'position' => 2, 'name' => 'Sản phẩm', 'item' => route('products.index', absolute: true)],
+            ['@type' => 'ListItem', 'position' => 3, 'name' => $product->name, 'item' => $productShareUrl],
+        ],
+    ]])
+    @php
+        $productSchema = [
+            '@context' => 'https://schema.org',
+            '@type' => 'Product',
+            'name' => $product->name,
+            'description' => $productDescription,
+            'sku' => $product->sku ?: null,
+            'url' => $productShareUrl,
+            'image' => $productOgImage,
+            'brand' => ['@type' => 'Brand', 'name' => store_setting('name')],
+        ];
+        if ($product->displayPrice() !== null) {
+            $productSchema['offers'] = [
+                '@type' => 'Offer',
+                'url' => $productShareUrl,
+                'priceCurrency' => 'VND',
+                'price' => $product->displayPrice(),
+                'availability' => 'https://schema.org/InStock',
+            ];
+        }
+    @endphp
+    @include('partials.seo.json-ld', ['data' => array_filter($productSchema, fn ($value) => $value !== null && $value !== '')])
 @endpush
 
 @section('content')
@@ -37,85 +71,32 @@
 
         <div
             class="grid grid-cols-1 gap-10 lg:grid-cols-12"
-            x-data="{
-                quantity: 1,
+            x-data="storeProductDetail({
                 selectedVariant: @js($product->variants->first()?->id),
                 variants: @js($product->variants->map(fn($v) => ['id' => $v->id, 'label' => $v->label(), 'price' => $v->price, 'formatted' => $v->formattedPrice()])),
                 basePrice: @js($product->displayPrice()),
                 gallery: @js(store_media_gallery_items($product->image, (array) ($product->gallery ?? []))),
-                activeIndex: 0,
-                lightbox: false,
-                touchStartX: 0,
-                touchStartY: 0,
-                galleryDidSwipe: false,
-                onGalleryTouchStart(event) {
-                    if (this.gallery.length <= 1) {
-                        return;
-                    }
-                    this.touchStartX = event.touches[0].clientX;
-                    this.touchStartY = event.touches[0].clientY;
-                },
-                onGalleryTouchEnd(event) {
-                    if (this.gallery.length <= 1) {
-                        return;
-                    }
-                    const touch = event.changedTouches[0];
-                    const deltaX = touch.clientX - this.touchStartX;
-                    const deltaY = touch.clientY - this.touchStartY;
-                    if (Math.abs(deltaX) < 48 || Math.abs(deltaX) < Math.abs(deltaY)) {
-                        return;
-                    }
-                    this.galleryDidSwipe = true;
-                    setTimeout(() => this.galleryDidSwipe = false, 400);
-                    if (deltaX < 0) {
-                        this.next();
-                    } else {
-                        this.prev();
-                    }
-                },
-                openLightbox() {
-                    if (this.galleryDidSwipe) {
-                        return;
-                    }
-                    this.lightbox = true;
-                    document.documentElement.classList.add('overflow-hidden');
-                },
-                closeLightbox() {
-                    this.lightbox = false;
-                    document.documentElement.classList.remove('overflow-hidden');
-                },
-                next() { if (this.gallery.length) this.activeIndex = (this.activeIndex + 1) % this.gallery.length; },
-                prev() { if (this.gallery.length) this.activeIndex = (this.activeIndex - 1 + this.gallery.length) % this.gallery.length; },
-                clampQuantity() {
-                    const n = parseInt(String(this.quantity).replace(/\D/g, ''), 10);
-                    this.quantity = Number.isNaN(n) || n < 1 ? 1 : n;
-                },
-                decrementQuantity() {
-                    const n = parseInt(String(this.quantity).replace(/\D/g, ''), 10) || 1;
-                    this.quantity = Math.max(1, n - 1);
-                },
-                incrementQuantity() {
-                    const n = parseInt(String(this.quantity).replace(/\D/g, ''), 10) || 0;
-                    this.quantity = n + 1;
-                }
-            }"
+            })"
         >
             {{-- Gallery --}}
             <div class="lg:col-span-5">
-                <div
-                    class="product-gallery-main relative mb-4 aspect-square overflow-hidden rounded-lg border border-slate-200 bg-slate-50"
-                    @touchstart.passive="onGalleryTouchStart($event)"
-                    @touchend.passive="onGalleryTouchEnd($event)"
-                >
-                    <div class="flex h-full transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]" :style="`transform: translateX(-${activeIndex * 100}%)`">
+                <div class="product-gallery-main relative mb-4 aspect-square overflow-hidden rounded-lg border border-slate-200 bg-slate-50">
+                    <div
+                        class="product-gallery-swipe flex h-full transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]"
+                        :style="galleryTrackStyle()"
+                        @pointerdown="onGalleryPointerDown($event)"
+                        @pointerup="onGalleryPointerUp($event)"
+                        @pointercancel="onGalleryPointerCancel($event)"
+                    >
                         <template x-for="(img, i) in gallery" :key="i">
-                            <div class="group/main h-full w-full shrink-0 cursor-zoom-in" @click="openLightbox()">
+                            <div class="group/main h-full shrink-0 cursor-zoom-in" :style="gallerySlideStyle()" @click="openLightbox()" @dragstart.prevent>
                                 <img
                                     :src="img.display"
                                     :srcset="img.srcset"
                                     sizes="(min-width: 1024px) 480px, calc(100vw - 2rem)"
                                     alt="{{ $product->name }}"
-                                    class="h-full w-full object-cover transition-transform duration-500 ease-out group-hover/main:scale-[1.03]"
+                                    class="product-gallery-slide-img h-full w-full object-cover transition-transform duration-500 ease-out group-hover/main:scale-[1.03]"
+                                    draggable="false"
                                     :loading="i === 0 ? 'eager' : 'lazy'"
                                     :fetchpriority="i === 0 ? 'high' : 'auto'"
                                     decoding="async"
@@ -149,6 +130,8 @@
                     x-show="lightbox"
                     x-cloak
                     @keydown.escape.window="closeLightbox()"
+                    @keydown.arrow-left.window="lightbox && prev()"
+                    @keydown.arrow-right.window="lightbox && next()"
                     class="fixed inset-0 z-[100]"
                     role="dialog"
                     aria-modal="true"
@@ -170,30 +153,31 @@
                         <button type="button" @click.stop="prev()" x-show="gallery.length > 1" class="absolute left-2 top-1/2 z-10 flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full bg-white/10 text-3xl text-white transition hover:bg-white/20 sm:left-4">&lsaquo;</button>
 
                         <div
-                            x-show="lightbox"
-                            x-transition:enter="transition ease-[cubic-bezier(0.16,1,0.3,1)] duration-500"
-                            x-transition:enter-start="opacity-0 scale-[0.82]"
-                            x-transition:enter-end="opacity-100 scale-100"
-                            x-transition:leave="transition ease-in duration-250"
-                            x-transition:leave-start="opacity-100 scale-100"
-                            x-transition:leave-end="opacity-0 scale-[0.94]"
-                            class="product-lightbox-image relative z-[1] flex max-h-[90vh] max-w-[92vw] items-center justify-center"
-                            @click.stop
+                            class="product-lightbox-swipe relative z-[1] max-h-[90vh] w-full max-w-[92vw] overflow-hidden"
+                            @pointerdown="onGalleryPointerDown($event)"
+                            @pointerup="onGalleryPointerUp($event)"
+                            @pointercancel="onGalleryPointerCancel($event)"
                         >
-                            <img
-                                :src="lightbox ? gallery[activeIndex]?.full : null"
-                                :srcset="lightbox ? gallery[activeIndex]?.fullSrcset : null"
-                                sizes="92vw"
-                                :key="activeIndex"
-                                alt="{{ $product->name }}"
+                            <div
                                 x-show="lightbox"
-                                x-transition:enter="transition ease-[cubic-bezier(0.16,1,0.3,1)] duration-300"
-                                x-transition:enter-start="opacity-0 scale-95"
-                                x-transition:enter-end="opacity-100 scale-100"
-                                class="max-h-[90vh] max-w-[92vw] object-contain"
-                                loading="lazy"
-                                decoding="async"
+                                class="flex h-full max-h-[90vh] transition-transform duration-300 ease-out"
+                                :style="galleryTrackStyle()"
                             >
+                                <template x-for="(img, i) in gallery" :key="'lb-' + i">
+                                    <div class="flex h-full max-h-[90vh] shrink-0 items-center justify-center" :style="gallerySlideStyle()" @dragstart.prevent>
+                                        <img
+                                            :src="img.full"
+                                            :srcset="img.fullSrcset"
+                                            sizes="92vw"
+                                            alt="{{ $product->name }}"
+                                            class="product-gallery-slide-img max-h-[90vh] max-w-full object-contain"
+                                            draggable="false"
+                                            loading="lazy"
+                                            decoding="async"
+                                        >
+                                    </div>
+                                </template>
+                            </div>
                         </div>
 
                         <button type="button" @click.stop="next()" x-show="gallery.length > 1" class="absolute right-2 top-1/2 z-10 flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full bg-white/10 text-3xl text-white transition hover:bg-white/20 sm:right-4">&rsaquo;</button>

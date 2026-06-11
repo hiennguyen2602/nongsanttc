@@ -1,6 +1,7 @@
 @extends('store.layouts.app')
 
 @section('title', 'Giỏ hàng — ' . store_setting('name'))
+@section('robots', 'noindex,nofollow')
 
 @section('content')
     @php

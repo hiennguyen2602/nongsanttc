@@ -1,8 +1,14 @@
+import { createGallerySwipeMethods } from '../gallery-swipe';
+
 document.addEventListener('alpine:init', () => {
     Alpine.data('productGallery', (images = []) => ({
         images,
         active: 0,
         lightbox: false,
+
+        ...createGallerySwipeMethods(function itemCount() {
+            return this.images.length;
+        }),
 
         get current() {
             return this.images[this.active] ?? {};
@@ -13,16 +19,23 @@ document.addEventListener('alpine:init', () => {
         },
 
         open(index = null) {
+            if (this.galleryDidSwipe) {
+                return;
+            }
+
             if (index !== null) {
                 this.active = index;
             }
+
             if (this.images.length) {
                 this.lightbox = true;
+                document.documentElement.classList.add('overflow-hidden');
             }
         },
 
         close() {
             this.lightbox = false;
+            document.documentElement.classList.remove('overflow-hidden');
         },
 
         next() {

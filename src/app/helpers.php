@@ -345,6 +345,37 @@ if (! function_exists('kept_upload_paths')) {
     }
 }
 
+if (! function_exists('seo_meta_description')) {
+    function seo_meta_description(?string $text, ?string $fallback = null, int $limit = 160): string
+    {
+        $fallback ??= (string) store_setting('tagline', '');
+        $plain = trim(preg_replace('/\s+/u', ' ', strip_tags((string) $text)) ?? '');
+
+        if ($plain === '') {
+            $plain = trim($fallback);
+        }
+
+        return Str::limit($plain, $limit, '…');
+    }
+}
+
+if (! function_exists('seo_absolute_url')) {
+    function seo_absolute_url(?string $url = null): string
+    {
+        $url ??= url()->current();
+
+        if (! str_starts_with($url, 'http://') && ! str_starts_with($url, 'https://')) {
+            $url = url($url);
+        }
+
+        if (app()->environment('production') && str_starts_with($url, 'http://')) {
+            $url = 'https://' . substr($url, 7);
+        }
+
+        return $url;
+    }
+}
+
 if (! function_exists('resolve_kept_upload_path')) {
     /**
      * Xác nhận ảnh đại diện giữ lại — path phải khớp DB, không tin client tùy ý.

@@ -1,6 +1,15 @@
 @extends('store.layouts.app')
 
 @section('title', 'Sản phẩm — ' . store_setting('name'))
+@section('meta_description', 'Danh sách nông sản sạch tại ' . store_setting('name') . '. ' . store_setting('tagline'))
+@if (request()->filled('q'))
+    @section('robots', 'noindex,follow')
+@endif
+@if ($activeCategory)
+    @section('canonical', route('products.index', ['category' => $activeCategory], absolute: true))
+@else
+    @section('canonical', route('products.index', absolute: true))
+@endif
 
 @section('content')
     <div class="bg-brand py-10 text-white">
