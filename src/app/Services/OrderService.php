@@ -23,7 +23,7 @@ class OrderService
 
     public function createFromCart(array $customer, ?string $promoCode = null): Order
     {
-        return DB::transaction(function () use ($customer, $promoCode) {
+        $order = DB::transaction(function () use ($customer, $promoCode) {
             $items = $this->cart->resolveItems();
 
             if ($items->isEmpty()) {
