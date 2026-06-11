@@ -1,6 +1,12 @@
 @extends('admin.layouts.app')
 @section('title', $order->order_code)
 @section('page-title', 'Đơn ' . $order->order_code)
+@section('breadcrumbs')
+    @include('admin.partials.breadcrumb', ['items' => admin_breadcrumb([
+        ['label' => 'Đơn hàng', 'url' => route('admin.orders.index')],
+        ['label' => 'Chi tiết đơn hàng'],
+    ])])
+@endsection
 @section('content')
     <div class="grid grid-cols-1 gap-6 lg:grid-cols-3">
         <div class="lg:col-span-2 space-y-4">

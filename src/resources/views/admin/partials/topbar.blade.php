@@ -10,10 +10,9 @@
         </svg>
     </button>
 
-    <div class="hidden sm:block">
-        <h1 class="text-lg font-semibold text-black">@yield('page-title', 'Dashboard')</h1>
-        @hasSection('breadcrumb')
-            <p class="text-xs text-slate-500">@yield('breadcrumb')</p>
+    <div class="min-w-0 flex-1">
+        @hasSection('breadcrumbs')
+            @yield('breadcrumbs')
         @endif
     </div>
 

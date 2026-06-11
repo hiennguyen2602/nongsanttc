@@ -1,6 +1,12 @@
 @extends('admin.layouts.app')
 @section('title', 'Thêm danh mục')
 @section('page-title', 'Thêm danh mục')
+@section('breadcrumbs')
+    @include('admin.partials.breadcrumb', ['items' => admin_breadcrumb([
+        ['label' => 'Danh mục', 'url' => route('admin.categories.index')],
+        ['label' => 'Thêm danh mục'],
+    ])])
+@endsection
 @section('content')
     <div class="x_panel">
         <div class="x_title"><h2>Thêm danh mục</h2></div>

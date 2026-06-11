@@ -1,6 +1,11 @@
 @extends('admin.layouts.app')
 @section('title', 'Đổi mật khẩu')
 @section('page-title', 'Đổi mật khẩu')
+@section('breadcrumbs')
+    @include('admin.partials.breadcrumb', ['items' => admin_breadcrumb([
+        ['label' => 'Đổi mật khẩu'],
+    ])])
+@endsection
 @section('content')
     <div class="x_panel">
         <div class="x_title"><h2>Đổi mật khẩu</h2></div>

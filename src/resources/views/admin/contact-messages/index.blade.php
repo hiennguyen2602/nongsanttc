@@ -2,7 +2,11 @@
 
 @section('title', 'Tin nhắn liên hệ')
 @section('page-title', 'Tin nhắn liên hệ')
-@section('breadcrumb', 'Liên hệ / Danh sách')
+@section('breadcrumbs')
+    @include('admin.partials.breadcrumb', ['items' => admin_breadcrumb([
+        ['label' => 'Tin nhắn liên hệ'],
+    ])])
+@endsection
 
 @section('content')
     <div class="x_panel">

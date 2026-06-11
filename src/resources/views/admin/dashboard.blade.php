@@ -1,8 +1,9 @@
 @extends('admin.layouts.app')
 
 @section('title', 'Dashboard')
-@section('page-title', 'Dashboard')
-@section('breadcrumb', 'Trang chủ / Dashboard')
+@section('breadcrumbs')
+    @include('admin.partials.breadcrumb', ['items' => admin_breadcrumb([])])
+@endsection
 
 @section('content')
     <div class="x_panel">

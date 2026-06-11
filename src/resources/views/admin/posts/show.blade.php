@@ -2,6 +2,12 @@
 
 @section('title', $post->title)
 @section('page-title', 'Chi tiết bài viết')
+@section('breadcrumbs')
+    @include('admin.partials.breadcrumb', ['items' => admin_breadcrumb([
+        ['label' => 'Bài viết', 'url' => route('admin.posts.index')],
+        ['label' => 'Chi tiết bài viết'],
+    ])])
+@endsection
 
 @section('content')
     <div class="x_panel admin-post-panel">

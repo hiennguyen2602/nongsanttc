@@ -2,6 +2,12 @@
 
 @section('title', $customer->name)
 @section('page-title', 'Chi tiết khách hàng')
+@section('breadcrumbs')
+    @include('admin.partials.breadcrumb', ['items' => admin_breadcrumb([
+        ['label' => 'Khách hàng', 'url' => route('admin.customers.index')],
+        ['label' => 'Chi tiết khách hàng'],
+    ])])
+@endsection
 
 @section('content')
     <div class="x_panel">
