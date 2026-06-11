@@ -131,7 +131,7 @@
 
                     <div class="mb-3">
                         <label class="form-label">Giá gốc *</label>
-                        <input type="text" inputmode="numeric" name="price" value="{{ old('price', $product->price ?? 0) }}" required class="form-control input-number">
+                        <input type="text" inputmode="numeric" name="price" value="{{ old('price', $product->price ?? '') }}" required min="1" class="form-control input-number">
                     </div>
 
                     <div class="mb-3">
@@ -141,7 +141,7 @@
 
                     <div class="mb-3">
                         <label class="form-label">Tồn kho</label>
-                        <input type="text" inputmode="numeric" name="stock" value="{{ old('stock', $product->stock ?? 0) }}" class="form-control input-number">
+                        <input type="text" inputmode="numeric" name="stock" value="{{ old('stock', $product->stock ?? '') }}" class="form-control input-number">
                     </div>
 
                     <div class="form-check mb-2">

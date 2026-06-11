@@ -14,7 +14,7 @@
                     @endforeach
                 </div>
                 <form method="GET" action="{{ route('admin.dashboard') }}" class="dashboard-custom">
-                    <input type="hidden" name="period" value="custom">
+                    <input type="hidden" name="period" value="{{ $period }}">
                     <div class="dashboard-dates">
                         <input type="date" name="from" value="{{ $fromInput }}" class="form-control" max="{{ now()->format('Y-m-d') }}">
                         <span class="text-slate-400">~</span>

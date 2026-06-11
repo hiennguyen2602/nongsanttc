@@ -8,6 +8,7 @@ export default defineConfig({
             input: [
                 'resources/css/app.css',
                 'resources/css/admin.css',
+                'resources/scss/pagination.scss',
                 'resources/js/store.js',
                 'resources/js/admin.js',
             ],

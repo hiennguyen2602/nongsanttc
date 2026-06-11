@@ -100,14 +100,19 @@ class ProductController extends Controller
 
     private function validated(Request $request, ?Product $product = null): array
     {
+        $request->merge([
+            'sale_price' => blank($request->input('sale_price')) ? null : $request->input('sale_price'),
+            'stock' => blank($request->input('stock')) ? null : $request->input('stock'),
+        ]);
+
         $data = $request->validate([
             'category_id' => ['nullable', 'exists:categories,id'],
             'name' => ['required', 'string', 'max:255'],
             'sku' => ['nullable', 'string', 'max:100'],
             'description' => ['nullable', 'string'],
-            'price' => ['required', 'integer', 'min:0'],
+            'price' => ['required', 'integer', 'min:1'],
             'sale_price' => ['nullable', 'integer', 'min:0'],
-            'stock' => ['required', 'integer', 'min:0'],
+            'stock' => ['nullable', 'integer', 'min:0'],
             'is_featured' => ['nullable', 'boolean'],
             'is_active' => ['nullable', 'boolean'],
             'images' => ['nullable', 'array'],
@@ -252,7 +257,7 @@ class ProductController extends Controller
                 'flavor' => $variant['flavor'] ?? null,
                 'size' => $variant['size'] ?? null,
                 'price' => (int) $variant['price'],
-                'stock' => (int) ($variant['stock'] ?? 0),
+                'stock' => filled($variant['stock'] ?? null) ? (int) $variant['stock'] : null,
             ];
 
             $id = $variant['id'] ?? null;

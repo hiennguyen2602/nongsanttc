@@ -9,6 +9,7 @@ use App\Services\CartService;
 use App\Services\SettingService;
 use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Notifications\Messages\MailMessage;
+use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
@@ -42,6 +43,8 @@ class AppServiceProvider extends ServiceProvider
             $view->with('newOrdersCount', Order::query()->new()->count());
             $view->with('newContactMessagesCount', ContactMessage::query()->new()->count());
         });
+
+        Paginator::defaultView('partials.pagination');
 
         $this->configurePasswordResetMail();
     }

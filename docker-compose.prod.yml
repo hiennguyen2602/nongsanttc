@@ -10,3 +10,6 @@ services:
 
   db:
     ports: []
+
+  queue:
+    profiles: []

@@ -342,14 +342,6 @@
     text-decoration: underline;
 }
 
-.admin-body main .pagination a {
-    color: var(--admin-link);
-}
-
-.admin-body main .pagination a:hover {
-    color: var(--admin-link-hover);
-}
-
 .admin-body .table-striped tbody tr:nth-child(even) {
     background-color: #f9fafb;
 }

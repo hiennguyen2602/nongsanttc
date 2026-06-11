@@ -21,6 +21,11 @@ class ProductVariant extends Model
 
     public function formattedPrice(): string
     {
-        return number_format($this->price, 0, ',', '.') . 'đ';
+        return $this->price !== null ? number_format($this->price, 0, ',', '.') . 'đ' : '—';
+    }
+
+    public function formattedStock(): string
+    {
+        return $this->stock !== null ? number_format($this->stock, 0, ',', '.') : '—';
     }
 }

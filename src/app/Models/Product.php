@@ -35,13 +35,24 @@ class Product extends Model
         return $this->hasMany(ProductVariant::class);
     }
 
-    public function displayPrice(): int
+    public function displayPrice(): ?int
     {
-        return $this->sale_price ?? $this->price;
+        if ($this->sale_price !== null) {
+            return (int) $this->sale_price;
+        }
+
+        return $this->price !== null ? (int) $this->price : null;
     }
 
     public function formattedPrice(): string
     {
-        return number_format($this->displayPrice(), 0, ',', '.') . 'đ';
+        $price = $this->displayPrice();
+
+        return $price !== null ? number_format($price, 0, ',', '.') . 'đ' : '—';
+    }
+
+    public function formattedStock(): string
+    {
+        return $this->stock !== null ? number_format($this->stock, 0, ',', '.') : '—';
     }
 }
