@@ -8,7 +8,6 @@ use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use Illuminate\Session\TokenMismatchException;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -49,25 +48,7 @@ return Application::configure(basePath: dirname(__DIR__))
         });
     })
     ->withExceptions(function (Exceptions $exceptions): void {
-        $exceptions->render(function (TokenMismatchException $e, Request $request) {
-            if ($request->is('admin') || $request->is('admin/*')) {
-                return redirect()
-                    ->route('admin.login')
-                    ->withErrors(['email' => 'Phiên đăng nhập hết hạn. Vui lòng tải lại trang và thử lại.']);
-            }
-
-            if ($request->is('lien-he')) {
-                return redirect()
-                    ->route('contact')
-                    ->withInput($request->except('_token'))
-                    ->withErrors(['name' => 'Phiên hết hạn. Vui lòng tải lại trang và gửi lại tin nhắn.']);
-            }
-
-            return redirect()
-                ->back()
-                ->withInput($request->except('_token'))
-                ->withErrors(['_token' => 'Phiên hết hạn. Vui lòng tải lại trang và thử lại.']);
-        });
+        //
     })
     ->withSchedule(function (Schedule $schedule): void {
         $schedule->command('media:clean-editor-orphans')->weeklyOn(0, '03:00');
