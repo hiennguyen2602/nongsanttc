@@ -16,7 +16,7 @@
             @include('admin.partials.topbar')
 
             <main class="admin-main flex-1 p-4 sm:p-6" role="main">
-                <div class="admin-page-frame">
+                <div class="admin-page-frame @yield('page-frame-class')">
                     @include('admin.partials.alerts')
                     @yield('content')
                 </div>
