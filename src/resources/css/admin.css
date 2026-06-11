@@ -1117,31 +1117,78 @@
 }
 
 /* ─── Login (standalone) ─── */
+html:has(body.admin-auth) {
+    margin: 0;
+    height: 100%;
+}
+
+body.admin-auth {
+    margin: 0;
+    width: 100%;
+    overflow-x: hidden;
+}
+
 .admin-auth {
+    /* 100vh trên mobile thường cao hơn màn hình thật (thanh địa chỉ) → form bị lệch xuống */
+    --admin-auth-gutter: max(1.5rem, env(safe-area-inset-left, 0px), env(safe-area-inset-right, 0px));
     min-height: 100vh;
+    min-height: 100svh;
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     justify-content: center;
     background: var(--admin-sidebar);
-    padding: 1rem;
+    padding-top: max(3.5rem, calc(env(safe-area-inset-top, 0px) + 1rem));
+    padding-bottom: max(1.5rem, env(safe-area-inset-bottom, 0px));
+    padding-inline: var(--admin-auth-gutter);
+    box-sizing: border-box;
+}
+
+.admin-auth__shell {
+    width: 100%;
+    max-width: 26rem;
+    margin-inline: auto;
 }
 
 .admin-auth .login-card {
     width: 100%;
-    max-width: 26rem;
     background: #fff;
     border-radius: 8px;
     box-shadow: 0 8px 32px rgb(0 0 0 / 0.2);
     padding: 2rem;
+    box-sizing: border-box;
+}
+
+@media (max-width: 639px) {
+    .admin-auth__shell {
+        max-width: none;
+    }
+}
+
+@media (min-width: 640px) {
+    .admin-auth {
+        padding-top: 8vh;
+    }
 }
 
 .admin-auth .form-control {
     display: block;
     width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
     padding: 0.625rem 0.75rem;
     font-size: 0.875rem;
     border: 1px solid #ced4da;
     border-radius: 0.375rem;
+}
+
+.admin-auth .form-check-input {
+    width: 1rem;
+    height: 1rem;
+    margin: 0;
+    flex-shrink: 0;
+    border: 1px solid #ced4da;
+    border-radius: 0.25rem;
+    accent-color: var(--admin-primary);
 }
 
 .admin-auth .form-control:focus {
