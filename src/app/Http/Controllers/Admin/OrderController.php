@@ -29,7 +29,7 @@ class OrderController extends Controller
             ->when($fromDate, fn ($q) => $q->where('created_at', '>=', $fromDate))
             ->when($toDate, fn ($q) => $q->where('created_at', '<=', $toDate))
             ->latest()
-            ->paginate(1)
+            ->paginate(20)
             ->withQueryString();
 
         return view('admin.orders.index', [
