@@ -1,6 +1,5 @@
 @extends('admin.layouts.app')
-@section('title', $order->order_code)
-@section('page-title', 'Đơn ' . $order->order_code)
+@section('title', 'Chi tiết đơn hàng')
 @section('breadcrumbs')
     @include('admin.partials.breadcrumb', ['items' => admin_breadcrumb([
         ['label' => 'Đơn hàng', 'url' => route('admin.orders.index')],
@@ -11,7 +10,7 @@
     <div class="grid grid-cols-1 gap-6 lg:grid-cols-3">
         <div class="lg:col-span-2 space-y-4">
             <div class="x_panel">
-                <div class="x_title"><h2>Sản phẩm</h2></div>
+                <div class="x_title"><h2>Chi tiết đơn hàng</h2></div>
                 <div class="x_content">
                     <div class="table-responsive">
                         <table class="table table-striped">
@@ -39,6 +38,25 @@
             </div>
         </div>
         <div class="space-y-4">
+            <div class="x_panel">
+                <div class="x_title"><h2>Thông tin đơn</h2></div>
+                <div class="x_content text-sm">
+                    <dl class="space-y-2">
+                        <div class="flex gap-2">
+                            <dt class="w-15 shrink-0 font-semibold text-slate-500">Mã đơn</dt>
+                            <dd class="flex-1 font-medium">{{ $order->order_code }}</dd>
+                        </div>
+                        <div class="flex gap-2">
+                            <dt class="w-15 shrink-0 font-semibold text-slate-500">Ngày đặt</dt>
+                            <dd class="flex-1">{{ $order->created_at->format('d/m/Y H:i') }}</dd>
+                        </div>
+                        <div class="flex gap-2">
+                            <dt class="w-15 shrink-0 font-semibold text-slate-500">Trạng thái</dt>
+                            <dd class="flex-1">@include('admin.partials.status-badge', ['label' => $order->statusLabel(), 'class' => $order->statusBadgeClass()])</dd>
+                        </div>
+                    </dl>
+                </div>
+            </div>
             <div class="x_panel">
                 <div class="x_title"><h2>Khách hàng</h2></div>
                 <div class="x_content text-sm">
