@@ -267,6 +267,7 @@ document.addEventListener('alpine:init', () => {
             this.updateVisibility();
         },
     }));
+
 });
 
 function initScrollReveal() {
