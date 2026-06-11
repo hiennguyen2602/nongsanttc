@@ -67,7 +67,7 @@
             class="flex h-9 w-9 shrink-0 cursor-pointer items-center justify-center rounded-full bg-[#1877F2] text-white transition hover:bg-[#166fe5]"
             aria-label="Chia sẻ lên Facebook"
         >
-            @include('store.partials.icons.facebook')
+            @include('store.partials.icons.facebook-share')
         </a>
         @endif
         @if (store_setting('messenger'))
