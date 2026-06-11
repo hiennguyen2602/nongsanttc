@@ -256,6 +256,36 @@
                                 this.copied = true;
                                 setTimeout(() => this.copied = false, 2000);
                             });
+                        },
+                        openFacebookShare(event) {
+                            const shareUrl = @js($productShareUrl);
+                            const encoded = encodeURIComponent(shareUrl);
+                            const webShareUrl = 'https://www.facebook.com/sharer/sharer.php?u=' + encoded;
+                            const ua = navigator.userAgent;
+
+                            if (! /iPhone|iPad|iPod|Android/i.test(ua)) {
+                                return;
+                            }
+
+                            event.preventDefault();
+
+                            if (/Android/i.test(ua)) {
+                                const fallback = encodeURIComponent(webShareUrl);
+                                window.location.href = 'intent://www.facebook.com/sharer/sharer.php?u=' + encoded
+                                    + '#Intent;package=com.facebook.katana;scheme=https;S.browser_fallback_url=' + fallback + ';end';
+                                return;
+                            }
+
+                            let appOpened = false;
+                            const onHide = () => { appOpened = true; };
+                            document.addEventListener('visibilitychange', onHide, { once: true });
+                            window.location.href = 'fb://share?link=' + encoded;
+                            setTimeout(() => {
+                                document.removeEventListener('visibilitychange', onHide);
+                                if (! appOpened) {
+                                    window.open(webShareUrl, '_blank', 'noopener,noreferrer');
+                                }
+                            }, 1200);
                         }
                     }"
                 >
@@ -266,6 +296,7 @@
                             href="https://www.facebook.com/sharer/sharer.php?u={{ urlencode($productShareUrl) }}"
                             target="_blank"
                             rel="noopener noreferrer"
+                            @click="openFacebookShare($event)"
                             class="flex h-9 w-9 shrink-0 cursor-pointer items-center justify-center rounded-full bg-[#1877F2] text-white transition hover:bg-[#166fe5]"
                             aria-label="Chia sẻ lên Facebook"
                         >
