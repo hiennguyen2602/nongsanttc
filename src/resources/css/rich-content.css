@@ -1,5 +1,9 @@
 /* Hiển thị HTML từ Quill editor — dùng chung store + admin */
 
+.rich-content.prose p {
+    margin-block: 0;
+}
+
 .rich-content img {
     max-width: 100%;
     height: auto;
