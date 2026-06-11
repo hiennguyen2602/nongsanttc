@@ -13,6 +13,12 @@
         @include('partials.post-article-header', ['post' => $post])
 
         @include('partials.rich-content', ['html' => $post->content])
+
+        @include('store.partials.share-buttons', [
+            'shareUrl' => route('posts.show', $post->slug, absolute: true),
+            'shareTitle' => $post->title,
+            'wrapperClass' => 'mt-8 border-t border-slate-200 pt-8',
+        ])
     </article>
 
     @if ($recentPosts->isNotEmpty())
