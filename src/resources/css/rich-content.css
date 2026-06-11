@@ -1,6 +1,7 @@
 /* Hiển thị HTML từ Quill editor — dùng chung store + admin */
 
-.rich-content.prose p {
+.rich-content.prose p,
+.rich-content.prose img {
     margin-block: 0;
 }
 
