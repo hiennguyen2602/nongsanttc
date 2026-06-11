@@ -18,8 +18,10 @@
         <meta property="og:image" content="{{ $productOgImage }}">
         <meta property="og:image:secure_url" content="{{ preg_replace('/^http:/', 'https:', $productOgImage) }}">
     @endif
-    <meta property="og:price:amount" content="{{ $product->displayPrice() }}">
-    <meta property="og:price:currency" content="VND">
+    @if ($product->displayPrice() !== null)
+        <meta property="og:price:amount" content="{{ $product->displayPrice() }}">
+        <meta property="og:price:currency" content="VND">
+    @endif
 @endpush
 
 @section('content')
@@ -39,7 +41,7 @@
                 quantity: 1,
                 selectedVariant: @js($product->variants->first()?->id),
                 variants: @js($product->variants->map(fn($v) => ['id' => $v->id, 'label' => $v->label(), 'price' => $v->price, 'formatted' => $v->formattedPrice()])),
-                basePrice: {{ $product->displayPrice() }},
+                basePrice: @js($product->displayPrice()),
                 gallery: @js(store_media_gallery_items($product->image, (array) ($product->gallery ?? []))),
                 activeIndex: 0,
                 lightbox: false,

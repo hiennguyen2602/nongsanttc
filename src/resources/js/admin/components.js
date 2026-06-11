@@ -47,16 +47,16 @@ document.addEventListener('alpine:init', () => {
                 flavor: v.flavor ?? '',
                 size: v.size ?? '',
                 price: v.price != null ? String(v.price) : '',
-                stock: v.stock != null ? String(v.stock) : '0',
+                stock: v.stock != null ? String(v.stock) : '',
             }))
-            : [{ id: '', flavor: '', size: '', price: '', stock: '0' }],
+            : [{ id: '', flavor: '', size: '', price: '', stock: '' }],
 
         errorFor(index) {
             return this.variantErrors[index] ?? '';
         },
 
         add() {
-            this.variants.push({ id: '', flavor: '', size: '', price: '', stock: '0' });
+            this.variants.push({ id: '', flavor: '', size: '', price: '', stock: '' });
         },
 
         remove(index) {

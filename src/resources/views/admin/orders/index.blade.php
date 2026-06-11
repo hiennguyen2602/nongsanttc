@@ -6,7 +6,7 @@
         <div class="x_title"><h2>Đơn hàng</h2></div>
         <div class="x_content">
             <form method="GET" class="orders-filter">
-                <input type="hidden" name="period" value="custom">
+                <input type="hidden" name="period" value="{{ $period }}">
                 <div class="orders-filter-top">
                     <input type="search" name="q" value="{{ request('q') }}" placeholder="Mã đơn, tên, SĐT..." class="form-control">
                     <select name="status" class="form-select">

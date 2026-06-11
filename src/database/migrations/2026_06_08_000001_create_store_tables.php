@@ -23,13 +23,13 @@ return new class extends Migration
             $table->string('slug')->unique();
             $table->string('sku')->nullable();
             $table->text('description')->nullable();
-            $table->unsignedInteger('price');
+            $table->unsignedInteger('price')->nullable();
             $table->unsignedInteger('sale_price')->nullable();
             $table->string('image')->nullable();
             $table->json('gallery')->nullable();
             $table->boolean('is_featured')->default(false);
             $table->boolean('is_active')->default(true);
-            $table->unsignedInteger('stock')->default(0);
+            $table->unsignedInteger('stock')->nullable();
             $table->timestamps();
 
             $table->index(['is_active', 'is_featured'], 'products_active_featured_index');
@@ -42,8 +42,8 @@ return new class extends Migration
             $table->foreignId('product_id')->constrained()->cascadeOnDelete();
             $table->string('flavor')->nullable();
             $table->string('size')->nullable();
-            $table->unsignedInteger('price');
-            $table->unsignedInteger('stock')->default(0);
+            $table->unsignedInteger('price')->nullable();
+            $table->unsignedInteger('stock')->nullable();
             $table->timestamps();
         });
 

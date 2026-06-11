@@ -15,7 +15,7 @@ class OrderController extends Controller
 
     public function index(Request $request): View
     {
-        $period = $request->input('period', 'recent');
+        $period = $this->resolveFilterPeriod($request);
         [$fromDate, $toDate] = $this->resolveDateRange($period, $request);
 
         $orders = Order::query()

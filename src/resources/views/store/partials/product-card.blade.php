@@ -1,5 +1,5 @@
 @php
-    $hasSale = $product->sale_price && $product->sale_price < $product->price;
+    $hasSale = $product->sale_price !== null && $product->price !== null && $product->sale_price < $product->price;
 @endphp
 
 <article class="product-card-hover group flex h-full flex-col overflow-hidden rounded-xl border border-slate-200/80 bg-white shadow-sm">

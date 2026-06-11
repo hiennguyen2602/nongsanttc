@@ -39,7 +39,7 @@
                 @endforeach
             </div>
             <div class="mt-10">
-                {{ $products->withQueryString()->links() }}
+                {{ $products->links() }}
             </div>
         @endif
     </div>

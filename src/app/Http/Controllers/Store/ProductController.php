@@ -26,7 +26,7 @@ class ProductController extends Controller
         }
 
         return view('store.products.index', [
-            'products' => $query->latest()->paginate(12),
+            'products' => $query->latest()->paginate(12)->withQueryString(),
             'categories' => Category::orderBy('sort_order')->get(),
             'activeCategory' => $request->category,
         ]);

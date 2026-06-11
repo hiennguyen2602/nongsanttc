@@ -2,12 +2,15 @@
 
 namespace App\Services;
 
+use App\Mail\NewOrderMail;
 use App\Models\Customer;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Services\CustomerService;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 use RuntimeException;
 
@@ -60,7 +63,10 @@ class OrderService
 
             $this->cart->clear();
 
-            return $order->load('items');
+            $order->load('items');
+            $this->notifyStoreOfNewOrder($order);
+
+            return $order;
         });
     }
 
@@ -81,6 +87,25 @@ class OrderService
                 'quantity' => $quantity,
                 'unit_price' => $unitPrice,
                 'line_total' => $lineTotal,
+            ]);
+        }
+    }
+
+    private function notifyStoreOfNewOrder(Order $order): void
+    {
+        $email = store_setting('email');
+
+        if (! filled($email)) {
+            return;
+        }
+
+        try {
+            Mail::to($email)->send(new NewOrderMail($order));
+        } catch (\Throwable $e) {
+            Log::error('Failed to send new order notification.', [
+                'order_id' => $order->id,
+                'email' => $email,
+                'error' => $e->getMessage(),
             ]);
         }
     }

@@ -61,15 +61,15 @@
                         <div>
                             <dt>Giá</dt>
                             <dd>
-                                @if ($product->sale_price)
+                                @if ($product->sale_price !== null && $product->price !== null && $product->sale_price < $product->price)
                                     <span class="text-lg font-bold text-rose-600">{{ number_format($product->sale_price, 0, ',', '.') }}đ</span>
                                     <span class="ml-2 text-sm text-slate-400 line-through">{{ number_format($product->price, 0, ',', '.') }}đ</span>
                                 @else
-                                    <span class="text-lg font-bold text-slate-800">{{ number_format($product->price, 0, ',', '.') }}đ</span>
+                                    <span class="text-lg font-bold text-slate-800">{{ $product->formattedPrice() }}</span>
                                 @endif
                             </dd>
                         </div>
-                        <div><dt>Tồn kho</dt><dd>{{ number_format($product->stock, 0, ',', '.') }}</dd></div>
+                        <div><dt>Tồn kho</dt><dd>{{ $product->formattedStock() }}</dd></div>
                         <div>
                             <dt>Trạng thái</dt>
                             <dd>
@@ -103,8 +103,8 @@
                                     <tr>
                                         <td class="cell-text">{{ $variant->flavor ?? '—' }}</td>
                                         <td class="cell-text">{{ $variant->size ?? '—' }}</td>
-                                        <td class="cell-price">{{ number_format($variant->price, 0, ',', '.') }}đ</td>
-                                        <td class="cell-num">{{ number_format($variant->stock, 0, ',', '.') }}</td>
+                                        <td class="cell-price">{{ $variant->formattedPrice() }}</td>
+                                        <td class="cell-num">{{ $variant->formattedStock() }}</td>
                                     </tr>
                                 @endforeach
                             </tbody>
