@@ -1,6 +1,6 @@
 @php
     $buttonClass = match ($platform) {
-        'facebook' => 'rounded-full bg-[#1877F2] text-white transition hover:bg-[#166fe5]',
+        'facebook' => 'overflow-hidden rounded-full shadow-sm transition hover:opacity-90',
         'messenger' => 'rounded-full bg-[#0084FF] text-white transition hover:bg-[#0073e6]',
         'zalo' => 'overflow-hidden rounded-full shadow-sm transition hover:opacity-90',
         default => 'rounded-full bg-slate-500 text-white transition hover:bg-slate-600',
