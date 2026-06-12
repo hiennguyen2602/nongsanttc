@@ -1,13 +1,8 @@
-@php
-    $messengerIconPath = public_path('images/icons/logo-messenger.png');
-    $messengerIconVersion = file_exists($messengerIconPath) ? filemtime($messengerIconPath) : 1;
-@endphp
-<img
-    src="{{ asset('images/icons/logo-messenger.png') }}?v={{ $messengerIconVersion }}"
-    alt=""
-    class="{{ $iconClass ?? 'block h-full w-full object-cover' }}"
-    width="36"
-    height="36"
-    aria-hidden="true"
-    decoding="async"
->
+{{-- Messenger app icon: blue circle → white bubble → blue bolt (3 layers, matches logo-messenger.png) --}}
+<svg class="block h-full w-full" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <circle cx="256" cy="256" r="256" fill="#0084FF"/>
+    <g transform="translate(256 256) scale(0.62) translate(-256 -256)">
+        <path fill="#fff" d="M505.999 248.5c0 139.34-109.168 242.497-250 242.497-25.292 0-49.56-3.334-72.37-9.605a19.941 19.941 0 00-13.35.972l-49.624 21.907c-12.977 5.735-27.628-3.499-28.063-17.682l-1.364-44.477c-.17-5.475-2.634-10.603-6.72-14.247C35.865 384.361 6 321.388 6 248.5 6 109.165 115.168 6.002 256 6.002c140.831 0 249.999 103.163 249.999 242.498z"/>
+        <path fill="#0084FF" d="M323.88 318.306l87.04-134.517c8.752-13.52-7.458-29.257-20.714-20.113l-90.86 62.67a9.19 9.19 0 01-10.218.152l-80.643-52.175c-6.826-4.414-15.94-2.463-20.353 4.363L101.085 313.21c-8.752 13.52 7.459 29.257 20.713 20.112l90.88-62.675a9.199 9.199 0 0110.224-.152l80.63 52.174c6.827 4.415 15.94 2.464 20.354-4.363h-.006z"/>
+    </g>
+</svg>
