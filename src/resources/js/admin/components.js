@@ -1,10 +1,10 @@
 import { createGallerySwipeMethods } from '../gallery-swipe';
+import { isProductGalleryDesktop, openProductGallery } from '../product-fancybox';
 
 document.addEventListener('alpine:init', () => {
     Alpine.data('productGallery', (images = []) => ({
         images,
         active: 0,
-        lightbox: false,
 
         ...createGallerySwipeMethods(function itemCount() {
             return this.images.length;
@@ -19,7 +19,7 @@ document.addEventListener('alpine:init', () => {
         },
 
         open(index = null) {
-            if (this.galleryDidSwipe) {
+            if (this.galleryDidSwipe || ! this.images.length || ! isProductGalleryDesktop()) {
                 return;
             }
 
@@ -27,15 +27,9 @@ document.addEventListener('alpine:init', () => {
                 this.active = index;
             }
 
-            if (this.images.length) {
-                this.lightbox = true;
-                document.documentElement.classList.add('overflow-hidden');
-            }
-        },
-
-        close() {
-            this.lightbox = false;
-            document.documentElement.classList.remove('overflow-hidden');
+            openProductGallery(this.images, this.active, (idx) => {
+                this.active = idx;
+            });
         },
 
         next() {

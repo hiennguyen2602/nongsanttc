@@ -44,7 +44,7 @@
                                 @pointercancel="onGalleryPointerCancel($event)"
                             >
                                 <template x-for="(img, i) in images" :key="i">
-                                    <div class="h-full shrink-0 cursor-zoom-in" :style="gallerySlideStyle()" @click="open(i)" @dragstart.prevent>
+                                    <div class="h-full shrink-0 lg:cursor-zoom-in" :style="gallerySlideStyle()" @click.stop="open(i)" @dragstart.prevent>
                                         <img :src="img.display" alt="{{ $product->name }}" class="product-gallery-slide-img h-full w-full object-cover" draggable="false">
                                     </div>
                                 </template>
@@ -52,9 +52,9 @@
                             <button type="button" x-show="images.length > 1" @click.stop="prev()" class="absolute left-2 top-1/2 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full bg-white/80 text-xl text-slate-700 shadow hover:bg-white">&lsaquo;</button>
                             <button type="button" x-show="images.length > 1" @click.stop="next()" class="absolute right-2 top-1/2 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full bg-white/80 text-xl text-slate-700 shadow hover:bg-white">&rsaquo;</button>
                         </div>
-                        <div class="mt-3 flex flex-wrap gap-2">
+                        <div class="product-gallery-thumbs mt-3 flex flex-wrap gap-2">
                             <template x-for="(img, i) in images" :key="i">
-                                <button type="button" @click="select(i)" class="h-16 w-16 overflow-hidden rounded-lg border-2 transition" :class="active === i ? 'border-sky-600' : 'border-slate-200 hover:border-slate-400'">
+                                <button type="button" data-gallery-thumb @click="select(i)" class="h-16 w-16 overflow-hidden rounded-lg border-2 transition" :class="active === i ? 'border-sky-600' : 'border-slate-200 hover:border-slate-400'">
                                     <img :src="img.thumb" alt="" class="h-full w-full object-cover">
                                 </button>
                             </template>
@@ -115,57 +115,6 @@
                     @endif
                 </div>
 
-                {{-- Lightbox --}}
-                <template x-teleport="body">
-                    <div
-                        x-show="lightbox"
-                        x-cloak
-                        @keydown.escape.window="close()"
-                        @keydown.arrow-left.window="lightbox && prev()"
-                        @keydown.arrow-right.window="lightbox && next()"
-                        class="fixed inset-0 z-[100]"
-                        role="dialog"
-                        aria-modal="true"
-                    >
-                        <div
-                            class="product-lightbox-backdrop absolute inset-0"
-                            x-show="lightbox"
-                            x-transition.opacity
-                            @click="close()"
-                        ></div>
-
-                        <div class="relative flex h-full items-center justify-center p-4 sm:p-8" @click.self="close()">
-                            <button type="button" @click="close()" class="absolute right-4 top-4 z-10 flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-2xl text-white hover:bg-white/20">&times;</button>
-                            <button type="button" @click.stop="prev()" x-show="images.length > 1" class="absolute left-2 top-1/2 z-10 flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full bg-white/10 text-3xl text-white hover:bg-white/20 sm:left-4">&lsaquo;</button>
-
-                            <div
-                                class="product-lightbox-swipe relative z-[1] max-h-[90vh] w-full max-w-[92vw] overflow-hidden"
-                                @pointerdown="onGalleryPointerDown($event)"
-                                @pointerup="onGalleryPointerUp($event)"
-                                @pointercancel="onGalleryPointerCancel($event)"
-                            >
-                                <div
-                                    x-show="lightbox"
-                                    class="flex h-full max-h-[90vh] transition-transform duration-300 ease-out"
-                                    :style="galleryTrackStyle()"
-                                >
-                                    <template x-for="(img, i) in images" :key="'lb-' + i">
-                                        <div class="flex h-full max-h-[90vh] shrink-0 items-center justify-center" :style="gallerySlideStyle()" @dragstart.prevent>
-                                            <img
-                                                :src="img.full"
-                                                alt="{{ $product->name }}"
-                                                class="product-gallery-slide-img max-h-[90vh] max-w-full object-contain"
-                                                draggable="false"
-                                            >
-                                        </div>
-                                    </template>
-                                </div>
-                            </div>
-
-                            <button type="button" @click.stop="next()" x-show="images.length > 1" class="absolute right-2 top-1/2 z-10 flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full bg-white/10 text-3xl text-white hover:bg-white/20 sm:right-4">&rsaquo;</button>
-                        </div>
-                    </div>
-                </template>
             </div>
 
             @if ($product->description)

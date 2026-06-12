@@ -52,6 +52,13 @@ export function createGallerySwipeMethods(getItemCount) {
                         return;
                     }
 
+                    const deltaX = Math.abs(event.clientX - this.swipeStartX);
+                    const deltaY = Math.abs(event.clientY - this.swipeStartY);
+
+                    if (deltaX > 8 || deltaY > 8) {
+                        event.preventDefault();
+                    }
+
                     this.evaluateSwipe(event.clientX, event.clientY);
                 };
 
@@ -135,8 +142,6 @@ export function createGallerySwipeMethods(getItemCount) {
             if (event.pointerType === 'mouse' && event.button !== 0) {
                 return;
             }
-
-            event.preventDefault();
 
             this.swipeStartX = event.clientX;
             this.swipeStartY = event.clientY;
