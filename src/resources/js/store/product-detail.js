@@ -1,4 +1,5 @@
 import { createGallerySwipeMethods } from '../gallery-swipe';
+import { isProductGalleryDesktop, openProductGallery } from '../product-fancybox';
 
 document.addEventListener('alpine:init', () => {
     Alpine.data('storeProductDetail', (config) => ({
@@ -8,24 +9,19 @@ document.addEventListener('alpine:init', () => {
         basePrice: config.basePrice,
         gallery: config.gallery,
         activeIndex: 0,
-        lightbox: false,
 
         ...createGallerySwipeMethods(function itemCount() {
             return this.gallery.length;
         }),
 
         openLightbox() {
-            if (this.galleryDidSwipe) {
+            if (this.galleryDidSwipe || ! this.gallery.length || ! isProductGalleryDesktop()) {
                 return;
             }
 
-            this.lightbox = true;
-            document.documentElement.classList.add('overflow-hidden');
-        },
-
-        closeLightbox() {
-            this.lightbox = false;
-            document.documentElement.classList.remove('overflow-hidden');
+            openProductGallery(this.gallery, this.activeIndex, (index) => {
+                this.activeIndex = index;
+            });
         },
 
         next() {

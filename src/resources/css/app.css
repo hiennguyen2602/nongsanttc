@@ -2,6 +2,7 @@
 @plugin '@tailwindcss/typography';
 @import './rich-content.css';
 @import './store-layout.css';
+@import './product-fancybox.css';
 
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 @source '../../storage/framework/views/*.php';
@@ -315,25 +316,6 @@ html {
     pointer-events: none;
     -webkit-user-drag: none;
     user-select: none;
-}
-
-/* Product gallery lightbox */
-.product-lightbox-backdrop {
-    background-color: rgb(0 0 0 / 0.88);
-}
-
-.product-lightbox-image {
-    transform-origin: center center;
-}
-
-.product-lightbox-swipe {
-    touch-action: pan-x pinch-zoom;
-    cursor: grab;
-    user-select: none;
-}
-
-.product-lightbox-swipe:active {
-    cursor: grabbing;
 }
 
 /* Homepage banner CTA — Safari/iPad: grid + min-height cố định, không absolute full-bleed */

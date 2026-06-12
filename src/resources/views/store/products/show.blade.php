@@ -89,7 +89,7 @@
                         @pointercancel="onGalleryPointerCancel($event)"
                     >
                         <template x-for="(img, i) in gallery" :key="i">
-                            <div class="group/main h-full shrink-0 cursor-zoom-in" :style="gallerySlideStyle()" @click="openLightbox()" @dragstart.prevent>
+                            <div class="group/main h-full shrink-0 lg:cursor-zoom-in" :style="gallerySlideStyle()" @click.stop="openLightbox()" @dragstart.prevent>
                                 <img
                                     :src="img.display"
                                     :srcset="img.srcset"
@@ -107,9 +107,9 @@
                     <button type="button" x-show="gallery.length > 1" @click.stop="prev()" class="absolute left-2 top-1/2 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full bg-white/80 text-xl text-slate-700 shadow transition hover:bg-white">&lsaquo;</button>
                     <button type="button" x-show="gallery.length > 1" @click.stop="next()" class="absolute right-2 top-1/2 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full bg-white/80 text-xl text-slate-700 shadow transition hover:bg-white">&rsaquo;</button>
                 </div>
-                <div class="flex gap-2 overflow-x-auto pb-2">
+                <div class="product-gallery-thumbs flex gap-2 overflow-x-auto pb-2">
                     <template x-for="(img, i) in gallery" :key="i">
-                        <button type="button" @click="activeIndex = i" class="h-16 w-16 shrink-0 overflow-hidden rounded border-2 transition hover:border-brand" :class="activeIndex === i ? 'border-brand' : 'border-slate-200'">
+                        <button type="button" data-gallery-thumb @click="activeIndex = i" class="h-16 w-16 shrink-0 overflow-hidden rounded border-2 transition hover:border-brand" :class="activeIndex === i ? 'border-brand' : 'border-slate-200'">
                             <img
                                 :src="img.thumb"
                                 :srcset="img.srcset"
@@ -123,67 +123,6 @@
                     </template>
                 </div>
             </div>
-
-            {{-- Lightbox --}}
-            <template x-teleport="body">
-                <div
-                    x-show="lightbox"
-                    x-cloak
-                    @keydown.escape.window="closeLightbox()"
-                    @keydown.arrow-left.window="lightbox && prev()"
-                    @keydown.arrow-right.window="lightbox && next()"
-                    class="fixed inset-0 z-[100]"
-                    role="dialog"
-                    aria-modal="true"
-                >
-                    <div
-                        class="product-lightbox-backdrop absolute inset-0"
-                        x-show="lightbox"
-                        x-transition:enter="transition ease-out duration-300"
-                        x-transition:enter-start="opacity-0"
-                        x-transition:enter-end="opacity-100"
-                        x-transition:leave="transition ease-in duration-200"
-                        x-transition:leave-start="opacity-100"
-                        x-transition:leave-end="opacity-0"
-                        @click="closeLightbox()"
-                    ></div>
-
-                    <div class="relative flex h-full items-center justify-center p-4 sm:p-8" @click.self="closeLightbox()">
-                        <button type="button" @click="closeLightbox()" class="absolute right-4 top-4 z-10 flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-2xl text-white transition hover:bg-white/20">&times;</button>
-                        <button type="button" @click.stop="prev()" x-show="gallery.length > 1" class="absolute left-2 top-1/2 z-10 flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full bg-white/10 text-3xl text-white transition hover:bg-white/20 sm:left-4">&lsaquo;</button>
-
-                        <div
-                            class="product-lightbox-swipe relative z-[1] max-h-[90vh] w-full max-w-[92vw] overflow-hidden"
-                            @pointerdown="onGalleryPointerDown($event)"
-                            @pointerup="onGalleryPointerUp($event)"
-                            @pointercancel="onGalleryPointerCancel($event)"
-                        >
-                            <div
-                                x-show="lightbox"
-                                class="flex h-full max-h-[90vh] transition-transform duration-300 ease-out"
-                                :style="galleryTrackStyle()"
-                            >
-                                <template x-for="(img, i) in gallery" :key="'lb-' + i">
-                                    <div class="flex h-full max-h-[90vh] shrink-0 items-center justify-center" :style="gallerySlideStyle()" @dragstart.prevent>
-                                        <img
-                                            :src="img.full"
-                                            :srcset="img.fullSrcset"
-                                            sizes="92vw"
-                                            alt="{{ $product->name }}"
-                                            class="product-gallery-slide-img max-h-[90vh] max-w-full object-contain"
-                                            draggable="false"
-                                            loading="lazy"
-                                            decoding="async"
-                                        >
-                                    </div>
-                                </template>
-                            </div>
-                        </div>
-
-                        <button type="button" @click.stop="next()" x-show="gallery.length > 1" class="absolute right-2 top-1/2 z-10 flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full bg-white/10 text-3xl text-white transition hover:bg-white/20 sm:right-4">&rsaquo;</button>
-                    </div>
-                </div>
-            </template>
 
             {{-- Product info --}}
             <div class="lg:col-span-4">
