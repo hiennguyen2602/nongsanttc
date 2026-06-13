@@ -4,6 +4,13 @@
 @section('meta_description', seo_meta_description(store_setting('about_meta_description')))
 @section('canonical', route('about', absolute: true))
 
+@push('json-ld')
+    @include('partials.seo.breadcrumb', ['crumbs' => [
+        ['name' => 'Trang chủ', 'url' => route('home', absolute: true)],
+        ['name' => 'Về chúng tôi', 'url' => route('about', absolute: true)],
+    ]])
+@endpush
+
 @section('content')
     @php
         $aboutMainUrl = store_media_url(store_setting('about_main'));
