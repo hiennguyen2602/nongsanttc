@@ -1,6 +1,38 @@
 @extends('store.layouts.app')
 
 @section('title', 'Liên hệ — ' . store_setting('name'))
+@section('meta_description', seo_meta_description(store_setting('contact_meta_description')))
+@section('canonical', route('contact', absolute: true))
+
+@push('json-ld')
+    @php
+        $localBusiness = [
+            '@context' => 'https://schema.org',
+            '@type' => 'LocalBusiness',
+            'name' => store_setting('company_name') ?: store_setting('name'),
+            'url' => route('home', absolute: true),
+            'description' => seo_meta_description(store_setting('contact_meta_description')),
+            'image' => store_media_url(store_setting('hero_desktop'), 'large'),
+        ];
+        if (filled(store_setting('phone'))) {
+            $localBusiness['telephone'] = store_setting('phone');
+        }
+        if (filled(store_setting('email'))) {
+            $localBusiness['email'] = store_setting('email');
+        }
+        if (filled(store_setting('address'))) {
+            $localBusiness['address'] = [
+                '@type' => 'PostalAddress',
+                'streetAddress' => store_setting('address'),
+                'addressCountry' => 'VN',
+            ];
+        }
+        if (filled(store_setting('google_maps_url'))) {
+            $localBusiness['hasMap'] = store_setting('google_maps_url');
+        }
+    @endphp
+    @include('partials.seo.json-ld', ['data' => array_filter($localBusiness, fn ($value) => $value !== null && $value !== '')])
+@endpush
 
 @section('content')
     <section class="py-12 lg:py-16">

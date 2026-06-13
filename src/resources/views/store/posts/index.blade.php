@@ -2,7 +2,11 @@
 
 @section('title', 'Tin tức — ' . store_setting('name'))
 @section('meta_description', 'Tin tức, kiến thức nông sản và cập nhật mới nhất từ ' . store_setting('name') . '.')
-@section('canonical', route('posts.index', absolute: true))
+@php $listingRobots = seo_paginated_robots($posts); @endphp
+@if ($listingRobots)
+    @section('robots', $listingRobots)
+@endif
+@section('canonical', seo_listing_canonical('posts.index', [], $posts))
 
 @section('content')
     <div class="bg-brand py-10 text-white">

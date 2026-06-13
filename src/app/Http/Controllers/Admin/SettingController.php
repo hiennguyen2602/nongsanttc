@@ -19,6 +19,7 @@ class SettingController extends Controller
     /** @var list<string> */
     private const GROUP_ORDER = [
         'general',
+        'seo',
         'contact',
         'social',
         'banner',
@@ -26,6 +27,11 @@ class SettingController extends Controller
 
     /** @var array<string, list<string>> */
     private const GROUP_KEY_ORDER = [
+        'seo' => [
+            'google_site_verification',
+            'about_meta_description',
+            'contact_meta_description',
+        ],
         'contact' => [
             'company_name',
             'phone',
@@ -52,6 +58,7 @@ class SettingController extends Controller
     /** @var array<string, string> */
     private const GROUP_LABELS = [
         'general' => 'Chung',
+        'seo' => 'SEO',
         'contact' => 'Contact',
         'social' => 'Social',
         'banner' => 'Banner',
@@ -61,6 +68,9 @@ class SettingController extends Controller
     private const FIELD_COL_SPAN = [
         'name' => 1,
         'tagline' => 2,
+        'google_site_verification' => 2,
+        'about_meta_description' => 2,
+        'contact_meta_description' => 2,
         'company_name' => 2,
         'phone' => 1,
         'email' => 1,
@@ -145,6 +155,11 @@ class SettingController extends Controller
 
             if ($key === 'phone') {
                 $rules[$key] = ['nullable', 'string', 'max:20'];
+                continue;
+            }
+
+            if ($key === 'google_site_verification') {
+                $rules[$key] = ['nullable', 'string', 'max:255'];
                 continue;
             }
 

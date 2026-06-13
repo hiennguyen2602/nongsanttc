@@ -58,11 +58,13 @@ return [
             'label' => 'Banner',
             'route' => 'admin.banners.index',
             'icon' => 'banner',
+            'admin_only' => true,
         ],
         [
             'label' => 'Cài đặt',
             'route' => 'admin.settings.edit',
             'icon' => 'settings',
+            'admin_only' => true,
         ],
     ],
 ];

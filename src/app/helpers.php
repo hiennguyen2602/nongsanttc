@@ -376,6 +376,93 @@ if (! function_exists('seo_absolute_url')) {
     }
 }
 
+if (! function_exists('seo_entity_title')) {
+    function seo_entity_title(string $name, ?string $metaTitle = null, ?string $siteName = null): string
+    {
+        $siteName ??= (string) store_setting('name', '');
+        $title = filled($metaTitle) ? trim($metaTitle) : $name;
+
+        return $title . ' — ' . $siteName;
+    }
+}
+
+if (! function_exists('seo_entity_description')) {
+    function seo_entity_description(?string $source, ?string $metaDescription = null, ?string $fallback = null): string
+    {
+        if (filled($metaDescription)) {
+            return seo_meta_description($metaDescription);
+        }
+
+        return seo_meta_description($source, $fallback);
+    }
+}
+
+if (! function_exists('seo_paginated_robots')) {
+    /** @param  \Illuminate\Contracts\Pagination\Paginator|\Illuminate\Contracts\Pagination\LengthAwarePaginator  $paginator */
+    function seo_paginated_robots($paginator): ?string
+    {
+        if ($paginator->currentPage() > 1) {
+            return 'noindex,follow';
+        }
+
+        return null;
+    }
+}
+
+if (! function_exists('seo_listing_canonical')) {
+    /**
+     * @param  \Illuminate\Contracts\Pagination\Paginator|\Illuminate\Contracts\Pagination\LengthAwarePaginator|null  $paginator
+     */
+    function seo_listing_canonical(string $routeName, array $query = [], $paginator = null): string
+    {
+        $page = $paginator?->currentPage() ?? 1;
+
+        if ($page > 1) {
+            $query['page'] = $page;
+        } else {
+            unset($query['page']);
+        }
+
+        return route($routeName, array_filter($query, fn ($value) => $value !== null && $value !== ''), absolute: true);
+    }
+}
+
+if (! function_exists('seo_product_in_stock')) {
+    function seo_product_in_stock(\App\Models\Product $product): bool
+    {
+        if ($product->stock !== null && $product->stock <= 0) {
+            return false;
+        }
+
+        if ($product->relationLoaded('variants') && $product->variants->isNotEmpty()) {
+            $variantStocks = $product->variants->pluck('stock')->filter(fn ($stock) => $stock !== null);
+
+            if ($variantStocks->isNotEmpty() && $variantStocks->every(fn ($stock) => (int) $stock <= 0)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+}
+
+if (! function_exists('seo_product_schema_images')) {
+    function seo_product_schema_images(\App\Models\Product $product): array|string|null
+    {
+        $paths = array_filter(array_merge([$product->image], (array) ($product->gallery ?? [])));
+        $urls = array_values(array_filter(array_map(
+            fn ($path) => store_media_url($path, 'large'),
+            $paths,
+        )));
+
+        if ($urls === []) {
+            return null;
+        }
+
+        return count($urls) === 1 ? $urls[0] : $urls;
+    }
+}
+
 if (! function_exists('resolve_kept_upload_path')) {
     /**
      * Xác nhận ảnh đại diện giữ lại — path phải khớp DB, không tin client tùy ý.

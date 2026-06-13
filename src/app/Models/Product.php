@@ -12,7 +12,7 @@ class Product extends Model
     use HasActiveVisibility;
 
     protected $fillable = [
-        'category_id', 'name', 'slug', 'sku', 'description',
+        'category_id', 'name', 'slug', 'sku', 'description', 'meta_title', 'meta_description',
         'price', 'sale_price', 'image', 'gallery', 'is_featured', 'is_active', 'stock',
     ];
 

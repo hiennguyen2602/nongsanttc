@@ -3,19 +3,28 @@
 @php
     $postShareUrl = route('posts.show', $post->slug, absolute: true);
     $postOgImage = store_media_url($post->image, 'large');
-    $postDescription = seo_meta_description($post->excerpt ?: $post->content);
+    $postTitle = filled($post->meta_title) ? trim($post->meta_title) : $post->title;
+    $postDescription = seo_entity_description($post->excerpt ?: $post->content, $post->meta_description);
 @endphp
 
-@section('title', $post->title . ' — ' . store_setting('name'))
+@section('title', seo_entity_title($post->title, $post->meta_title))
 @section('meta_description', $postDescription)
 @section('canonical', $postShareUrl)
 @section('og_type', 'article')
-@section('og_title', $post->title)
+@section('og_title', $postTitle)
 @section('og_description', $postDescription)
 @section('og_url', $postShareUrl)
+@section('og_image_alt', $postTitle)
 @if ($postOgImage)
     @section('og_image', $postOgImage)
 @endif
+
+@push('head')
+    @if ($post->published_at)
+        <meta property="article:published_time" content="{{ $post->published_at->toAtomString() }}">
+    @endif
+    <meta property="article:modified_time" content="{{ $post->updated_at->toAtomString() }}">
+@endpush
 
 @push('json-ld')
     @include('partials.seo.json-ld', ['data' => [
