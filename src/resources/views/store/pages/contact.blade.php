@@ -5,6 +5,10 @@
 @section('canonical', route('contact', absolute: true))
 
 @push('json-ld')
+    @include('partials.seo.breadcrumb', ['crumbs' => [
+        ['name' => 'Trang chủ', 'url' => route('home', absolute: true)],
+        ['name' => 'Liên hệ', 'url' => route('contact', absolute: true)],
+    ]])
     @php
         $localBusiness = [
             '@context' => 'https://schema.org',

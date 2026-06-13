@@ -12,6 +12,7 @@
     <style>.site-header,.site-header a,.site-header button{color:#fff}</style>
     @vite(['resources/css/app.css', 'resources/js/store.js'])
     @stack('head')
+    @include('partials.seo.organization')
     @stack('json-ld')
 </head>
 <body class="flex min-h-screen flex-col bg-white font-sans text-slate-800 antialiased">

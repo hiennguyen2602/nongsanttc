@@ -8,6 +8,13 @@
 @endif
 @section('canonical', seo_listing_canonical('posts.index', [], $posts))
 
+@push('json-ld')
+    @include('partials.seo.breadcrumb', ['crumbs' => [
+        ['name' => 'Trang chủ', 'url' => route('home', absolute: true)],
+        ['name' => 'Tin tức', 'url' => seo_listing_canonical('posts.index', [], $posts)],
+    ]])
+@endpush
+
 @section('content')
     <div class="bg-brand py-10 text-white">
         <div class="store-container">

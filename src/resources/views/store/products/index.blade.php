@@ -11,6 +11,25 @@
 @endif
 @section('canonical', seo_listing_canonical('products.index', $listingQuery, $products))
 
+@push('json-ld')
+    @php
+        $productCrumbs = [
+            ['name' => 'Trang chủ', 'url' => route('home', absolute: true)],
+            ['name' => 'Sản phẩm', 'url' => route('products.index', absolute: true)],
+        ];
+        if ($activeCategory) {
+            $activeCategoryModel = $categories->firstWhere('slug', $activeCategory);
+            if ($activeCategoryModel) {
+                $productCrumbs[] = [
+                    'name' => $activeCategoryModel->name,
+                    'url' => route('products.index', ['category' => $activeCategory], absolute: true),
+                ];
+            }
+        }
+    @endphp
+    @include('partials.seo.breadcrumb', ['crumbs' => $productCrumbs])
+@endpush
+
 @section('content')
     <div class="bg-brand py-10 text-white">
         <div class="store-container">
