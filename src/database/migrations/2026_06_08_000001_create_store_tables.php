@@ -23,6 +23,8 @@ return new class extends Migration
             $table->string('slug')->unique();
             $table->string('sku')->nullable();
             $table->text('description')->nullable();
+            $table->string('meta_title')->nullable();
+            $table->string('meta_description', 320)->nullable();
             $table->unsignedInteger('price')->nullable();
             $table->unsignedInteger('sale_price')->nullable();
             $table->string('image')->nullable();
@@ -51,6 +53,8 @@ return new class extends Migration
             $table->id();
             $table->string('title');
             $table->string('slug')->unique();
+            $table->string('meta_title')->nullable();
+            $table->string('meta_description', 320)->nullable();
             $table->text('excerpt')->nullable();
             $table->longText('content')->nullable();
             $table->string('image')->nullable();

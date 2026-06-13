@@ -29,13 +29,21 @@
         }
     @endphp
     @include('partials.seo.json-ld', ['data' => array_filter($organization, fn ($value) => $value !== null && $value !== '')])
-    @include('partials.seo.json-ld', ['data' => [
+    @include('partials.seo.json-ld', ['data' => array_filter([
         '@context' => 'https://schema.org',
         '@type' => 'WebSite',
         'name' => store_setting('name'),
         'url' => route('home', absolute: true),
         'description' => store_setting('tagline'),
-    ]])
+        'potentialAction' => [
+            '@type' => 'SearchAction',
+            'target' => [
+                '@type' => 'EntryPoint',
+                'urlTemplate' => route('products.index', ['q' => '{search_term_string}'], absolute: true),
+            ],
+            'query-input' => 'required name=search_term_string',
+        ],
+    ], fn ($value) => $value !== null && $value !== '')])
 @endpush
 
 @push('head')

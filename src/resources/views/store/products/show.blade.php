@@ -3,16 +3,19 @@
 @php
     $productShareUrl = route('products.show', $product->slug, absolute: true);
     $productOgImage = store_media_url($product->image, 'large');
-    $productDescription = seo_meta_description($product->description);
+    $productTitle = filled($product->meta_title) ? trim($product->meta_title) : $product->name;
+    $productDescription = seo_entity_description($product->description, $product->meta_description);
+    $productSchemaImages = seo_product_schema_images($product);
 @endphp
 
-@section('title', $product->name . ' — ' . store_setting('name'))
+@section('title', seo_entity_title($product->name, $product->meta_title))
 @section('meta_description', $productDescription)
 @section('canonical', $productShareUrl)
 @section('og_type', 'product')
-@section('og_title', $product->name)
+@section('og_title', $productTitle)
 @section('og_description', $productDescription)
 @section('og_url', $productShareUrl)
+@section('og_image_alt', $productTitle)
 @if ($productOgImage)
     @section('og_image', $productOgImage)
 @endif
@@ -42,7 +45,7 @@
             'description' => $productDescription,
             'sku' => $product->sku ?: null,
             'url' => $productShareUrl,
-            'image' => $productOgImage,
+            'image' => $productSchemaImages,
             'brand' => ['@type' => 'Brand', 'name' => store_setting('name')],
         ];
         if ($product->displayPrice() !== null) {
@@ -51,7 +54,9 @@
                 'url' => $productShareUrl,
                 'priceCurrency' => 'VND',
                 'price' => $product->displayPrice(),
-                'availability' => 'https://schema.org/InStock',
+                'availability' => seo_product_in_stock($product)
+                    ? 'https://schema.org/InStock'
+                    : 'https://schema.org/OutOfStock',
             ];
         }
     @endphp

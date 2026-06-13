@@ -2,14 +2,14 @@
 
 @section('title', 'Sản phẩm — ' . store_setting('name'))
 @section('meta_description', 'Danh sách nông sản sạch tại ' . store_setting('name') . '. ' . store_setting('tagline'))
-@if (request()->filled('q'))
-    @section('robots', 'noindex,follow')
+@php
+    $listingQuery = array_filter(['category' => $activeCategory]);
+    $listingRobots = seo_paginated_robots($products) ?? (request()->filled('q') ? 'noindex,follow' : null);
+@endphp
+@if ($listingRobots)
+    @section('robots', $listingRobots)
 @endif
-@if ($activeCategory)
-    @section('canonical', route('products.index', ['category' => $activeCategory], absolute: true))
-@else
-    @section('canonical', route('products.index', absolute: true))
-@endif
+@section('canonical', seo_listing_canonical('products.index', $listingQuery, $products))
 
 @section('content')
     <div class="bg-brand py-10 text-white">

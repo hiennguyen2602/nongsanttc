@@ -1,0 +1,22 @@
+---
+description: Quy ước Laravel migrations — gộp vào bảng gốc, check tồn tại khi migrate bổ sung
+globs: src/database/migrations/**/*.php
+alwaysApply: false
+---
+
+# Database migrations (nongsanttc)
+
+Dự án dev — trước production sẽ squash migrations thừa. Chi tiết: `docs/development.md`.
+
+## Bắt buộc khi thêm/sửa schema
+
+1. **Cập nhật migration `create` gốc** (`*_create_*_tables.php`) để fresh install đủ schema.
+2. **Migration bổ sung** (nếu cần cho DB đã migrate):
+   - `up()`: `Schema::hasTable()` / `Schema::hasColumn()` trước khi thêm.
+   - `down()`: check trước khi drop.
+   - Comment file: cột đã gộp vào migration gốc nào.
+3. **Không** chỉ tạo migration alter mà quên sửa file create gốc.
+
+## Trước production
+
+Gộp hết vào migration gốc → xóa file alter thừa → `migrate:fresh --seed` kiểm tra.

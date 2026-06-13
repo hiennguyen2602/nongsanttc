@@ -155,6 +155,21 @@
                 </div>
             </div>
 
+            <div class="x_panel">
+                <div class="x_title"><h3>SEO</h3></div>
+                <div class="x_content">
+                    <div class="mb-3">
+                        <label class="form-label">Tiêu đề SEO</label>
+                        <input type="text" name="meta_title" value="{{ old('meta_title', $product->meta_title ?? '') }}" maxlength="255" class="form-control" placeholder="Để trống = dùng tên sản phẩm">
+                    </div>
+                    <div class="mb-1">
+                        <label class="form-label">Mô tả SEO</label>
+                        <textarea name="meta_description" rows="3" maxlength="320" class="form-control" placeholder="Để trống = tự lấy từ mô tả sản phẩm">{{ old('meta_description', $product->meta_description ?? '') }}</textarea>
+                        <p class="mt-1 text-xs text-slate-500">Tối đa ~160 ký tự hiển thị trên Google.</p>
+                    </div>
+                </div>
+            </div>
+
             <div class="form-actions">
                 <button type="submit" class="btn btn-primary">Lưu sản phẩm</button>
                 <a href="{{ route('admin.products.index') }}" class="btn btn-secondary">Hủy</a>

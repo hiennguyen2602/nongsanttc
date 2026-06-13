@@ -1,6 +1,8 @@
 @extends('store.layouts.app')
 
 @section('title', 'Về chúng tôi — ' . store_setting('name'))
+@section('meta_description', seo_meta_description(store_setting('about_meta_description')))
+@section('canonical', route('about', absolute: true))
 
 @section('content')
     @php

@@ -37,12 +37,14 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::resource('products', ProductController::class);
     Route::resource('categories', CategoryController::class)->except(['show']);
     Route::resource('posts', PostController::class);
-    Route::resource('banners', BannerController::class)->except(['show']);
     Route::resource('promotions', PromotionController::class)->except(['show']);
 
     // Chỉ Admin — xem docs/store-logic.md mục 5
     Route::middleware('administrator')->group(function () {
         Route::resource('users', UserController::class)->except(['show']);
+        Route::resource('banners', BannerController::class)->except(['show']);
+        Route::get('settings', [SettingController::class, 'edit'])->name('settings.edit');
+        Route::put('settings', [SettingController::class, 'update'])->name('settings.update');
     });
 
     Route::get('orders', [OrderController::class, 'index'])->name('orders.index');
@@ -55,7 +57,4 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('contact-messages', [ContactMessageController::class, 'index'])->name('contact-messages.index');
     Route::get('contact-messages/{contactMessage}', [ContactMessageController::class, 'show'])->name('contact-messages.show');
     Route::delete('contact-messages/{contactMessage}', [ContactMessageController::class, 'destroy'])->name('contact-messages.destroy');
-
-    Route::get('settings', [SettingController::class, 'edit'])->name('settings.edit');
-    Route::put('settings', [SettingController::class, 'update'])->name('settings.update');
 });

@@ -24,6 +24,15 @@
                 <label class="form-label">Nội dung</label>
                 @include('admin.partials.rich-editor', ['name' => 'content', 'value' => $post->content ?? ''])
             </div>
+            <div class="mb-3">
+                <label class="form-label">Tiêu đề SEO</label>
+                <input type="text" name="meta_title" value="{{ old('meta_title', $post->meta_title ?? '') }}" maxlength="255" class="form-control" placeholder="Để trống = dùng tiêu đề bài viết">
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Mô tả SEO</label>
+                <textarea name="meta_description" rows="3" maxlength="320" class="form-control" placeholder="Để trống = tự lấy từ tóm tắt/nội dung">{{ old('meta_description', $post->meta_description ?? '') }}</textarea>
+                <p class="mt-1 text-xs text-slate-500">Tối đa ~160 ký tự hiển thị trên Google.</p>
+            </div>
             <div class="form-check mb-4">
                 <input type="hidden" name="is_published" value="0">
                 <input type="checkbox" name="is_published" value="1" id="is_published" class="form-check-input" @checked((string) old('is_published', ($post->is_published ?? true) ? '1' : '0') === '1')>

@@ -9,7 +9,13 @@
     $seoOgUrl = trim($__env->yieldContent('og_url')) ?: $seoCanonical;
     $seoOgImage = trim($__env->yieldContent('og_image')) ?: store_media_url(store_setting('hero_desktop'), 'large');
     $seoOgImageSecure = $seoOgImage ? preg_replace('/^http:/', 'https:', $seoOgImage) : null;
+    $seoOgImageAlt = trim($__env->yieldContent('og_image_alt')) ?: $seoOgTitle;
+    $googleSiteVerification = trim((string) store_setting('google_site_verification', ''));
 @endphp
+
+@if ($googleSiteVerification !== '')
+    <meta name="google-site-verification" content="{{ $googleSiteVerification }}">
+@endif
 
 <link rel="canonical" href="{{ $seoCanonical }}">
 <meta name="robots" content="{{ $seoRobots }}">
@@ -25,6 +31,7 @@
     @if ($seoOgImageSecure)
         <meta property="og:image:secure_url" content="{{ $seoOgImageSecure }}">
     @endif
+    <meta property="og:image:alt" content="{{ $seoOgImageAlt }}">
 @endif
 
 <meta name="twitter:card" content="summary_large_image">

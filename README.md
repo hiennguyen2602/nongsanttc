@@ -14,6 +14,10 @@ docker compose exec app php artisan migrate --seed --force
 
 Truy cập: http://localhost:8080
 
+## Phát triển
+
+Quy ước migration (gộp vào bảng gốc, squash trước production): [docs/development.md](docs/development.md)
+
 ## Tại sao lần đầu vào chậm?
 
 **Nguyên nhân chính đã xác định:** khi có file `public/hot`, Laravel bắt browser tải CSS/JS từ **Vite dev** (`:5173`). Trên Windows + Docker, lần compile Tailwind đầu mất **~60 giây** — trong lúc đó trang trắng hoặc không có style.

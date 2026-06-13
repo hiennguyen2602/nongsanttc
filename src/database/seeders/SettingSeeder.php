@@ -12,6 +12,9 @@ class SettingSeeder extends Seeder
         $settings = [
             ['group' => 'general', 'key' => 'name', 'value' => 'Nông Sản TTC', 'type' => 'text', 'label' => 'Tên website'],
             ['group' => 'general', 'key' => 'tagline', 'value' => 'Đặc sản nông sản sạch — từ đồng quê đến bàn ăn', 'type' => 'text', 'label' => 'Slogan'],
+            ['group' => 'seo', 'key' => 'google_site_verification', 'value' => '', 'type' => 'text', 'label' => 'Google Search Console (mã xác minh)'],
+            ['group' => 'seo', 'key' => 'about_meta_description', 'value' => 'Tìm hiểu câu chuyện, sứ mệnh và giá trị của Nông Sản TTC — nông sản sạch từ đồng quê đến bàn ăn.', 'type' => 'textarea', 'label' => 'Meta mô tả — Về chúng tôi'],
+            ['group' => 'seo', 'key' => 'contact_meta_description', 'value' => 'Liên hệ Nông Sản TTC — địa chỉ, điện thoại, email và bản đồ. Chúng tôi sẵn sàng hỗ trợ bạn.', 'type' => 'textarea', 'label' => 'Meta mô tả — Liên hệ'],
             ['group' => 'contact', 'key' => 'company_name', 'value' => 'Công ty TNHH sản xuất và chế biến nông sản TTC', 'type' => 'text', 'label' => 'Tên công ty'],
             ['group' => 'contact', 'key' => 'phone', 'value' => '0901 234 567', 'type' => 'text', 'label' => 'Số điện thoại'],
             ['group' => 'contact', 'key' => 'email', 'value' => 'info@nongsanttc.com', 'type' => 'text', 'label' => 'Email'],
