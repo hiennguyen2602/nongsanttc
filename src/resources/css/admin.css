@@ -12,6 +12,13 @@
 @source '../js/admin/components.js';
 @source '../js/admin-editor.js';
 
+.btn-primary:disabled,
+.btn-secondary:disabled,
+button.is-submitting {
+    cursor: wait;
+    opacity: 0.72;
+}
+
 [x-cloak] {
     display: none !important;
 }
@@ -1352,6 +1359,11 @@ body.admin-auth {
     pointer-events: none;
     -webkit-user-drag: none;
     user-select: none;
+}
+
+.product-gallery-nav {
+    padding: 0;
+    cursor: pointer;
 }
 
 .admin-body .order-show-items-table {

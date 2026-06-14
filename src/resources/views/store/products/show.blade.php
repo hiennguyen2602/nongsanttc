@@ -109,23 +109,49 @@
                             </div>
                         </template>
                     </div>
-                    <button type="button" x-show="gallery.length > 1" @click.stop="prev()" class="absolute left-2 top-1/2 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full bg-white/80 text-xl text-slate-700 shadow transition hover:bg-white">&lsaquo;</button>
-                    <button type="button" x-show="gallery.length > 1" @click.stop="next()" class="absolute right-2 top-1/2 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full bg-white/80 text-xl text-slate-700 shadow transition hover:bg-white">&rsaquo;</button>
+                    <button type="button" x-show="gallery.length > 1" @click.stop="prev()" class="product-gallery-nav absolute left-2 top-1/2 z-10 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full bg-white/80 text-slate-700 shadow transition hover:bg-white" aria-label="Ảnh trước">
+                        <svg class="h-5 w-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+                    </button>
+                    <button type="button" x-show="gallery.length > 1" @click.stop="next()" class="product-gallery-nav absolute right-2 top-1/2 z-10 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full bg-white/80 text-slate-700 shadow transition hover:bg-white" aria-label="Ảnh sau">
+                        <svg class="h-5 w-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                    </button>
                 </div>
-                <div class="product-gallery-thumbs flex gap-2 overflow-x-auto pb-2">
-                    <template x-for="(img, i) in gallery" :key="i">
-                        <button type="button" data-gallery-thumb @click="activeIndex = i" class="h-16 w-16 shrink-0 overflow-hidden rounded border-2 transition hover:border-brand" :class="activeIndex === i ? 'border-brand' : 'border-slate-200'">
-                            <img
-                                :src="img.thumb"
-                                :srcset="img.srcset"
-                                sizes="64px"
-                                alt=""
-                                class="h-full w-full object-cover"
-                                loading="lazy"
-                                decoding="async"
-                            >
-                        </button>
-                    </template>
+                <div
+                    class="product-gallery-thumbs-carousel relative"
+                    x-show.flex="gallery.length > 1"
+                    x-cloak
+                >
+                    <button
+                        type="button"
+                        class="product-gallery-thumbs-nav absolute left-0 top-1/2 z-10 flex h-8 w-8 -translate-y-1/2 items-center justify-center"
+                        aria-label="Ảnh trước"
+                        @click.stop="scrollThumbsPrev()"
+                    >
+                        <svg class="h-4 w-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+                    </button>
+                    <div class="product-gallery-thumbs" x-ref="thumbStrip">
+                        <template x-for="(img, i) in gallery" :key="i">
+                            <button type="button" data-gallery-thumb @click.stop="activeIndex = i" class="h-16 w-16 shrink-0 overflow-hidden rounded border-2 transition hover:border-brand" :class="activeIndex === i ? 'border-brand' : 'border-slate-200'">
+                                <img
+                                    :src="img.thumb"
+                                    :srcset="img.srcset"
+                                    sizes="64px"
+                                    alt=""
+                                    class="h-full w-full object-cover"
+                                    loading="lazy"
+                                    decoding="async"
+                                >
+                            </button>
+                        </template>
+                    </div>
+                    <button
+                        type="button"
+                        class="product-gallery-thumbs-nav absolute right-0 top-1/2 z-10 flex h-8 w-8 -translate-y-1/2 items-center justify-center"
+                        aria-label="Ảnh sau"
+                        @click.stop="scrollThumbsNext()"
+                    >
+                        <svg class="h-4 w-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                    </button>
                 </div>
             </div>
 

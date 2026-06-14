@@ -10,6 +10,32 @@ document.addEventListener('alpine:init', () => {
         gallery: config.gallery,
         activeIndex: 0,
 
+        init() {
+            this.$watch('activeIndex', () => {
+                this.scrollActiveThumbIntoView();
+            });
+        },
+
+        scrollActiveThumbIntoView() {
+            this.$nextTick(() => {
+                const strip = this.$refs.thumbStrip;
+                if (!strip) {
+                    return;
+                }
+
+                const button = strip.querySelectorAll('[data-gallery-thumb]')[this.activeIndex];
+                button?.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+            });
+        },
+
+        scrollThumbsPrev() {
+            this.prev();
+        },
+
+        scrollThumbsNext() {
+            this.next();
+        },
+
         ...createGallerySwipeMethods(function itemCount() {
             return this.gallery.length;
         }),
