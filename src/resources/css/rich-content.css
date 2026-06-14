@@ -1,7 +1,26 @@
 /* Hiển thị HTML từ Quill editor — dùng chung store + admin */
 
-.rich-content.prose p,
-.rich-content.prose img {
+/* Khoảng cách dọc do editor quyết định (Enter / <p><br></p>), không dùng margin mặc định của prose */
+.rich-content.prose :where(
+    p,
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6,
+    ul,
+    ol,
+    li,
+    blockquote,
+    pre,
+    figure,
+    figcaption,
+    hr,
+    table,
+    img,
+    video
+) {
     margin-block: 0;
 }
 
