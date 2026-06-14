@@ -1044,6 +1044,30 @@
     min-height: 280px;
 }
 
+/* Khoảng cách dọc do editor quyết định — khớp hiển thị store/admin */
+.admin-body .rich-editor .ql-editor :where(
+    p,
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6,
+    ul,
+    ol,
+    li,
+    blockquote,
+    pre,
+    figure,
+    figcaption,
+    hr,
+    table,
+    img,
+    video
+) {
+    margin-block: 0;
+}
+
 /* Ảnh trong editor: màn nhỏ co về 100% (không tràn ngang), màn to tối đa 600px */
 .admin-body .rich-editor .ql-editor img {
     max-width: 100%;

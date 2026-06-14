@@ -270,9 +270,7 @@
         @if ($product->description)
             <div class="mt-12 border-t border-slate-200 pt-10">
                 <h2 class="mb-4 text-lg font-bold text-slate-900">Mô tả sản phẩm</h2>
-                <div class="prose prose-slate max-w-none text-slate-600">
-                    {!! $product->description !!}
-                </div>
+                @include('partials.rich-content', ['html' => $product->description])
             </div>
         @endif
 
