@@ -122,8 +122,10 @@
             </div>
 
             @if ($product->description)
-                <div class="mt-8 border-t border-slate-200 pt-6">
-                    <h3 class="panel-title mb-2">Mô tả chi tiết</h3>
+                <div class="mt-12">
+                    <div class="mb-4 border-b border-slate-200">
+                        <h2 class="inline-block w-fit border-b border-black -mb-px text-lg font-bold text-slate-900">Mô tả sản phẩm</h2>
+                    </div>
                     @include('partials.rich-content', ['html' => $product->description])
                 </div>
             @endif

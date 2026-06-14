@@ -84,7 +84,7 @@
                     </div>
 
                     <div class="mb-1">
-                        <label class="form-label">Mô tả chi tiết</label>
+                        <label class="form-label">Mô tả sản phẩm</label>
                         @include('admin.partials.rich-editor', ['name' => 'description', 'value' => $product->description ?? ''])
                     </div>
                 </div>
