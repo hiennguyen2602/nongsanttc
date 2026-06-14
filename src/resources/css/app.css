@@ -318,6 +318,46 @@ html {
     user-select: none;
 }
 
+.product-gallery-nav {
+    padding: 0;
+    cursor: pointer;
+}
+
+/* Thumbnail carousel — một hàng, ẩn scrollbar, nút ‹ › absolute hai bên */
+.product-gallery-thumbs-carousel {
+    padding-inline: 2.25rem;
+}
+
+.product-gallery-thumbs {
+    display: flex;
+    gap: 0.5rem;
+    overflow-x: auto;
+    padding-block: 0.125rem;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+.product-gallery-thumbs::-webkit-scrollbar {
+    display: none;
+}
+
+.product-gallery-thumbs-nav {
+    border-radius: 9999px;
+    border: 1px solid rgb(226 232 240);
+    background: rgb(255 255 255);
+    color: rgb(51 65 85);
+    box-shadow: 0 1px 2px rgb(15 23 42 / 0.06);
+    transition: background-color 0.15s ease, border-color 0.15s ease;
+    cursor: pointer;
+    padding: 0;
+}
+
+.product-gallery-thumbs-nav:hover {
+    border-color: var(--color-brand);
+    background: var(--color-brand-muted);
+    color: var(--color-brand-dark);
+}
+
 /* Homepage banner CTA — Safari/iPad: grid + min-height cố định, không absolute full-bleed */
 .banner-cta-grid {
     align-items: stretch;

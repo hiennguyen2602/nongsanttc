@@ -49,8 +49,12 @@
                                     </div>
                                 </template>
                             </div>
-                            <button type="button" x-show="images.length > 1" @click.stop="prev()" class="absolute left-2 top-1/2 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full bg-white/80 text-xl text-slate-700 shadow hover:bg-white">&lsaquo;</button>
-                            <button type="button" x-show="images.length > 1" @click.stop="next()" class="absolute right-2 top-1/2 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full bg-white/80 text-xl text-slate-700 shadow hover:bg-white">&rsaquo;</button>
+                            <button type="button" x-show="images.length > 1" @click.stop="prev()" class="product-gallery-nav absolute left-2 top-1/2 z-10 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full bg-white/80 text-slate-700 shadow transition hover:bg-white" aria-label="Ảnh trước">
+                                <svg class="h-5 w-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+                            </button>
+                            <button type="button" x-show="images.length > 1" @click.stop="next()" class="product-gallery-nav absolute right-2 top-1/2 z-10 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full bg-white/80 text-slate-700 shadow transition hover:bg-white" aria-label="Ảnh sau">
+                                <svg class="h-5 w-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                            </button>
                         </div>
                         <div class="product-gallery-thumbs mt-3 flex flex-wrap gap-2">
                             <template x-for="(img, i) in images" :key="i">

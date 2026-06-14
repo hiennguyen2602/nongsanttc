@@ -39,7 +39,50 @@ function initNumberInputs() {
     });
 }
 
+function initFormSubmitLock() {
+    document.querySelectorAll('form').forEach((form) => {
+        if (form.dataset.submitLockInit || form.method.toLowerCase() !== 'post') {
+            return;
+        }
+
+        form.dataset.submitLockInit = '1';
+
+        form.addEventListener('submit', (event) => {
+            if (form.dataset.submitting === '1') {
+                event.preventDefault();
+                return;
+            }
+
+            const submitters = form.querySelectorAll('button[type="submit"], input[type="submit"]');
+            if (!submitters.length) {
+                return;
+            }
+
+            form.dataset.submitting = '1';
+
+            submitters.forEach((button) => {
+                if (!button.dataset.submitLabel) {
+                    button.dataset.submitLabel = button.tagName === 'INPUT'
+                        ? button.value
+                        : button.textContent.trim();
+                }
+
+                button.disabled = true;
+                button.classList.add('is-submitting');
+                button.setAttribute('aria-busy', 'true');
+
+                if (button.tagName === 'BUTTON') {
+                    button.textContent = 'Đang xử lý...';
+                } else {
+                    button.value = 'Đang xử lý...';
+                }
+            });
+        });
+    });
+}
+
 export function bootAdminEnhancements() {
     bootRichEditors();
     initNumberInputs();
+    initFormSubmitLock();
 }
