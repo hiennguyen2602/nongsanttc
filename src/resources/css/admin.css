@@ -10,7 +10,8 @@
 @source '../views/partials/**/*.blade.php';
 @source '../js/admin.js';
 @source '../js/admin/components.js';
-@source '../js/admin-editor.js';
+@source '../js/admin/confirm-modal.js';
+@source '../js/admin/confirm-forms.js';
 
 .btn-primary:disabled,
 .btn-secondary:disabled,
@@ -1435,4 +1436,131 @@ body.admin-auth {
 .admin-body .order-status-inline-fields .btn {
     flex: 0 0 auto;
     width: auto;
+}
+
+/* ─── Confirm modal (Bootstrap markup, giống manager-stock) ─── */
+.admin-body .modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1055;
+    display: none;
+    width: 100%;
+    height: 100%;
+    overflow-x: hidden;
+    overflow-y: auto;
+    outline: 0;
+}
+
+.admin-body .modal.show {
+    display: block;
+}
+
+.admin-body .modal.fade .modal-dialog {
+    transform: translate(0, -1rem);
+    transition: transform 0.2s ease-out;
+}
+
+.admin-body .modal.show .modal-dialog {
+    transform: none;
+}
+
+.admin-body .modal-dialog {
+    position: relative;
+    width: auto;
+    max-width: 28rem;
+    margin: 1.75rem auto;
+    pointer-events: none;
+}
+
+.admin-body .modal-dialog-centered {
+    display: flex;
+    align-items: center;
+    min-height: calc(100% - 3.5rem);
+}
+
+.admin-body .modal-content {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    pointer-events: auto;
+    background-color: #fff;
+    border: 1px solid var(--admin-border);
+    border-radius: 0.5rem;
+    box-shadow: 0 0.5rem 1rem rgb(15 23 42 / 0.15);
+}
+
+.admin-body .modal-header {
+    display: flex;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem 1.25rem;
+    border-bottom: 1px solid var(--admin-border);
+}
+
+.admin-body .modal-title {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #0f172a;
+}
+
+.admin-body .modal-body {
+    position: relative;
+    flex: 1 1 auto;
+    padding: 1.25rem;
+    color: #334155;
+    line-height: 1.6;
+}
+
+.admin-body .modal-body .confirm-emphasis {
+    color: #dc2626;
+    font-weight: 600;
+}
+
+.admin-body .modal-footer {
+    display: flex;
+    flex-shrink: 0;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.25rem 1.25rem;
+    border-top: 1px solid var(--admin-border);
+}
+
+.admin-body .btn-close {
+    box-sizing: content-box;
+    width: 0.75rem;
+    height: 0.75rem;
+    padding: 0.25rem;
+    border: 0;
+    border-radius: 0.25rem;
+    background: transparent url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23000'%3e%3cpath d='M.293.293a1 1 0 0 1 1.414 0L8 6.586 14.293.293a1 1 0 1 1 1.414 1.414L9.414 8l6.293 6.293a1 1 0 0 1-1.414 1.414L8 9.414l-6.293 6.293a1 1 0 0 1-1.414-1.414L6.586 8 .293 1.707a1 1 0 0 1 0-1.414z'/%3e%3c/svg%3e") center / 0.75rem auto no-repeat;
+    opacity: 0.55;
+    cursor: pointer;
+}
+
+.admin-body .btn-close:hover {
+    opacity: 0.85;
+}
+
+.modal-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1050;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgb(15 23 42 / 0.45);
+}
+
+.modal-backdrop.fade {
+    opacity: 0;
+}
+
+.modal-backdrop.show {
+    opacity: 1;
 }

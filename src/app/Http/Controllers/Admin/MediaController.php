@@ -3,19 +3,16 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\UploadEditorImageRequest;
 use App\Services\ImageUploadService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class MediaController extends Controller
 {
-    public function upload(Request $request, ImageUploadService $uploader): JsonResponse
+    public function upload(UploadEditorImageRequest $request, ImageUploadService $uploader): JsonResponse
     {
         try {
-            $request->validate([
-                'file' => image_upload_file_rules(['required']),
-            ], image_upload_validation_messages('file'));
-
             $result = $uploader->upload(
                 $request->file('file'),
                 'uploads/editor/' . date('Y/m'),

@@ -3,10 +3,10 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\StoreUserRequest;
+use App\Http\Requests\Admin\UpdateUserRequest;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
-use Illuminate\Validation\Rule;
 use Illuminate\View\View;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
@@ -27,9 +27,9 @@ class UserController extends Controller
         return view('admin.users.create');
     }
 
-    public function store(Request $request): RedirectResponse
+    public function store(StoreUserRequest $request): RedirectResponse
     {
-        User::query()->create($this->validated($request));
+        User::query()->create($request->validated());
 
         return redirect()->route('admin.users.index')->with('success', 'Thêm người dùng thành công.');
     }
@@ -41,11 +41,11 @@ class UserController extends Controller
         return view('admin.users.edit', compact('user'));
     }
 
-    public function update(Request $request, User $user): RedirectResponse
+    public function update(UpdateUserRequest $request, User $user): RedirectResponse
     {
         $this->ensureManagedUser($user);
 
-        $user->update($this->validated($request, $user));
+        $user->update($request->toModelData());
 
         return redirect()->route('admin.users.index')->with('success', 'Cập nhật người dùng thành công.');
     }
@@ -69,29 +69,5 @@ class UserController extends Controller
         if (! in_array((int) $user->type, [User::TYPE_ADMIN, User::TYPE_STAFF], true)) {
             throw new NotFoundHttpException();
         }
-    }
-
-    private function validated(Request $request, ?User $user = null): array
-    {
-        $rules = [
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'email', 'max:255', Rule::unique('users')->ignore($user?->id)],
-            'type' => ['required', Rule::in([User::TYPE_ADMIN, User::TYPE_STAFF])],
-            'status' => ['required', Rule::in([0, 1])],
-        ];
-
-        if ($user === null) {
-            $rules['password'] = ['required', 'confirmed', admin_password_rule()];
-        } else {
-            $rules['password'] = ['nullable', 'confirmed', admin_password_rule()];
-        }
-
-        $data = $request->validate($rules);
-
-        if (empty($data['password'])) {
-            unset($data['password']);
-        }
-
-        return $data;
     }
 }

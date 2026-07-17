@@ -1,5 +1,6 @@
 import Quill from 'quill';
 import 'quill/dist/quill.snow.css';
+import { buildRemoveConfirmMessage, confirmDialog } from './admin/confirm-modal.js';
 
 let formatsRegistered = false;
 
@@ -193,8 +194,16 @@ function attachImageDeletion(quill, wrapper, deleteUrl, urlToPath) {
     editorRoot.addEventListener('scroll', position);
     btn.addEventListener('mouseleave', scheduleHide);
 
-    btn.addEventListener('click', () => {
+    btn.addEventListener('click', async () => {
         if (! currentImg) {
+            return;
+        }
+
+        const confirmed = await confirmDialog(
+            buildRemoveConfirmMessage('ảnh này khỏi nội dung', 'Thao tác này không thể hoàn tác.'),
+        );
+
+        if (! confirmed) {
             return;
         }
 

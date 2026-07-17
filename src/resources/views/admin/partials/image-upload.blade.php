@@ -8,7 +8,7 @@
     'imgClass' => '',
 ])
 
-<div class="mb-3" x-data="featuredImage(@js($existing))">
+<div class="mb-3" x-data="featuredImage(@js($existing), @js($label))">
     <label class="form-label" @if($attributes->has('for')) for="{{ $attributes->get('for') }}" @endif>{{ $label }}@if ($required) *@endif</label>
 
     <div class="image-grid mb-2" x-show="existing || newImage" style="display:none">

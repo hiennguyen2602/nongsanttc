@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Store;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Store\AddCartItemRequest;
+use App\Http\Requests\Store\UpdateCartItemRequest;
 use App\Services\CartService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
@@ -21,17 +23,9 @@ class CartController extends Controller
         ]);
     }
 
-    public function add(Request $request, CartService $cart): RedirectResponse
+    public function add(AddCartItemRequest $request, CartService $cart): RedirectResponse
     {
-        $maxQty = CartService::MAX_QUANTITY;
-
-        $data = $request->validate([
-            'product_id' => ['required', 'exists:products,id'],
-            'variant_id' => ['nullable', 'integer', 'exists:product_variants,id'],
-            'quantity' => ['nullable', 'integer', 'min:1', 'max:' . $maxQty],
-        ], [
-            'quantity.max' => 'Số lượng vượt quá giới hạn cho phép.',
-        ]);
+        $data = $request->validated();
 
         $variantId = ! empty($data['variant_id']) ? (int) $data['variant_id'] : null;
 
@@ -52,16 +46,9 @@ class CartController extends Controller
         return back()->with('success', 'Đã thêm sản phẩm vào giỏ hàng.');
     }
 
-    public function update(Request $request, CartService $cart): RedirectResponse|JsonResponse
+    public function update(UpdateCartItemRequest $request, CartService $cart): RedirectResponse|JsonResponse
     {
-        $maxQty = CartService::MAX_QUANTITY;
-
-        $data = $request->validate([
-            'key' => ['required', 'string'],
-            'quantity' => ['required', 'integer', 'min:0', 'max:' . $maxQty],
-        ], [
-            'quantity.max' => 'Số lượng vượt quá giới hạn cho phép.',
-        ]);
+        $data = $request->validated();
 
         try {
             $cart->update($data['key'], (int) $data['quantity']);

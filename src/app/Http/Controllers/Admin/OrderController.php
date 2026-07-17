@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Concerns\ResolvesDateRange;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\UpdateOrderStatusRequest;
 use App\Models\Order;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -50,13 +51,9 @@ class OrderController extends Controller
         return view('admin.orders.show', compact('order'));
     }
 
-    public function updateStatus(Request $request, Order $order): RedirectResponse
+    public function updateStatus(UpdateOrderStatusRequest $request, Order $order): RedirectResponse
     {
-        $request->validate([
-            'status' => ['required', 'in:' . implode(',', array_keys(Order::statusLabels()))],
-        ]);
-
-        $order->update(['status' => $request->status]);
+        $order->update(['status' => $request->validated('status')]);
 
         return back()->with('success', 'Cập nhật trạng thái đơn hàng thành công.');
     }

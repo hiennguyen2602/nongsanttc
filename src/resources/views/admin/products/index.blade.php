@@ -50,7 +50,7 @@
                                 </td>
                                 <td class="table-actions">
                                     <a href="{{ route('admin.products.edit', $product) }}" class="btn btn-link btn-sm">Sửa</a>
-                                    <form method="POST" action="{{ route('admin.products.destroy', $product) }}" class="inline" onsubmit="return confirm('Xóa sản phẩm?')">
+                                    <form method="POST" action="{{ route('admin.products.destroy', $product) }}" class="inline" data-confirm-entity="sản phẩm" data-confirm-name="{{ $product->name }}">
                                         @csrf @method('DELETE')
                                         <button type="submit" class="btn btn-link btn-link-danger btn-sm">Xóa</button>
                                     </form>

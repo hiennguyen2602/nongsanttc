@@ -34,7 +34,7 @@
                                 <td class="table-actions">
                                     <a href="{{ route('admin.users.edit', $user) }}" class="btn btn-link btn-sm">Sửa</a>
                                     @if($user->id !== auth()->id())
-                                        <form method="POST" action="{{ route('admin.users.destroy', $user) }}" class="inline" onsubmit="return confirm('Xóa?')">
+                                        <form method="POST" action="{{ route('admin.users.destroy', $user) }}" class="inline" data-confirm-entity="người dùng" data-confirm-name="{{ $user->name }}">
                                             @csrf @method('DELETE')
                                             <button type="submit" class="btn btn-link btn-link-danger btn-sm">Xóa</button>
                                         </form>
