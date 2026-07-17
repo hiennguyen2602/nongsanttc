@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\StoreProductRequest;
+use App\Http\Requests\Admin\UpdateProductRequest;
 use App\Models\Category;
 use App\Models\Product;
 use App\Services\EditorImageService;
@@ -40,11 +42,9 @@ class ProductController extends Controller
         ]);
     }
 
-    public function store(Request $request, ImageUploadService $uploader): RedirectResponse
+    public function store(StoreProductRequest $request, ImageUploadService $uploader): RedirectResponse
     {
-        $data = $this->validated($request);
-        $this->ensureHasImage($request, null);
-        $this->validateVariants($request);
+        $data = $request->toModelData();
 
         [$image, $gallery] = $this->handleImages($request, $uploader, null);
         $data['image'] = $image;
@@ -66,12 +66,13 @@ class ProductController extends Controller
         ]);
     }
 
-    public function update(Request $request, Product $product, ImageUploadService $uploader, EditorImageService $editorImages): RedirectResponse
-    {
-        $data = $this->validated($request, $product);
-        $this->ensureHasImage($request, $product);
-        $this->validateVariants($request);
-
+    public function update(
+        UpdateProductRequest $request,
+        Product $product,
+        ImageUploadService $uploader,
+        EditorImageService $editorImages,
+    ): RedirectResponse {
+        $data = $request->toModelData();
         $oldDescription = $product->description;
 
         [$image, $gallery] = $this->handleImages($request, $uploader, $product);
@@ -98,81 +99,8 @@ class ProductController extends Controller
         return redirect()->route('admin.products.index')->with('success', 'Xóa sản phẩm thành công.');
     }
 
-    private function validated(Request $request, ?Product $product = null): array
-    {
-        $request->merge([
-            'sale_price' => blank($request->input('sale_price')) ? null : $request->input('sale_price'),
-            'stock' => blank($request->input('stock')) ? null : $request->input('stock'),
-        ]);
-
-        $data = $request->validate([
-            'category_id' => ['nullable', 'exists:categories,id'],
-            'name' => ['required', 'string', 'max:255'],
-            'sku' => ['nullable', 'string', 'max:100'],
-            'description' => ['nullable', 'string'],
-            'meta_title' => ['nullable', 'string', 'max:255'],
-            'meta_description' => ['nullable', 'string', 'max:320'],
-            'price' => ['required', 'integer', 'min:1'],
-            'sale_price' => ['nullable', 'integer', 'min:0'],
-            'stock' => ['nullable', 'integer', 'min:0'],
-            'is_featured' => ['nullable', 'boolean'],
-            'is_active' => ['nullable', 'boolean'],
-            'images' => ['nullable', 'array'],
-            'images.*' => image_upload_file_rules(['nullable']),
-        ], image_upload_validation_messages('images.*'));
-
-        unset($data['images']);
-
-        $data['slug'] = generate_unique_slug($data['name'], 'products', $product?->id);
-
-        $sku = trim((string) ($data['sku'] ?? ''));
-        $data['sku'] = $sku !== '' ? $sku : generate_unique_sku();
-
-        $data['is_featured'] = $request->boolean('is_featured');
-        $data['is_active'] = $request->boolean('is_active', true);
-
-        return $data;
-    }
-
-    /**
-     * Biến thể có Vị hoặc Size thì bắt buộc phải có giá.
-     */
-    private function validateVariants(Request $request): void
-    {
-        $errors = [];
-
-        foreach ((array) $request->input('variants', []) as $index => $variant) {
-            $flavor = trim((string) ($variant['flavor'] ?? ''));
-            $size = trim((string) ($variant['size'] ?? ''));
-            $price = trim((string) ($variant['price'] ?? ''));
-
-            if (($flavor !== '' || $size !== '') && $price === '') {
-                $errors["variants.{$index}.price"] = 'Vui lòng nhập giá cho biến thể.';
-            }
-        }
-
-        if ($errors !== []) {
-            throw ValidationException::withMessages($errors);
-        }
-    }
-
-    /**
-     * Yêu cầu sản phẩm phải có ít nhất một ảnh (ảnh cũ giữ lại hoặc ảnh mới).
-     */
-    private function ensureHasImage(Request $request, ?Product $product): void
-    {
-        $hasNew = collect((array) $request->file('images', []))->filter()->isNotEmpty();
-        $hasKept = count($this->keptProductImages($request, $product)) > 0;
-
-        if (! $hasNew && ! $hasKept) {
-            throw ValidationException::withMessages([
-                'images' => 'Vui lòng chọn ít nhất một ảnh sản phẩm.',
-            ]);
-        }
-    }
-
     /** @return list<string> */
-    private function keptProductImages(Request $request, ?Product $product): array
+    private function keptProductImages(StoreProductRequest|UpdateProductRequest $request, ?Product $product): array
     {
         $submitted = (array) $request->input('existing_images', []);
 
@@ -198,8 +126,11 @@ class ProductController extends Controller
      *
      * @return array{0: ?string, 1: array<int, string>}
      */
-    private function handleImages(Request $request, ImageUploadService $uploader, ?Product $product): array
-    {
+    private function handleImages(
+        StoreProductRequest|UpdateProductRequest $request,
+        ImageUploadService $uploader,
+        ?Product $product,
+    ): array {
         $kept = $this->keptProductImages($request, $product);
 
         if ($product) {
@@ -244,7 +175,7 @@ class ProductController extends Controller
      * Đồng bộ biến thể: giữ nguyên ID của biến thể cũ (update), tạo mới biến thể chưa có,
      * và chỉ xóa những biến thể đã bị bỏ. Tránh đổi ID làm hỏng giỏ hàng/đơn cũ.
      */
-    private function syncVariants(Product $product, Request $request): void
+    private function syncVariants(Product $product, StoreProductRequest|UpdateProductRequest $request): void
     {
         $variants = $request->input('variants', []);
         $keptIds = [];

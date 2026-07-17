@@ -23,7 +23,7 @@
                                 <td class="cell-num">{{ $category->sort_order }}</td>
                                 <td class="table-actions">
                                     <a href="{{ route('admin.categories.edit', $category) }}" class="btn btn-link btn-sm">Sửa</a>
-                                    <form method="POST" action="{{ route('admin.categories.destroy', $category) }}" class="inline" onsubmit="return confirm('Xóa?')">@csrf @method('DELETE')<button type="submit" class="btn btn-link btn-link-danger btn-sm">Xóa</button></form>
+                                    <form method="POST" action="{{ route('admin.categories.destroy', $category) }}" class="inline" data-confirm-entity="danh mục" data-confirm-name="{{ $category->name }}">@csrf @method('DELETE')<button type="submit" class="btn btn-link btn-link-danger btn-sm">Xóa</button></form>
                                 </td>
                             </tr>
                         @endforeach

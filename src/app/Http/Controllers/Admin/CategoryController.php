@@ -3,9 +3,9 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\CategoryRequest;
 use App\Models\Category;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
 use Illuminate\View\View;
 
 class CategoryController extends Controller
@@ -24,10 +24,9 @@ class CategoryController extends Controller
         ]);
     }
 
-    public function store(Request $request): RedirectResponse
+    public function store(CategoryRequest $request): RedirectResponse
     {
-        $data = $this->validated($request);
-        Category::query()->create($data);
+        Category::query()->create($request->toModelData());
 
         return redirect()->route('admin.categories.index')->with('success', 'Thêm danh mục thành công.');
     }
@@ -37,9 +36,9 @@ class CategoryController extends Controller
         return view('admin.categories.edit', compact('category'));
     }
 
-    public function update(Request $request, Category $category): RedirectResponse
+    public function update(CategoryRequest $request, Category $category): RedirectResponse
     {
-        $category->update($this->validated($request, $category));
+        $category->update($request->toModelData());
 
         return redirect()->route('admin.categories.index')->with('success', 'Cập nhật danh mục thành công.');
     }
@@ -49,18 +48,5 @@ class CategoryController extends Controller
         $category->delete();
 
         return redirect()->route('admin.categories.index')->with('success', 'Xóa danh mục thành công.');
-    }
-
-    private function validated(Request $request, ?Category $category = null): array
-    {
-        $data = $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'sort_order' => ['nullable', 'integer', 'min:1'],
-        ]);
-
-        $data['slug'] = generate_unique_slug($data['name'], 'categories', $category?->id);
-        $data['sort_order'] = max(1, (int) ($data['sort_order'] ?? 1));
-
-        return $data;
     }
 }

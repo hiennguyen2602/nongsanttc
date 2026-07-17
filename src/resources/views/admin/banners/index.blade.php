@@ -33,7 +33,7 @@
                                 <td class="cell-status">@include('admin.partials.status-badge', ['label' => $banner->visibilityLabel(), 'class' => $banner->visibilityBadgeClass()])</td>
                                 <td class="table-actions">
                                     <a href="{{ route('admin.banners.edit', $banner) }}" class="btn btn-link btn-sm">Sửa</a>
-                                    <form method="POST" action="{{ route('admin.banners.destroy', $banner) }}" class="inline" onsubmit="return confirm('Xóa?')">@csrf @method('DELETE')<button type="submit" class="btn btn-link btn-link-danger btn-sm">Xóa</button></form>
+                                    <form method="POST" action="{{ route('admin.banners.destroy', $banner) }}" class="inline" data-confirm-entity="banner" data-confirm-name="{{ $banner->title }}">@csrf @method('DELETE')<button type="submit" class="btn btn-link btn-link-danger btn-sm">Xóa</button></form>
                                 </td>
                             </tr>
                         @endforeach

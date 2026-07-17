@@ -36,5 +36,7 @@
         style="display: none;"
         aria-hidden="true"
     ></div>
+
+    @include('admin.partials.confirm-modal')
 </body>
 </html>

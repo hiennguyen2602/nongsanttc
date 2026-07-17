@@ -81,8 +81,11 @@ function initFormSubmitLock() {
     });
 }
 
+import { initConfirmForms } from './confirm-forms.js';
+
 export function bootAdminEnhancements() {
     bootRichEditors();
     initNumberInputs();
+    initConfirmForms();
     initFormSubmitLock();
 }

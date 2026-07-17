@@ -1,5 +1,10 @@
 import { createGallerySwipeMethods } from '../gallery-swipe';
 import { isProductGalleryDesktop, openProductGallery } from '../product-fancybox';
+import { buildRemoveConfirmMessage, confirmDialog } from './confirm-modal.js';
+
+async function confirmRemoveImage(emphasis = 'ảnh này') {
+    return confirmDialog(buildRemoveConfirmMessage(emphasis));
+}
 
 document.addEventListener('alpine:init', () => {
     Alpine.data('productGallery', (images = []) => ({
@@ -97,14 +102,22 @@ document.addEventListener('alpine:init', () => {
             this.syncFileInput();
         },
 
-        removeExisting(path) {
+        async removeExisting(path) {
+            if (! await confirmRemoveImage('ảnh này')) {
+                return;
+            }
+
             this.existing = this.existing.filter((item) => item.path !== path);
             if (this.main === 'existing:' + path) {
                 this.resetMain();
             }
         },
 
-        removeNew(id) {
+        async removeNew(id) {
+            if (! await confirmRemoveImage('ảnh này')) {
+                return;
+            }
+
             this.newImages = this.newImages.filter((item) => item.id !== id);
             if (this.main === 'new:' + id) {
                 this.resetMain();
@@ -157,9 +170,10 @@ document.addEventListener('alpine:init', () => {
         },
     }));
 
-    Alpine.data('featuredImage', (existing = null) => ({
+    Alpine.data('featuredImage', (existing = null, label = 'ảnh này') => ({
         existing: existing ? { path: existing.path, url: existing.url } : null,
         newImage: null,
+        removeLabel: label,
 
         addFile(event) {
             const file = event.target.files?.[0];
@@ -176,11 +190,19 @@ document.addEventListener('alpine:init', () => {
             this.syncFileInput();
         },
 
-        removeExisting() {
+        async removeExisting() {
+            if (! await confirmRemoveImage(this.removeLabel)) {
+                return;
+            }
+
             this.existing = null;
         },
 
-        removeNew() {
+        async removeNew() {
+            if (! await confirmRemoveImage(this.removeLabel)) {
+                return;
+            }
+
             if (this.newImage?.url) {
                 URL.revokeObjectURL(this.newImage.url);
             }

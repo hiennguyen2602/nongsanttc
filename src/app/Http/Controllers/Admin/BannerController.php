@@ -3,11 +3,12 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\StoreBannerRequest;
+use App\Http\Requests\Admin\UpdateBannerRequest;
 use App\Models\Banner;
 use App\Services\ImageUploadService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
 
 class BannerController extends Controller
@@ -24,10 +25,9 @@ class BannerController extends Controller
         return view('admin.banners.create');
     }
 
-    public function store(Request $request, ImageUploadService $uploader): RedirectResponse
+    public function store(StoreBannerRequest $request, ImageUploadService $uploader): RedirectResponse
     {
-        $data = $this->validated($request);
-        $this->ensureDesktopImage($request);
+        $data = $request->toModelData();
 
         $data['image'] = $uploader->upload(
             $request->file('image'),
@@ -55,10 +55,9 @@ class BannerController extends Controller
         return view('admin.banners.edit', compact('banner'));
     }
 
-    public function update(Request $request, Banner $banner, ImageUploadService $uploader): RedirectResponse
+    public function update(UpdateBannerRequest $request, Banner $banner, ImageUploadService $uploader): RedirectResponse
     {
-        $data = $this->validated($request);
-        $this->ensureDesktopImageOnUpdate($request, $banner);
+        $data = $request->toModelData();
 
         $data['image'] = $this->handleBannerImage(
             $request,
@@ -95,55 +94,8 @@ class BannerController extends Controller
         return redirect()->route('admin.banners.index')->with('success', 'Xóa banner thành công.');
     }
 
-    private function validated(Request $request): array
-    {
-        $data = $request->validate([
-            'title' => ['required', 'string', 'max:255'],
-            'subtitle' => ['nullable', 'string', 'max:255'],
-            'link' => ['nullable', 'string', 'max:500'],
-            'position' => ['required', 'string', 'in:home_cta'],
-            'sort_order' => ['nullable', 'integer', 'min:0'],
-            'is_active' => ['nullable', 'boolean'],
-            'image' => image_upload_file_rules(['nullable']),
-            'image_mobile' => image_upload_file_rules(['nullable']),
-        ], array_merge(
-            image_upload_validation_messages('image'),
-            image_upload_validation_messages('image_mobile'),
-            [
-                'position.in' => 'Vị trí banner không hợp lệ.',
-            ],
-        ));
-
-        unset($data['image'], $data['image_mobile']);
-
-        $data['sort_order'] = (int) ($data['sort_order'] ?? 0);
-        $data['is_active'] = $request->boolean('is_active');
-
-        return $data;
-    }
-
-    private function ensureDesktopImage(Request $request): void
-    {
-        if (! $request->hasFile('image')) {
-            throw ValidationException::withMessages([
-                'image' => 'Vui lòng chọn ảnh desktop.',
-            ]);
-        }
-    }
-
-    private function ensureDesktopImageOnUpdate(Request $request, Banner $banner): void
-    {
-        if ($request->hasFile('image') || filled($request->input('existing_image'))) {
-            return;
-        }
-
-        throw ValidationException::withMessages([
-            'image' => 'Vui lòng chọn ảnh desktop.',
-        ]);
-    }
-
     private function handleBannerImage(
-        Request $request,
+        UpdateBannerRequest|StoreBannerRequest|Request $request,
         ImageUploadService $uploader,
         Banner $banner,
         string $field,

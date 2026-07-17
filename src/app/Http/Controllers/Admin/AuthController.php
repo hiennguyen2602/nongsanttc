@@ -3,11 +3,14 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\Auth\ChangePasswordRequest;
+use App\Http\Requests\Admin\Auth\LoginRequest;
+use App\Http\Requests\Admin\Auth\ResetPasswordRequest;
+use App\Http\Requests\Admin\Auth\SendPasswordResetLinkRequest;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Str;
@@ -37,13 +40,8 @@ class AuthController extends Controller
         return view('admin.auth.login');
     }
 
-    public function login(Request $request): RedirectResponse
+    public function login(LoginRequest $request): RedirectResponse
     {
-        $credentials = $request->validate([
-            'email' => ['required', 'email'],
-            'password' => ['required'],
-        ]);
-
         $this->ensureLoginIsNotRateLimited($request);
 
         $remember = $request->boolean('remember');
@@ -53,7 +51,7 @@ class AuthController extends Controller
             Auth::guard()->setRememberDuration($rememberMinutes);
         }
 
-        if (! Auth::attempt($credentials, $remember)) {
+        if (! Auth::attempt($request->credentials(), $remember)) {
             RateLimiter::hit($this->loginThrottleKey($request), self::LOGIN_DECAY_SECONDS);
 
             return back()
@@ -93,10 +91,8 @@ class AuthController extends Controller
         return view('admin.auth.forgot-password');
     }
 
-    public function sendResetLink(Request $request): RedirectResponse
+    public function sendResetLink(SendPasswordResetLinkRequest $request): RedirectResponse
     {
-        $request->validate(['email' => ['required', 'email']]);
-
         $user = User::query()->where('email', $request->input('email'))->first();
 
         if ($user && ! $user->canAccessAdminPanel()) {
@@ -128,14 +124,8 @@ class AuthController extends Controller
         ]);
     }
 
-    public function resetPassword(Request $request): RedirectResponse
+    public function resetPassword(ResetPasswordRequest $request): RedirectResponse
     {
-        $request->validate([
-            'token' => ['required'],
-            'email' => ['required', 'email'],
-            'password' => ['required', 'confirmed', admin_password_rule()],
-        ]);
-
         $user = User::query()->where('email', $request->input('email'))->first();
 
         if ($user && ! $user->canAccessAdminPanel()) {
@@ -159,30 +149,19 @@ class AuthController extends Controller
         return view('admin.auth.change-password');
     }
 
-    public function changePassword(Request $request): RedirectResponse
+    public function changePassword(ChangePasswordRequest $request): RedirectResponse
     {
-        $request->validate([
-            'current_password' => ['required'],
-            'password' => ['required', 'confirmed', admin_password_rule()],
-        ]);
-
-        $user = $request->user();
-
-        if (! Hash::check($request->input('current_password'), $user->password)) {
-            return back()->withErrors(['current_password' => 'Mật khẩu hiện tại không đúng.']);
-        }
-
-        $user->update(['password' => $request->input('password')]);
+        $request->user()->update(['password' => $request->input('password')]);
 
         return back()->with('success', 'Đổi mật khẩu thành công.');
     }
 
-    private function loginThrottleKey(Request $request): string
+    private function loginThrottleKey(LoginRequest|Request $request): string
     {
         return Str::transliterate(Str::lower($request->string('email')).'|'.$request->ip());
     }
 
-    private function ensureLoginIsNotRateLimited(Request $request): void
+    private function ensureLoginIsNotRateLimited(LoginRequest $request): void
     {
         $key = $this->loginThrottleKey($request);
 

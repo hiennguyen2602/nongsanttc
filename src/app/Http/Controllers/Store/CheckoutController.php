@@ -3,7 +3,8 @@
 namespace App\Http\Controllers\Store;
 
 use App\Http\Controllers\Controller;
-use App\Models\Customer;
+use App\Http\Requests\Store\ApplyPromoRequest;
+use App\Http\Requests\Store\StoreCheckoutRequest;
 use App\Models\Order;
 use App\Models\Promotion;
 use App\Services\CartService;
@@ -45,10 +46,9 @@ class CheckoutController extends Controller
         ]);
     }
 
-    public function applyPromo(Request $request, CartService $cart): RedirectResponse
+    public function applyPromo(ApplyPromoRequest $request, CartService $cart): RedirectResponse
     {
-        $request->validate(['promo_code' => ['required', 'string', 'max:50']]);
-        $code = strtoupper(trim($request->promo_code));
+        $code = strtoupper(trim($request->input('promo_code')));
 
         $promo = Promotion::query()->where('code', $code)->where('is_active', true)->first();
 
@@ -72,26 +72,13 @@ class CheckoutController extends Controller
         return back()->with('success', 'Áp dụng mã khuyến mãi thành công.');
     }
 
-    public function store(Request $request, OrderService $orders, CartService $cart): RedirectResponse
+    public function store(StoreCheckoutRequest $request, OrderService $orders, CartService $cart): RedirectResponse
     {
         if ($cart->items()->isEmpty()) {
             return redirect()->route('cart.index');
         }
 
-        $customer = $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'phone' => ['required', 'string', 'max:20', function (string $attribute, mixed $value, \Closure $fail) {
-                if (! Customer::isValidVietnamesePhone((string) $value)) {
-                    $fail('Số điện thoại phải có 10 chữ số (Việt Nam).');
-                }
-            }],
-            'email' => ['nullable', 'email', 'max:255'],
-            'address' => ['required', 'string', 'max:500'],
-            'note' => ['nullable', 'string', 'max:1000'],
-        ]);
-
-        $customer['phone'] = Customer::normalizePhone($customer['phone']);
-
+        $customer = $request->validated();
         $promoCode = $request->session()->get('promo_code');
 
         try {
