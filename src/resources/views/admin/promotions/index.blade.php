@@ -25,7 +25,7 @@
                                 <td class="cell-price">{{ format_money($promo->discount_amount) }}</td>
                                 <td class="table-actions">
                                     <a href="{{ route('admin.promotions.edit', $promo) }}" class="btn btn-link btn-sm">Sửa</a>
-                                    <form method="POST" action="{{ route('admin.promotions.destroy', $promo) }}" class="inline" data-confirm-entity="mã khuyến mãi" data-confirm-name="{{ $promo->code }}">@csrf @method('DELETE')<button type="submit" class="btn btn-link btn-link-danger btn-sm">Xóa</button></form>
+                                    <form method="POST" action="{{ route('admin.promotions.destroy', $promo) }}" class="inline" data-confirm-entity="mã khuyến mãi" data-confirm-name="{{ $promo->code }}">@csrf @method('DELETE')<button type="button" class="btn btn-link btn-link-danger btn-sm" data-confirm-trigger>Xóa</button></form>
                                 </td>
                             </tr>
                         @endforeach

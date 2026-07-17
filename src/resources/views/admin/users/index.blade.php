@@ -36,7 +36,7 @@
                                     @if($user->id !== auth()->id())
                                         <form method="POST" action="{{ route('admin.users.destroy', $user) }}" class="inline" data-confirm-entity="người dùng" data-confirm-name="{{ $user->name }}">
                                             @csrf @method('DELETE')
-                                            <button type="submit" class="btn btn-link btn-link-danger btn-sm">Xóa</button>
+                                            <button type="button" class="btn btn-link btn-link-danger btn-sm" data-confirm-trigger>Xóa</button>
                                         </form>
                                     @endif
                                 </td>

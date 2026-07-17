@@ -29,7 +29,7 @@
                                 <td class="cell-status">@include('admin.partials.status-badge', ['label' => $post->publishStatusLabel(), 'class' => $post->publishStatusBadgeClass()])</td>
                                 <td class="table-actions">
                                     <a href="{{ route('admin.posts.edit', $post) }}" class="btn btn-link btn-sm">Sửa</a>
-                                    <form method="POST" action="{{ route('admin.posts.destroy', $post) }}" class="inline" data-confirm-entity="bài viết" data-confirm-name="{{ $post->title }}">@csrf @method('DELETE')<button type="submit" class="btn btn-link btn-link-danger btn-sm">Xóa</button></form>
+                                    <form method="POST" action="{{ route('admin.posts.destroy', $post) }}" class="inline" data-confirm-entity="bài viết" data-confirm-name="{{ $post->title }}">@csrf @method('DELETE')<button type="button" class="btn btn-link btn-link-danger btn-sm" data-confirm-trigger>Xóa</button></form>
                                 </td>
                             </tr>
                         @endforeach
