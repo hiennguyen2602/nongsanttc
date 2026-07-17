@@ -21,7 +21,7 @@
                 <a href="{{ route('admin.contact-messages.index') }}" class="btn btn-secondary btn-sm">Quay lại</a>
                 <form method="POST" action="{{ route('admin.contact-messages.destroy', $message) }}" class="inline" data-confirm-entity="tin nhắn liên hệ từ" data-confirm-name="{{ $message->name ?: 'Khách' }}">
                     @csrf @method('DELETE')
-                    <button type="submit" class="btn btn-danger btn-sm">Xóa</button>
+                    <button type="button" class="btn btn-danger btn-sm" data-confirm-trigger>Xóa</button>
                 </form>
             </div>
         </div>

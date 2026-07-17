@@ -20,6 +20,36 @@ function resolveConfirmPayload(form) {
     return null;
 }
 
+function lockConfirmTrigger(button) {
+    if (! button.dataset.submitLabel) {
+        button.dataset.submitLabel = button.textContent.trim();
+    }
+
+    button.disabled = true;
+    button.classList.add('is-submitting');
+    button.setAttribute('aria-busy', 'true');
+    button.textContent = 'Đang xử lý...';
+}
+
+async function confirmAndSubmit(form, triggerButton = null) {
+    const payload = resolveConfirmPayload(form);
+    if (! payload) {
+        return;
+    }
+
+    if (! (await confirmDialog(payload))) {
+        return;
+    }
+
+    if (triggerButton) {
+        lockConfirmTrigger(triggerButton);
+    }
+
+    confirmFormBypass = true;
+    form.requestSubmit();
+    confirmFormBypass = false;
+}
+
 export function initConfirmForms() {
     if (document.body.dataset.confirmFormsDelegated === '1') {
         return;
@@ -27,7 +57,23 @@ export function initConfirmForms() {
 
     document.body.dataset.confirmFormsDelegated = '1';
 
-    // Capture phase: chạy trước initFormSubmitLock trên form để cancel không đổi nút thành "Đang xử lý...".
+    document.addEventListener('click', async (event) => {
+        const button = event.target.closest('[data-confirm-trigger]');
+        if (! button) {
+            return;
+        }
+
+        const form = button.closest('form');
+        if (! (form instanceof HTMLFormElement)) {
+            return;
+        }
+
+        event.preventDefault();
+
+        await confirmAndSubmit(form, button);
+    }, true);
+
+    // Legacy: form vẫn dùng type="submit" hoặc submit từ nơi khác.
     document.addEventListener('submit', async (event) => {
         if (confirmFormBypass) {
             return;
