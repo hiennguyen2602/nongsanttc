@@ -118,6 +118,13 @@ Worker queue: `docker-compose.prod.yml` tự bật service `queue`. Local dev: `
 
 File `dc-prod` có quyền thực thi (`755`) trong git — sau `git pull` chạy trực tiếp `./dc-prod ...`. Nếu vẫn `Permission denied`: `chmod +x dc-prod`.
 
+```bash
+git pull
+./dc-prod deploy
+```
+
+`deploy` = `up -d --build` + composer + vite-build + migrate + cache Laravel. Lệnh Docker Compose khác vẫn dùng được: `./dc-prod ps`, `./dc-prod logs app`, `./dc-prod exec app php artisan ...`.
+
 **Không** chạy `npm install` trực tiếp trên VPS (dễ sửa `package-lock.json` và chặn `git pull`). Build frontend qua `./dc-prod vite-build`.
 
 ### Checklist deploy
