@@ -1,6 +1,7 @@
 #!/bin/sh
 # Production Docker shortcut — chạy từ thư mục gốc repo (/var/www/nongsanttc)
 # Usage:
+#   ./dc-prod deploy
 #   ./dc-prod ps
 #   ./dc-prod exec app php artisan migrate --force
 #   ./dc-prod vite-build
@@ -13,6 +14,18 @@ run_compose() {
 }
 
 case "${1:-}" in
+    deploy)
+        run_compose up -d --build
+        run_compose exec app composer install --no-dev --optimize-autoloader
+        run_compose --profile build run --rm vite-build
+        run_compose exec app php artisan migrate --force
+        run_compose exec app php artisan optimize:clear
+        run_compose exec app php artisan config:cache
+        run_compose exec app php artisan route:cache
+        run_compose exec app php artisan view:cache
+        run_compose exec app php artisan event:cache
+        echo "Deploy xong."
+        ;;
     vite-build)
         shift
         run_compose --profile build run --rm vite-build "$@"
