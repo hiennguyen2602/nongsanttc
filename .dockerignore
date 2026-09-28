@@ -1,11 +1,17 @@
 src/node_modules
 src/vendor
+src/.env*
+src/public/uploads/**
+src/storage/app/**
 src/storage/logs
 src/storage/framework/cache
 src/storage/framework/sessions
 src/storage/framework/views
 src/bootstrap/cache
 .git
+.env*
+**/.env*
+**/auth.json
 docx_media
 *.md
 !README.md

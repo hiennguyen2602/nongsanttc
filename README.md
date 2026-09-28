@@ -1,167 +1,43 @@
 # Nông Sản TTC
 
-## Khởi chạy nhanh
+## Một cách triển khai
 
-```bash
-cp src/.env.example.docker src/.env   # lần đầu
-cp docker-compose.override.yml.example docker-compose.override.yml
+Repo chỉ dùng Dockerfile ở thư mục gốc. Dockerfile đóng gói Laravel, Composer dependencies và Vite assets, rồi chạy Nginx cùng PHP-FPM trong một container. Dùng cùng Dockerfile/image và cùng bộ tên biến môi trường ở máy local, VPS hoặc Vibe Host; không có cấu hình Compose hay image riêng theo môi trường.
 
-docker compose down --remove-orphans
-docker compose up -d --build
+MySQL không chạy trong container ứng dụng. Local dùng MySQL của XAMPP; môi trường khác kết nối tới MySQL bên ngoài tương ứng. Cả ba cùng dùng các biến `DB_HOST`, `DB_PORT`, `DB_DATABASE`, `DB_USERNAME` và `DB_PASSWORD`; chỉ giá trị host/credentials phụ thuộc nơi đặt MySQL, Dockerfile và image không thay đổi.
 
-docker compose exec app php artisan migrate --seed --force
+## Chạy bằng Docker
+
+Đảm bảo MySQL trong XAMPP đang chạy. Tạo file môi trường nếu chưa có, rồi cấu hình `DB_HOST=host.docker.internal`, `DB_PORT=3306` và thông tin database/user/password có quyền truy cập database trong XAMPP. Không dùng `DB_HOST=db` vì local không chạy MySQL bằng Compose.
+
+Trong PowerShell:
+
+```powershell
+if (-not (Test-Path src/.env)) {
+	Copy-Item src/.env.example src/.env
+}
+docker build -t nongsanttc .
+docker run --rm nongsanttc php artisan key:generate --show
 ```
 
-Truy cập: http://localhost:8080
+Lưu key vừa tạo vào `APP_KEY` trong `src/.env`. Khởi động ứng dụng và tạo bảng lần đầu:
+
+```powershell
+docker rm -f nongsanttc-local 2>$null
+docker run -d --name nongsanttc-local -p 8080:80 --env-file src/.env -v nongsanttc-storage:/var/www/html/storage -v nongsanttc-uploads:/var/www/html/public/uploads nongsanttc
+docker exec nongsanttc-local php artisan migrate --seed --force
+```
+
+Mở http://localhost:8080. Database XAMPP và thông tin kết nối hiện đã được chuẩn bị trên máy này. Sau khi sửa mã nguồn, build lại image rồi tạo lại container. File upload và dữ liệu Laravel được giữ trong Docker volumes.
+
+Thông tin đăng nhập admin sau khi seed: `admin@nongsanttc.local` / `password`.
+
+## Vibe Host hoặc máy chủ khác
+
+Chọn Dockerfile ở thư mục gốc, build context là thư mục gốc repository và cung cấp các biến môi trường cùng tên như trong `src/.env.example`. Trên Vibe Host, tạo MySQL trong bảng điều khiển rồi điền thông tin DB được cấp. Chạy `php artisan migrate --force` qua console/tác vụ deploy sau khi ứng dụng kết nối được database.
+
+Không commit `.env` hoặc credentials. Cấu hình persistent storage cho `storage` và `public/uploads` nếu nền tảng hỗ trợ; nếu không, dùng object storage cho tệp cần giữ qua các lần deploy. `QUEUE_CONNECTION=sync` giúp tác vụ queue chạy trong request, không cần container worker riêng.
 
 ## Phát triển
 
-Quy ước migration (gộp vào bảng gốc, squash trước production): [docs/development.md](docs/development.md)
-
-## Tại sao lần đầu vào chậm?
-
-**Nguyên nhân chính đã xác định:** khi có file `public/hot`, Laravel bắt browser tải CSS/JS từ **Vite dev** (`:5173`). Trên Windows + Docker, lần compile Tailwind đầu mất **~60 giây** — trong lúc đó trang trắng hoặc không có style.
-
-**Cách xử lý ổn định (mặc định):** container `vite` chạy `build + watch` — **không tạo `public/hot`**, trang dùng file trong `public/build/` (nginx, ~200ms). Sửa CSS/JS → vite tự build lại → **F5 trình duyệt**.
-
-| Triệu chứng | Nguyên nhân | Xử lý |
-|-------------|-------------|--------|
-| Trang trắng / không CSS ~1 phút | `public/hot` + Vite dev compile | Mặc định đã dùng build+watch; xóa hot: `rm src/public/hot` |
-| Ảnh/CSS thiếu chậm từng file | nginx gọi Laravel (đã sửa) | `vite-build` hoặc để vite watch build |
-| `docker compose up` lỗi unhealthy | healthcheck thiếu lệnh | Đã sửa `php-fpm -t` |
-| Trang chủ nhiều ảnh (~1.5MB) | Lần đầu browser tải ảnh | Bình thường; lần 2 cache nhanh |
-
-**Quy trình hàng ngày:**
-
-```bash
-docker compose up -d
-# Đợi vite build xong (~30–40s lần đầu sau up) rồi mở http://localhost:8080
-```
-
-**Muốn HMR tức thì:** trong `docker-compose.override.yml` thêm `VITE_MODE: dev` vào service `vite`, rồi `docker compose up -d --force-recreate vite`.
-
-## Dev frontend
-
-- **Mặc định:** `build + watch` — nhanh, sửa code → F5
-- **Tùy chọn HMR:** `VITE_MODE=dev` (xem trên)
-
-Build một lần thủ công:
-
-```bash
-docker compose run --rm vite-build
-```
-
-## Sau khi `git checkout` / đổi branch (layout vỡ, CSS cũ)
-
-**Blade/PHP** đổi theo branch ngay, nhưng **`public/build` và `public/hot` nằm trong `.gitignore`** — không đi theo branch. Trình duyệt vẫn có thể dùng CSS/JS cũ → giao diện lệch hoặc vỡ.
-
-Chọn **một** trong hai cách:
-
-### Cách 1 — Vite dev (HMR, tự refresh khi code)
-
-```bash
-docker compose restart vite          # tạo lại public/hot
-docker compose exec app php artisan view:clear
-```
-
-Kiểm tra: file `src/public/hot` phải tồn tại (nội dung dạng `http://127.0.0.1:5173`). Hard refresh trình duyệt (`Ctrl+F5`).
-
-### Cách 2 — Build tĩnh (nhanh, ổn định — khuyên dùng sau đổi branch)
-
-```bash
-docker compose run --rm vite-build     # build mới + xóa public/hot
-docker compose exec app php artisan view:clear
-```
-
-Nếu vẫn lạ: tắt vite dev để tránh nhầm mode:
-
-```bash
-docker compose stop vite
-```
-
-### Cache Laravel (Docker volume)
-
-View/config cache nằm volume `app_bootstrap_cache`, có thể giữ code cũ:
-
-```bash
-docker compose exec app php artisan optimize:clear
-```
-
-**Lưu ý:** Chạy `vite-build` trong lúc container `vite` đang chạy sẽ xóa `public/hot` — cần `docker compose restart vite` hoặc dùng một mode (dev **hoặc** build), không trộn lẫn.
-
-## Admin
-
-http://localhost:8080/admin/login — `admin@nongsanttc.local` / `password`
-
-## Production (VPS)
-
-Quy mô **vài chục–vài trăm truy cập/ngày**: `CACHE_STORE=database` (hoặc `file`) và `SESSION_DRIVER=database` (hoặc `file`) **đủ dùng**. Chưa cần Redis trừ khi nhiều container PHP cùng session hoặc traffic tăng rõ.
-
-### `.env` production
-
-| Biến | Giá trị |
-|------|---------|
-| `APP_ENV` | `production` |
-| `APP_DEBUG` | `false` |
-| `APP_URL` | `https://domain-cua-ban` |
-| `LOG_LEVEL` | `warning` hoặc `error` |
-| `SESSION_DRIVER` | `database` (khuyên dùng) hoặc `file` |
-| `SESSION_SECURE_COOKIE` | `true` (HTTPS) — tự bật khi `APP_ENV=production` |
-| `SESSION_DOMAIN` | **Bỏ dòng này** hoặc để trống — không ghi `null` |
-| `CACHE_STORE` | `database` hoặc `file` |
-| `QUEUE_CONNECTION` | `database` (đủ nếu queue nhẹ) |
-| `SESSION_LIFETIME` | `10080` (7 ngày; tick **Ghi nhớ** = 30 ngày) |
-
-Worker queue: `docker-compose.prod.yml` tự bật service `queue`. Local dev: `docker compose --profile workers up -d queue` hoặc `php artisan queue:work`.
-
-### Script `dc-prod` (VPS)
-
-File `dc-prod` có quyền thực thi (`755`) trong git — sau `git pull` chạy trực tiếp `./dc-prod ...`. Nếu vẫn `Permission denied`: `chmod +x dc-prod`.
-
-```bash
-git pull
-./dc-prod deploy
-```
-
-`deploy` = `up -d --build` + composer + vite-build + migrate + cache Laravel. Lệnh Docker Compose khác vẫn dùng được: `./dc-prod ps`, `./dc-prod logs app`, `./dc-prod exec app php artisan ...`.
-
-**Không** chạy `npm install` trực tiếp trên VPS (dễ sửa `package-lock.json` và chặn `git pull`). Build frontend qua `./dc-prod vite-build`.
-
-### Checklist deploy
-
-```bash
-# 1. Code + dependency
-composer install --no-dev --optimize-autoloader
-npm ci && npm run build          # hoặc: docker compose run --rm vite-build
-
-# 2. App key / migrate (lần đầu hoặc có migration mới)
-php artisan key:generate --force   # chỉ lần đầu
-php artisan migrate --force
-
-# 3. Cache Laravel (chạy sau khi .env đã đúng)
-php artisan config:cache
-php artisan route:cache
-php artisan view:cache
-php artisan event:cache            # Laravel 11+
-```
-
-Docker:
-
-```bash
-docker compose exec app composer install --no-dev --optimize-autoloader
-docker compose run --rm vite-build
-docker compose exec app php artisan migrate --force
-docker compose exec app php artisan config:cache
-docker compose exec app php artisan route:cache
-docker compose exec app php artisan view:cache
-docker compose exec app php artisan event:cache
-```
-
-### Sau khi đổi `.env`, route, hoặc Blade
-
-```bash
-php artisan optimize:clear
-# sửa xong rồi cache lại (config/route/view/event)
-```
-
-**Không** bật `APP_DEBUG=true` trên production. **Không** commit `.env`.
+Quy ước migration (gộp vào bảng gốc, squash trước production): [docs/development.md](docs/development.md).
