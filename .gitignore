@@ -21,7 +21,6 @@ yarn-error.log
 /.zed
 
 # Temp extraction / mockup files (dev only)
-docker-compose.override.yml
 docx_media/
 docx_content.txt
 _extract_docx.py
