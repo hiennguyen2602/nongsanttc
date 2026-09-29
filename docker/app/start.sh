@@ -14,12 +14,4 @@ mkdir -p storage/app/public storage/app/private \
     public/uploads/settings public/uploads/editor public/uploads/products
 chown -R www-data:www-data storage bootstrap/cache public/uploads
 
-if [ "${AUTO_MIGRATE:-false}" = "true" ]; then
-    php artisan migrate --force
-
-    if [ "${AUTO_SEED:-false}" = "true" ]; then
-        php artisan db:seed --force
-    fi
-fi
-
 exec /usr/bin/supervisord -c /etc/supervisor/supervisord.conf
