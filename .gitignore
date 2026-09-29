@@ -29,5 +29,5 @@ layout-admin.txt
 /*.PNG
 
 # User uploads — không đưa lên Git (deploy qua server / volume)
-src/public/uploads/**
-!src/public/uploads/.gitkeep
+/public/uploads/**
+!/public/uploads/.gitkeep

@@ -1,43 +1,47 @@
-# Nông Sản TTC
+# Triển khai Vibe Host
 
-## Một cách triển khai
+1. Tạo ứng dụng trên Vibe Host, chọn repository và nhánh cần triển khai. Để trống **Thư mục con** (thư mục gốc), chọn `Dockerfile` ở root và cổng `80`.
 
-Repo chỉ dùng Dockerfile ở thư mục gốc. Dockerfile đóng gói Laravel, Composer dependencies và Vite assets, rồi chạy Nginx cùng PHP-FPM trong một container. Dùng cùng Dockerfile/image và cùng bộ tên biến môi trường ở máy local, VPS hoặc Vibe Host; không có cấu hình Compose hay image riêng theo môi trường.
+2. Tạo MySQL trong bảng điều khiển Vibe Host. Tạo `APP_KEY` bằng lệnh `php artisan key:generate --show`, rồi khai báo các biến sau trong cấu hình ứng dụng:
 
-MySQL không chạy trong container ứng dụng. Local dùng MySQL của XAMPP; môi trường khác kết nối tới MySQL bên ngoài tương ứng. Cả ba cùng dùng các biến `DB_HOST`, `DB_PORT`, `DB_DATABASE`, `DB_USERNAME` và `DB_PASSWORD`; chỉ giá trị host/credentials phụ thuộc nơi đặt MySQL, Dockerfile và image không thay đổi.
+    ```env
+    APP_ENV=production
+    APP_DEBUG=false
+    APP_URL=https://ten-mien-cua-ban
+    APP_KEY=base64:key-vua-tao
+    DB_CONNECTION=mysql
+    DB_HOST=host-do-vibe-host-cap
+    DB_PORT=3306
+    DB_DATABASE=ten-database
+    DB_USERNAME=database-user
+    DB_PASSWORD=database-password
+    SESSION_DRIVER=database
+    CACHE_STORE=database
+    QUEUE_CONNECTION=sync
+    ```
 
-## Chạy bằng Docker
+3. Bật xác minh 2 bước và tạo **App Password** trong tài khoản Google. Khai báo trên Vibe Host:
 
-Đảm bảo MySQL trong XAMPP đang chạy. Tạo file môi trường nếu chưa có, rồi cấu hình `DB_HOST=host.docker.internal`, `DB_PORT=3306` và thông tin database/user/password có quyền truy cập database trong XAMPP. Không dùng `DB_HOST=db` vì local không chạy MySQL bằng Compose.
+    ```env
+    MAIL_MAILER=smtp
+    MAIL_SCHEME=smtp
+    MAIL_HOST=smtp.gmail.com
+    MAIL_PORT=587
+    MAIL_USERNAME=dia-chi-gmail@gmail.com
+    MAIL_PASSWORD=google-app-password
+    MAIL_FROM_ADDRESS=dia-chi-gmail@gmail.com
+    MAIL_FROM_NAME=Nong San TTC
+    ```
 
-Trong PowerShell:
+    Dùng App Password, không dùng mật khẩu Gmail; bỏ dấu cách khi nhập. `MAIL_FROM_ADDRESS` nên trùng với `MAIL_USERNAME`.
 
-```powershell
-if (-not (Test-Path src/.env)) {
-	Copy-Item src/.env.example src/.env
-}
-docker build -t nongsanttc .
-docker run --rm nongsanttc php artisan key:generate --show
-```
+4. Lưu cấu hình và chọn **Đồng ý, đưa website lên mạng**. Khi container đã chạy, mở Console của ứng dụng và chạy:
 
-Lưu key vừa tạo vào `APP_KEY` trong `src/.env`. Khởi động ứng dụng và tạo bảng lần đầu:
+    ```sh
+    php artisan migrate --force
+    php artisan db:seed --force
+    ```
 
-```powershell
-docker rm -f nongsanttc-local 2>$null
-docker run -d --name nongsanttc-local -p 8080:80 --env-file src/.env -v nongsanttc-storage:/var/www/html/storage -v nongsanttc-uploads:/var/www/html/public/uploads nongsanttc
-docker exec nongsanttc-local php artisan migrate --seed --force
-```
+    Chỉ chạy `db:seed` một lần trên database mới. Seeder tạo tài khoản admin với mật khẩu mặc định; đổi mật khẩu ngay sau khi đăng nhập và không chạy seed lại trên database đang sử dụng.
 
-Mở http://localhost:8080. Database XAMPP và thông tin kết nối hiện đã được chuẩn bị trên máy này. Sau khi sửa mã nguồn, build lại image rồi tạo lại container. File upload và dữ liệu Laravel được giữ trong Docker volumes.
-
-Thông tin đăng nhập admin sau khi seed: `admin@nongsanttc.local` / `password`.
-
-## Vibe Host hoặc máy chủ khác
-
-Chọn Dockerfile ở thư mục gốc, build context là thư mục gốc repository và cung cấp các biến môi trường cùng tên như trong `src/.env.example`. Trên Vibe Host, tạo MySQL trong bảng điều khiển rồi điền thông tin DB được cấp. Chạy `php artisan migrate --force` qua console/tác vụ deploy sau khi ứng dụng kết nối được database.
-
-Không commit `.env` hoặc credentials. Cấu hình persistent storage cho `storage` và `public/uploads` nếu nền tảng hỗ trợ; nếu không, dùng object storage cho tệp cần giữ qua các lần deploy. `QUEUE_CONNECTION=sync` giúp tác vụ queue chạy trong request, không cần container worker riêng.
-
-## Phát triển
-
-Quy ước migration (gộp vào bảng gốc, squash trước production): [docs/development.md](docs/development.md).
+5. Bật lưu trữ lâu dài cho `storage` và `public/uploads` để giữ dữ liệu qua các lần triển khai.

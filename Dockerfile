@@ -25,22 +25,22 @@ COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 FROM node:22-alpine3.22 AS frontend-build
 
 WORKDIR /app
-COPY src/package.json src/package-lock.json ./
+COPY package.json package-lock.json ./
 RUN npm ci
-COPY src/ ./
+COPY ./ ./
 RUN npm run build
 
 FROM php-base AS composer-build
 
 WORKDIR /var/www/html
-COPY src/ ./
+COPY ./ ./
 RUN mkdir -p bootstrap/cache storage/framework/cache storage/framework/sessions storage/framework/views storage/logs \
     && composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader
 
 FROM php-base AS runtime
 
 WORKDIR /var/www/html
-COPY src/ ./
+COPY ./ ./
 COPY --from=composer-build /var/www/html/vendor ./vendor
 COPY --from=frontend-build /app/public/build ./public/build
 COPY docker/app/nginx.conf /etc/nginx/conf.d/default.conf
