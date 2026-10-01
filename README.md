@@ -35,7 +35,7 @@
 
     Dùng App Password, không dùng mật khẩu Gmail; bỏ dấu cách khi nhập. `MAIL_FROM_ADDRESS` nên trùng với `MAIL_USERNAME`.
 
-4. Lưu cấu hình và chọn **Đồng ý, đưa website lên mạng**. Sau khi container khởi động, mở Console của ứng dụng và chạy thủ công:
+4. Lưu cấu hình và chọn **Đồng ý, đưa website lên mạng**. Container sẽ tự chạy toàn bộ migration khi database kết nối được. Nếu cần chạy thủ công, đặt `RUN_MIGRATIONS_ON_STARTUP=false`, sau đó mở Console và chạy:
 
     ```sh
     php artisan migrate --force
@@ -44,6 +44,6 @@
 
     Chỉ chạy `db:seed` một lần trên database mới. Seeder tạo tài khoản admin với mật khẩu mặc định; đổi mật khẩu ngay sau khi đăng nhập và không chạy seed lại trên database đang sử dụng.
 
-    Nếu muốn tự động migrate khi khởi động, khai báo `RUN_MIGRATIONS_ON_STARTUP=true` trong biến môi trường.
+    Mặc định migration tự động bật; chỉ tắt bằng `RUN_MIGRATIONS_ON_STARTUP=false` khi cần chạy thủ công.
 
 5. Bật lưu trữ lâu dài cho `storage` và `public/uploads` để giữ dữ liệu qua các lần triển khai.
