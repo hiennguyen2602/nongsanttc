@@ -14,4 +14,6 @@ mkdir -p storage/app/public storage/app/private \
     public/uploads/settings public/uploads/editor public/uploads/products
 chown -R www-data:www-data storage bootstrap/cache public/uploads
 
+php artisan migrate --force --no-interaction
+
 exec /usr/bin/supervisord -c /etc/supervisor/supervisord.conf
