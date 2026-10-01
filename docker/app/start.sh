@@ -14,6 +14,19 @@ mkdir -p storage/app/public storage/app/private \
     public/uploads/settings public/uploads/editor public/uploads/products
 chown -R www-data:www-data storage bootstrap/cache public/uploads
 
-php artisan migrate --force --no-interaction
+migration_attempts="${DB_MIGRATION_ATTEMPTS:-30}"
+migration_retry_seconds="${DB_MIGRATION_RETRY_SECONDS:-2}"
+migration_attempt=1
+
+until php artisan migrate --force --no-interaction; do
+    if [ "$migration_attempt" -ge "$migration_attempts" ]; then
+        echo "Database migration failed after ${migration_attempts} attempts. Check DB_HOST, DB_PORT, DB_DATABASE, DB_USERNAME and DB_PASSWORD." >&2
+        exit 1
+    fi
+
+    echo "Database is not ready; retrying migration (${migration_attempt}/${migration_attempts})..." >&2
+    migration_attempt=$((migration_attempt + 1))
+    sleep "$migration_retry_seconds"
+done
 
 exec /usr/bin/supervisord -c /etc/supervisor/supervisord.conf
