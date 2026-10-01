@@ -26,19 +26,8 @@ sed -i "s/listen 80 default_server;/listen ${app_port} default_server;/" /etc/ng
 exec /usr/bin/supervisord -c /etc/supervisor/supervisord.conf &
 supervisor_pid=$!
 
-migration_attempts="${DB_MIGRATION_ATTEMPTS:-30}"
-migration_retry_seconds="${DB_MIGRATION_RETRY_SECONDS:-2}"
-migration_attempt=1
-
-until php artisan migrate --force --no-interaction; do
-    if [ "$migration_attempt" -ge "$migration_attempts" ]; then
-        echo "Database migration failed after ${migration_attempts} attempts. Check DB_HOST, DB_PORT, DB_DATABASE, DB_USERNAME and DB_PASSWORD." >&2
-        exit 1
-    fi
-
-    echo "Database is not ready; retrying migration (${migration_attempt}/${migration_attempts})..." >&2
-    migration_attempt=$((migration_attempt + 1))
-    sleep "$migration_retry_seconds"
-done
+if [ "${RUN_MIGRATIONS_ON_STARTUP:-false}" = "true" ]; then
+    php artisan migrate --force --no-interaction
+fi
 
 wait "$supervisor_pid"
