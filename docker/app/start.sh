@@ -14,6 +14,18 @@ mkdir -p storage/app/public storage/app/private \
     public/uploads/settings public/uploads/editor public/uploads/products
 chown -R www-data:www-data storage bootstrap/cache public/uploads
 
+app_port="${PORT:-80}"
+case "$app_port" in
+    ''|*[!0-9]*)
+        echo "PORT must be a numeric TCP port; received: ${app_port}" >&2
+        exit 1
+        ;;
+esac
+sed -i "s/listen 80 default_server;/listen ${app_port} default_server;/" /etc/nginx/conf.d/default.conf
+
+exec /usr/bin/supervisord -c /etc/supervisor/supervisord.conf &
+supervisor_pid=$!
+
 migration_attempts="${DB_MIGRATION_ATTEMPTS:-30}"
 migration_retry_seconds="${DB_MIGRATION_RETRY_SECONDS:-2}"
 migration_attempt=1
@@ -29,4 +41,4 @@ until php artisan migrate --force --no-interaction; do
     sleep "$migration_retry_seconds"
 done
 
-exec /usr/bin/supervisord -c /etc/supervisor/supervisord.conf
+wait "$supervisor_pid"
