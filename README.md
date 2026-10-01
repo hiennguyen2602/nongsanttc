@@ -1,6 +1,6 @@
 # Triển khai Vibe Host
 
-1. Tạo ứng dụng trên Vibe Host, chọn repository và nhánh cần triển khai. Để trống **Thư mục con** (thư mục gốc), chọn `Dockerfile` ở root và cổng `80`.
+1. Tạo ứng dụng trên Vibe Host, chọn repository và nhánh cần triển khai. Để trống **Thư mục con** (thư mục gốc), chọn `Dockerfile` ở root và cổng `80`. Entrypoint sẽ dùng biến `PORT` do nền tảng cấp nếu nền tảng gán cổng khác.
 
 2. Tạo MySQL trong bảng điều khiển Vibe Host. Tạo `APP_KEY` bằng lệnh `php artisan key:generate --show`, rồi khai báo các biến sau trong cấu hình ứng dụng:
 
