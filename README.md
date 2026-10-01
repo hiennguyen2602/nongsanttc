@@ -4,6 +4,8 @@
 
 2. Tạo MySQL trong bảng điều khiển Vibe Host. Tạo `APP_KEY` bằng lệnh `php artisan key:generate --show`, rồi khai báo các biến sau trong cấu hình ứng dụng:
 
+    > Không chỉ sửa `.env.example`: file này bị loại khỏi Docker image. Phải nhập các biến bên dưới trong tab **Biến môi trường** của ứng dụng Vibe Host.
+
     ```env
     APP_ENV=production
     APP_DEBUG=false
