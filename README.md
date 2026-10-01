@@ -15,8 +15,8 @@
     DB_DATABASE=ten-database
     DB_USERNAME=database-user
     DB_PASSWORD=database-password
-    SESSION_DRIVER=database
-    CACHE_STORE=database
+    SESSION_DRIVER=file
+    CACHE_STORE=file
     QUEUE_CONNECTION=sync
     ```
 
@@ -35,10 +35,9 @@
 
     Dùng App Password, không dùng mật khẩu Gmail; bỏ dấu cách khi nhập. `MAIL_FROM_ADDRESS` nên trùng với `MAIL_USERNAME`.
 
-4. Lưu cấu hình và chọn **Đồng ý, đưa website lên mạng**. Khi container đã chạy, mở Console của ứng dụng và chạy:
+4. Lưu cấu hình và chọn **Đồng ý, đưa website lên mạng**. Container sẽ tự chạy migration trước health check. Khi container đã chạy, mở Console của ứng dụng và chạy:
 
     ```sh
-    php artisan migrate --force
     php artisan db:seed --force
     ```
 
