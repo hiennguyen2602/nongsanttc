@@ -35,7 +35,7 @@
 
     Dùng App Password, không dùng mật khẩu Gmail; bỏ dấu cách khi nhập. `MAIL_FROM_ADDRESS` nên trùng với `MAIL_USERNAME`.
 
-4. Lưu cấu hình và chọn **Đồng ý, đưa website lên mạng**. Container sẽ tự chạy migration trước health check. Khi container đã chạy, mở Console của ứng dụng và chạy:
+4. Lưu cấu hình và chọn **Đồng ý, đưa website lên mạng**. Container sẽ tự chạy migration trong lúc khởi động. Khi database đã kết nối thành công và container đã chạy, mở Console của ứng dụng và chạy:
 
     ```sh
     php artisan db:seed --force
