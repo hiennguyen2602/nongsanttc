@@ -1,0 +1,110 @@
+#!/bin/sh
+set -eu
+
+cd "$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)"
+
+compose() {
+  docker compose -f compose.yaml -f compose.prod.yaml "$@"
+}
+
+usage() {
+  cat <<'EOF'
+Usage:
+  ./dc-prod init
+  ./dc-prod build
+  ./dc-prod deploy
+  ./dc-prod migrate
+  ./dc-prod seed
+  ./dc-prod <docker compose arguments>
+
+Examples:
+  ./dc-prod ps
+  ./dc-prod logs -f web app worker scheduler
+  ./dc-prod exec app php artisan migrate:status
+EOF
+}
+
+require_env() {
+  if [ ! -f .env ]; then
+    echo "Missing .env. Run ./dc-prod init, then configure .env." >&2
+    exit 1
+  fi
+}
+
+check_production_env() {
+  require_env
+
+  if [ ! -f docker/app/nginx.production.conf ]; then
+    echo "Missing production Nginx config. Run ./dc-prod init, then set its domain." >&2
+    exit 1
+  fi
+
+  if grep -q 'ten-mien-cua-ban' docker/app/nginx.production.conf; then
+    echo "Replace the example domain in docker/app/nginx.production.conf before deploying." >&2
+    exit 1
+  fi
+
+  if ! grep -Eq '^APP_KEY=base64:.+' .env; then
+    echo "APP_KEY is missing. Generate one with:" >&2
+    echo "  docker compose run --rm --no-deps --entrypoint php app artisan key:generate --show" >&2
+    exit 1
+  fi
+
+  if ! grep -Eq '^APP_ENV=production$' .env || ! grep -Eq '^APP_DEBUG=false$' .env; then
+    echo "Set APP_ENV=production and APP_DEBUG=false in .env before deploying." >&2
+    exit 1
+  fi
+}
+
+if [ "$#" -eq 0 ]; then
+  usage
+  exit 2
+fi
+
+command=$1
+shift
+
+case "$command" in
+  init)
+    if [ -e .env ]; then
+      echo ".env already exists; leaving it unchanged."
+    else
+      cp .env.example .env
+      chmod 600 .env
+      echo "Created .env. Edit it, set production values and generate APP_KEY before deploying."
+    fi
+    if [ -e docker/app/nginx.production.conf ]; then
+      echo "Production Nginx config already exists; leaving it unchanged."
+    else
+      cp docker/app/nginx.production.conf.example docker/app/nginx.production.conf
+      echo "Created docker/app/nginx.production.conf. Set its domain and certificate paths before deploying."
+    fi
+    ;;
+  deploy)
+    if [ "$#" -ne 0 ]; then
+      echo "Usage: ./dc-prod deploy" >&2
+      exit 2
+    fi
+    check_production_env
+    git pull --ff-only
+    compose build
+    compose up -d db redis
+    compose run --rm migrate
+    compose up -d --remove-orphans
+    echo "Deploy complete. Check with: ./dc-prod ps"
+    ;;
+  migrate)
+    check_production_env
+    compose run --rm migrate "$@"
+    ;;
+  seed)
+    check_production_env
+    compose exec app php artisan db:seed --force "$@"
+    ;;
+  help|-h|--help)
+    usage
+    ;;
+  *)
+    compose "$command" "$@"
+    ;;
+esac

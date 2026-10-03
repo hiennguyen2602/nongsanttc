@@ -1,8 +1,27 @@
+# Copy this template to nginx.production.conf on the VPS, then set its domain.
 server {
     listen 8080 default_server;
-    server_name _;
+    server_name ten-mien-cua-ban;
+
+    location = /healthz {
+        access_log off;
+        default_type text/plain;
+        return 200 "ok\n";
+    }
+
+    location / {
+        return 301 https://$host$request_uri;
+    }
+}
+
+server {
+    listen 8443 ssl;
+    server_name ten-mien-cua-ban;
     root /var/www/html/public;
     index index.php;
+
+    ssl_certificate /etc/letsencrypt/live/ten-mien-cua-ban/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/ten-mien-cua-ban/privkey.pem;
 
     client_max_body_size 50M;
     access_log /dev/stdout;
@@ -17,12 +36,6 @@ server {
     gzip_min_length 256;
     gzip_types text/plain text/css text/javascript application/javascript application/json application/xml image/svg+xml;
 
-    location = /healthz {
-        access_log off;
-        default_type text/plain;
-        return 200 "ok\n";
-    }
-
     location / {
         try_files $uri $uri/ /index.php?$query_string;
     }
@@ -31,6 +44,7 @@ server {
         include fastcgi_params;
         fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
         fastcgi_param DOCUMENT_ROOT $document_root;
+        fastcgi_param HTTPS on;
         fastcgi_pass $php_upstream;
     }
 
