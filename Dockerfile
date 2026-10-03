@@ -11,14 +11,13 @@ RUN apt-get update \
         libpng-dev \
         libwebp-dev \
         libzip-dev \
-        nginx \
-        supervisor \
         unzip \
     && docker-php-ext-configure gd --with-jpeg --with-freetype --with-webp \
     && docker-php-ext-install pdo_mysql zip mbstring bcmath pcntl gd \
+    && pecl install redis-6.2.0 \
+    && docker-php-ext-enable redis \
     && apt-get clean \
-    && rm -rf /var/lib/apt/lists/* \
-    && rm -f /etc/nginx/sites-enabled/default
+    && rm -rf /var/lib/apt/lists/*
 
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
@@ -43,9 +42,7 @@ WORKDIR /var/www/html
 COPY ./ ./
 COPY --from=composer-build /var/www/html/vendor ./vendor
 COPY --from=frontend-build /app/public/build ./public/build
-COPY docker/app/nginx.conf /etc/nginx/conf.d/default.conf
-COPY docker/app/supervisord.conf /etc/supervisor/conf.d/app.conf
-COPY docker/app/start.sh /usr/local/bin/app-start
+COPY docker/php/start.sh /usr/local/bin/app-start
 COPY docker/php/opcache.ini /usr/local/etc/php/conf.d/99-opcache-custom.ini
 COPY docker/php/uploads.ini /usr/local/etc/php/conf.d/99-uploads-custom.ini
 
@@ -57,6 +54,17 @@ RUN sed -i 's/\r$//' /usr/local/bin/app-start \
         public/uploads/settings public/uploads/editor public/uploads/products \
     && chown -R www-data:www-data storage bootstrap/cache public/uploads
 
-EXPOSE 80
+EXPOSE 9000
 
-CMD ["/usr/local/bin/app-start"]
+ENTRYPOINT ["/usr/local/bin/app-start"]
+CMD ["php-fpm", "-F"]
+
+FROM nginx:stable-alpine AS web
+
+COPY docker/app/nginx.conf /etc/nginx/conf.d/default.conf
+COPY --from=runtime /var/www/html/public /var/www/html/public
+
+RUN mkdir -p /var/www/html/storage/app/public \
+    && chown -R nginx:nginx /var/www/html/public
+
+EXPOSE 8080
