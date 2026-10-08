@@ -275,22 +275,24 @@
             </div>
         </div>
 
-        {{-- Khuyến mãi --}}
-        <div class="mt-12">
-            <h2 class="mb-6 text-lg font-bold text-slate-900">Khuyến mãi dành cho bạn</h2>
-            <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-                @foreach ($promotions as $promo)
-                    <div class="rounded-lg border border-slate-200 p-4">
-                        <p class="font-semibold text-brand">{{ $promo->title }}</p>
-                        <p class="mt-1 text-sm text-slate-600">{{ $promo->description }}</p>
-                        <p class="mt-2 text-xs text-slate-400">Mã: {{ $promo->code }}</p>
-                        <button type="button" onclick="navigator.clipboard.writeText('{{ $promo->code }}')" class="mt-3 w-full rounded bg-brand py-2 text-xs font-semibold uppercase text-white hover:bg-brand-dark">
-                            Sao chép mã
-                        </button>
-                    </div>
-                @endforeach
+        @if ($promotions->isNotEmpty())
+            {{-- Khuyến mãi --}}
+            <div class="mt-12">
+                <h2 class="mb-6 text-lg font-bold text-slate-900">Khuyến mãi dành cho bạn</h2>
+                <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                    @foreach ($promotions as $promo)
+                        <div class="rounded-lg border border-slate-200 p-4">
+                            <p class="font-semibold text-brand">{{ $promo->title }}</p>
+                            <p class="mt-1 text-sm text-slate-600">{{ $promo->description }}</p>
+                            <p class="mt-2 text-xs text-slate-400">Mã: {{ $promo->code }}</p>
+                            <button type="button" onclick="navigator.clipboard.writeText('{{ $promo->code }}')" class="mt-3 w-full rounded bg-brand py-2 text-xs font-semibold uppercase text-white hover:bg-brand-dark">
+                                Sao chép mã
+                            </button>
+                        </div>
+                    @endforeach
+                </div>
             </div>
-        </div>
+        @endif
 
         {{-- Mô tả --}}
         @if ($product->description)
