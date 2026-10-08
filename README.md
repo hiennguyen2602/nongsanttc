@@ -155,6 +155,8 @@ Các lệnh thường dùng:
 ./dc-prod migrate
 ```
 
+Laravel ghi log ra `stderr` trong Docker để Docker thu thập, không phụ thuộc quyền ghi vào `storage/logs`. Xem log bằng `./dc-prod logs -f app worker scheduler`.
+
 Lệnh `migrate` chạy migration một lần với `--force`. Trước khi chuyển dữ liệu từ hệ thống cũ, backup và import database vào MySQL trên VPS; volume mới không tự chứa dữ liệu bên ngoài.
 
 ## Cập nhật và mở rộng
