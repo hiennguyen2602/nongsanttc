@@ -15,6 +15,8 @@ Compose khởi chạy **6 container**:
 
 Các container `web`, `app`, `scheduler`, `worker` dùng chung một image PHP/app hoặc web image được build từ cùng mã nguồn. MySQL và Redis không publish cổng ra máy chủ. Chỉ Nginx publish cổng `127.0.0.1:APP_PORT`, mặc định là `8080`, để reverse proxy trên máy chủ kết nối tới.
 
+PHP-FPM dùng PHP 8.5.12, đã bao gồm bản vá cho CVE-2026-109618 và CVE-2026-109619.
+
 Tách tiến trình giúp có thể tăng số PHP app hoặc worker độc lập trên một máy chủ. Nginx phân giải địa chỉ service `app` động để theo kịp thay đổi container. Compose vẫn chỉ điều phối trên một máy chủ; multi-host/HA cần load balancer và dịch vụ dữ liệu dùng chung hoặc managed.
 
 ## Triển khai trên máy chủ riêng

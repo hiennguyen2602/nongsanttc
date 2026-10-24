@@ -1,4 +1,4 @@
-FROM php:8.3-fpm-trixie AS php-base
+FROM php:8.5.12-fpm-trixie AS php-base
 
 ENV TZ=Asia/Ho_Chi_Minh
 
@@ -14,7 +14,7 @@ RUN apt-get update \
         unzip \
     && docker-php-ext-configure gd --with-jpeg --with-freetype --with-webp \
     && docker-php-ext-install pdo_mysql zip mbstring bcmath pcntl gd \
-    && pecl install redis-6.2.0 \
+    && pecl install redis-6.3.0 \
     && docker-php-ext-enable redis \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
